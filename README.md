@@ -1,1 +1,1 @@
-Use npm-start to run the client
+Use npm start to run the client
