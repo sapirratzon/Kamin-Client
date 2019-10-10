@@ -1,12 +1,15 @@
 .App {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
+  height: 80vh;
+}
+
+.information {
+  padding-left: 1000px;
 }
 
 .App-header {
-  background-color: #262626;
+  background-color: black;
   overflow: visible;
   width: 100%;
   text-align: center;
@@ -14,12 +17,11 @@
 }
 
 .Messages-list {
-  padding: 20px 0;
   max-width: 900px;
   width: 100%;
-  margin: 0 auto;
   list-style: none;
   padding-left: 0;
+  padding-bottom: 500px;
   flex-grow: 1;
   overflow: auto;
 }
@@ -27,20 +29,8 @@
 .Messages-message {
   display: flex;
   margin-top: 10px;
-}
+  text-align: left;
 
-.Messages-message.currentMember {
-  /*justify-content: flex-end;*/
-  flex-direction: row-reverse;
-  text-align: right;
-}
-
-.Message-content {
-  display: inline-block;
-}
-
-.currentMember > .Message-content {
-  align-items: flex-end;
 }
 
 .Messages-message > .avatar {
@@ -68,30 +58,24 @@
   display: inline-block;
 }
 
-.currentMember > .Message-content .text {
-  background-color: orangered;
-}
-
 form {
   display: flex;
   width: 100%;
   justify-content: space-between;
   max-width: 900px;
-  margin: 0 auto 40px;
 }
 
 input {
   padding: 5px;
   font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid orangered;
+  border: 1px solid black;
   flex-grow: 1;
 }
 
 button {
   padding: 5px 10px;
   font-size: 16px;
-  background-color: orangered;
+  background-color: darkgrey;
   color: white;
   border: none;
   border-radius: 8px;
