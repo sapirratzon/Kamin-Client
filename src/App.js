@@ -7,10 +7,6 @@ import Input from "./Input";
 class App extends Component {
     state = {
         messages: [],
-        member: {
-            username: "Guy",
-            color: "blue",
-        }
     }
 
     constructor() {
@@ -18,25 +14,16 @@ class App extends Component {
         var xhr = new XMLHttpRequest();
 
         xhr.addEventListener('load', () => {
-            const member = {...this.state.member};
-            member.id = 1;
-            this.setState({member});
             const messages = this.state.messages;
             let response = JSON.parse(xhr.responseText);
-            for (const [key, value] of Object.entries(response)) {
-                let entries = Object.entries(value);
-                for (const [key, value] of entries) {
-                    messages.push({member: member, text: key, father: null, id: null, tag: null, action: null});
-
-                }
-                messages.push({member: member, text: key, father: null, id: null, tag: null, action: null});
-            }
+            pushAllMessages(response["tree"], messages);
             this.setState({messages});
 
         });
-        xhr.open('GET', 'https://dog.ceo/api/breeds/list/all');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
         xhr.send();
     }
+
 
     render() {
         return (
@@ -63,5 +50,40 @@ class App extends Component {
     }
 
 }
+
+function pushAllMessages(node, messages) {
+    if (node == null)
+        return;
+    messages.push({
+            member: {
+                username: node["node"]["author"],
+                color: "#" + intToRGB(hashCode(node["node"]["author"]))
+            },
+            text: node["node"]["text"],
+            depth: node["node"]["depth"]
+
+        }
+    );
+    node["children"].forEach(function (child) {
+        pushAllMessages(child, messages);
+    });
+
+
+    function hashCode(str) { // java String#hashCode
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        return hash;
+    }
+
+    function intToRGB(i) {
+        var c = (i & 0x00FFFFFF)
+            .toString(16)
+            .toUpperCase();
+        return "00000".substring(0, 6 - c.length) + c;
+    }
+}
+
 
 export default App;
