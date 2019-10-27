@@ -4,10 +4,24 @@
   height: 80vh;
 }
 
-.information {
-  padding-left: 1000px;
+
+.split {
+    height: 100%;
+    width: 50%;
+    position: fixed;
+    z-index: 1;
+    top: 10%;
+    overflow-x: hidden;
+    padding-top: 20px;
 }
 
+.left {
+    left: 0;
+}
+
+.right{
+    right:0
+}
 .App-header {
   background-color: black;
   overflow: visible;
@@ -79,4 +93,11 @@ button {
   border: none;
   border-radius: 8px;
   margin-left: 10px;
+}
+
+svg[name="svg-container-graph-id"] {
+  height: 700px !important;
+  width: 100%;
+  border: 5px solid black;
+
 }
