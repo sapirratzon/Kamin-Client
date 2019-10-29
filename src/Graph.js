@@ -1,14 +1,16 @@
 import {Component} from "react";
 import React from "react";
 import {Graph} from "react-d3-graph";
-
+import Delayed from "./Delayed";
 
 class GraphDrawer extends Component {
     render() {
+
         const {nodes, links} = this.props;
         const data = {
-            nodes: [{id: "Harry"}, {id: "Sally"}, {id: "Alice"}],
-            links: [],
+            // nodes: [{id: "Harry"}, {id: "Sally"}, {id: "Alice"}],
+            nodes:[],
+            links: []
         };
         if (nodes.length !== 0 && links.length !== 0) {
             data["nodes"] = nodes;
@@ -31,7 +33,6 @@ class GraphDrawer extends Component {
                 data={data}
                 config={myConfig}
             />
-
         )
             ;
     }
