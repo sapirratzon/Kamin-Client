@@ -35,7 +35,7 @@ class App extends Component {
             let response = JSON.parse(xhr.responseText);
             this.getMessagesNodesLinks(response["tree"], messages, nodes, links);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/0');
         xhr.send();
     }
 
@@ -177,11 +177,13 @@ class App extends Component {
     handleSimulateClick = async () => {
         while (this.state.currentMessageIndex + 1 < this.state.allMessages.length) {
             await this.renderMessageNodeLink(1);
-            await (async () => {
-                console.time("Slept for")
-                await sleep(1000)
-                console.timeEnd("Slept for")
-            })();
+            if (true) {
+                await (async () => {
+                    console.time("Slept for")
+                    await sleep(1000)
+                    console.timeEnd("Slept for")
+                })();
+            }
         }
     }
 
