@@ -9,7 +9,7 @@ class GraphDrawer extends Component {
         const {nodes, links} = this.props;
         const data = {
             // nodes: [{id: "Harry"}, {id: "Sally"}, {id: "Alice"}],
-            nodes:[],
+            nodes:[{id: "root"}],
             links: []
         };
         if (nodes.length !== 0 && links.length !== 0) {
