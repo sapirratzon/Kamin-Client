@@ -1,17 +1,13 @@
-import { Component } from "react";
-import Delayed from './Delayed';
+import {Component} from "react";
 
 import React from "react";
 
 class Message extends Component {
     render() {
-        // let delayTime = 1000;
-        const { member, text, depth } = this.props;
-        var depthPixels = depth * 30;
-        var depthString = depthPixels.toString() + "px";
+        const {member, text, depth} = this.props;
+        let depthPixels = depth * 30;
+        let depthString = depthPixels.toString() + "px";
         return (
-            // <Delayed waitBeforeShow={delayTime}>
-
             <li className="Messages-message">
                 <span
                     className="avatar"
@@ -25,13 +21,12 @@ class Message extends Component {
                         {member.username}
                     </div>
                     <div className="text"
-                        style={{
-                            "backgroundColor": member.color
-                        }}
+                         style={{
+                             "backgroundColor": member.color
+                         }}
                     >{text}</div>
                 </div>
             </li>
-            // </Delayed>
         );
     }
 }

@@ -1,15 +1,14 @@
-import { Component } from "react";
-import Delayed from './Delayed';
+import {Component} from "react";
 import Message from './Message';
 
 import React from "react";
 
 class Messages extends Component {
     render() {
-        const { messages } = this.props;
+        const {messages} = this.props;
         return (
             <ul className="Messages-list">
-                {messages.map((m , i) => <Message key={i} member={m.member} text={m.text} depth={m.depth}></Message>)}
+                {messages.map((m, i) => <Message key={i} member={m.member} text={m.text} depth={m.depth}/>)}
             </ul>
 
         );

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import './App.css';
 import Messages from "./Messages";
 import Input from "./Input";
@@ -27,7 +27,6 @@ class App extends Component {
 
     componentDidMount() {
         var xhr = new XMLHttpRequest();
-
         xhr.addEventListener('load', () => {
             const messages = this.state.allMessages;
             const nodes = this.state.allNodes;
@@ -39,98 +38,18 @@ class App extends Component {
         xhr.send();
     }
 
-    // not using this function - here hust for example
-    pushAllMessages = (node, messages, nodes, links) => {
-        if (node == null)
-            return;
-        messages.push({
-            member: {
-                username: node["node"]["author"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"]))
-            },
-            text: node["node"]["text"],
-            depth: node["node"]["depth"]
-        }
-        );
-        this.setState({
-            messages: messages
-        });
-        nodes.push({
-            id: node["node"]["author"],
-            color: "#" + intToRGB(hashCode(node["node"]["author"]))
-        });
-        this.setState({
-            nodes: nodes
-        });
-        node["children"].map(child => {
-            this.pushAllMessages(child, messages, nodes, links);
-            let link = {
-                source: child["node"]["author"], target: node["node"]["author"]
-            }
-            if (node["node"]["author"].length !== 0) {
-                links.push(link);
-            }
-            this.setState({
-                links: links
-            });
-        });
-    };
-
-    // not using this function - here hust for example
-    pushAllMessagesInDelay = (node, messages, nodes, links) => {
-        if (node == null)
-            return;
-        messages.push({
-            member: {
-                username: node["node"]["author"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"]))
-            },
-            text: node["node"]["text"],
-            depth: node["node"]["depth"]
-        }
-        );
-        this.setState({
-            shownMessages: messages
-        });
-        nodes.push({
-            id: node["node"]["author"],
-            color: "#" + intToRGB(hashCode(node["node"]["author"]))
-        });
-        this.setState({
-            shownNodes: nodes
-        });
-        node["children"].map(child => {
-            setTimeout(
-                function () {
-                    this.pushAllMessagesInDelay(child, messages, nodes, links);
-                    let link = {
-                        source: child["node"]["author"], target: node["node"]["author"]
-                    }
-                    if (node["node"]["author"].length !== 0) {
-                        links.push(link);
-                    }
-                    this.setState({
-                        shownLinks: links
-                    });
-                }
-                    .bind(this),
-                7000
-            );
-        });
-    };
-
     // only converting tree to lists - gathering data
     getMessagesNodesLinks = (node, messages, nodes, links) => {
         if (node == null)
             return;
         messages.push({
-            member: {
-                username: node["node"]["author"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"]))
-            },
-            text: node["node"]["text"],
-            depth: node["node"]["depth"]
-        }
+                member: {
+                    username: node["node"]["author"],
+                    color: "#" + intToRGB(hashCode(node["node"]["author"]))
+                },
+                text: node["node"]["text"],
+                depth: node["node"]["depth"]
+            }
         );
         nodes.push({
             id: node["node"]["author"],
@@ -139,7 +58,7 @@ class App extends Component {
         node["children"].map(child => {
             let link = {
                 source: child["node"]["author"], target: node["node"]["author"]
-            }
+            };
             links.push(link);
             this.getMessagesNodesLinks(child, messages, nodes, links);
         });
@@ -164,45 +83,43 @@ class App extends Component {
                 console.log(this.state)
             })
         }
-    }
+    };
 
     handleNextClick = () => {
         this.renderMessageNodeLink(1);
-    }
+    };
 
     handleBackClick = () => {
         this.renderMessageNodeLink(-1);
-    }
+    };
 
     handleSimulateClick = async () => {
         while (this.state.currentMessageIndex + 1 < this.state.allMessages.length) {
             await this.renderMessageNodeLink(1);
-            if (true) {
-                await (async () => {
-                    console.time("Slept for")
-                    await sleep(1000)
-                    console.timeEnd("Slept for")
-                })();
-            }
+            await (async () => {
+                console.time("Slept for");
+                await sleep(1000);
+                console.timeEnd("Slept for")
+            })();
         }
-    }
+    };
 
     render() {
         return (
             <div className="App">
                 <div className="App-header">
-                    <button onClick={this.handleNextClick}>next</button>
-                    <button onClick={this.handleBackClick}>back</button>
-                    <button onClick={this.handleSimulateClick}>simulate</button>
                     <h1>Kamin Chat App</h1>
                 </div>
                 <div className="split right">
                     <div className="centered">
+                        <button onClick={this.handleNextClick}>next</button>
+                        <button onClick={this.handleBackClick}>back</button>
+                        <button onClick={this.handleSimulateClick}>simulate</button>
                         <h2>Conversation insights:</h2>
                         {this.state.showGraph ? <GraphDrawer
                             nodes={this.state.shownNodes}
                             links={this.state.shownLinks}
-                        /> : <div></div>}
+                        /> : <div/>}
 
                     </div>
                 </div>
@@ -239,6 +156,6 @@ function intToRGB(i) {
     return "00000".substring(0, 6 - c.length) + c;
 }
 
-const sleep = m => new Promise(r => setTimeout(r, m))
+const sleep = m => new Promise(r => setTimeout(r, m));
 
 export default App;
