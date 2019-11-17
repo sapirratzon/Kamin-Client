@@ -1,49 +1,24 @@
-.App {
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
-}
-
-
-.split {
-    height: 85%;
-    width: 50%;
-    position: fixed;
-    z-index: 1;
-    top: 10%;
+body{
+    color:#455358;
     overflow-x: hidden;
-    padding-top: 20px;
+    overflow-y: hidden;
 }
 
-.left {
-    left: 0;
-}
-
-.right {
-    right: 0
-}
-
-.App-header {
-    background-color: black;
-    overflow: visible;
-    width: 100%;
-    text-align: center;
-    color: white;
+#footer{
+    background-color:#FFBC42;
+    position : absolute;
+    bottom   : 0;
+    height: 3%;
 }
 
 .Messages-list {
-    max-width: 900px;
-    width: 100%;
-    list-style: none;
-    padding-left: 0;
-    padding-bottom: 500px;
-    flex-grow: 1;
+    height: 800px;
     overflow: auto;
 }
 
 .Messages-message {
     display: flex;
-    margin-top: 10px;
+    margin-top: 0.5em;
     text-align: left;
 
 }
@@ -51,6 +26,8 @@
 .Messages-message > .avatar {
     height: 35px;
     width: 35px;
+    min-height: 35px;
+    min-width: 35px;
     border-radius: 50%;
     display: inline-block;
     margin: 0 10px -10px;
@@ -65,8 +42,6 @@
 
 .Message-content > .text {
     padding: 10px;
-    max-width: 800px;
-    margin: 0;
     border-radius: 12px;
     color: white;
     display: inline-block;
@@ -76,29 +51,15 @@ form {
     display: flex;
     width: 100%;
     justify-content: space-between;
-    max-width: 900px;
+    max-width: 700px;
 }
 
 input {
-    padding: 5px;
-    font-size: 16px;
     border: 1px solid black;
     flex-grow: 1;
 }
 
-button {
-    padding: 5px 10px;
-    font-size: 16px;
-    background-color: darkgrey;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    margin-left: 10px;
-}
-
 svg[name="svg-container-graph-id"] {
-    height: 700px !important;
-    width: 100%;
-    border: 5px solid black;
-
+    height: 650px !important;
+    border: 5px solid #006BA6;
 }

@@ -107,24 +107,39 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <div className="App-header">
-                    <h1>Kamin Chat App</h1>
-                </div>
-                <div className="split right">
-                    <div className="centered">
-                        <button onClick={this.handleNextClick}>next</button>
-                        <button onClick={this.handleBackClick}>back</button>
-                        <button onClick={this.handleSimulateClick}>simulate</button>
-                        <h2>Conversation insights:</h2>
-                        {this.state.showGraph ? <GraphDrawer
-                            nodes={this.state.shownNodes}
-                            links={this.state.shownLinks}
-                        /> : <div/>}
+                <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1">
+                    <div className="container-fluid px-5">
+                        <a className="navbar-brand" href="#"><i className="fas fa-dungeon pr-2"></i>Kamin</a>
+                        <button className="navbar-toggler" type="button" data-toggle="collapse"
+                                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
 
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav mr-auto">
+                                <li className="nav-item active">
+                                    <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="#">Popular <span className="sr-only">(current)</span></a>
+                                </li>
+                            </ul>
+                            <ul className="navbar-nav ml-auto">
+                                <li className="nav-item">
+                                    <a className="nav-link" href="#"><i className="fas fa-sign-in-alt pr-2"></i>Sign
+                                        In <span className="sr-only">(current)</span></a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="#"><i className="fas fa-user-plus pr-2"></i>Sign
+                                        Up <span className="sr-only">(current)</span></a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div className="split left">
-                    <div className="centered">
+                </nav>
+                <div className="row px-5">
+                    <div className="col-6 py-3">
                         <Messages
                             messages={this.state.shownMessages}
                             currentMember={this.state.member}
@@ -133,8 +148,38 @@ class App extends Component {
                             onSendMessage={this.onSendMessage}
                         />
                     </div>
-                </div>
+                    <div className="col-6">
+                        <h2 className="text-center py-2">Simulation:</h2>
+                        <div className="row justify-content-around py-3 w-75">
+                            <div className="col-2"></div>
+                            <div className="col-2">
+                                <button type="button" className="btn btn-primary btn-lg"
+                                        onClick={this.handleBackClick}>Back
+                                </button>
+                            </div>
+                            <div className="col-2">
+                                <button type="button" className="btn btn-primary btn-lg"
+                                        onClick={this.handleNextClick}>Next
+                                </button>
+                            </div>
+                            <div className="col-2">
+                                <button type="button" className="btn btn-primary btn-lg"
+                                        onClick={this.handleSimulateClick}>Run
+                                </button>
+                            </div>
 
+                        </div>
+                        <h2 className="text-center">Conversation Insights:</h2>
+                        {this.state.showGraph ? <GraphDrawer className="w-100 h-100"
+                                                             nodes={this.state.shownNodes}
+                                                             links={this.state.shownLinks}
+                        /> : <div/>}                    </div>
+                </div>
+                <div className="row footer-copyright text-center bg-primary w-100" id="footer">
+                    <div className="col">
+                        <p>© Kamin Chat App</p>
+                    </div>
+                </div>
             </div>
         );
     }
