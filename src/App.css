@@ -1,5 +1,5 @@
 body{
-    color:#455358;
+    /*color:#455358;*/
     overflow-x: hidden;
     overflow-y: hidden;
 }
@@ -43,7 +43,7 @@ body{
 .Message-content > .text {
     padding: 10px;
     border-radius: 12px;
-    color: white;
+    color: black;
     display: inline-block;
 }
 

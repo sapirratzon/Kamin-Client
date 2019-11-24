@@ -21,9 +21,6 @@ class Message extends Component {
                         {member.username}
                     </div>
                     <div className="text"
-                         style={{
-                             "backgroundColor": member.color
-                         }}
                     >{text}</div>
                 </div>
             </li>
