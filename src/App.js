@@ -1,8 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './App.css';
 import Messages from "./Messages";
 import Input from "./Input";
 import GraphDrawer from "./Graph"
+import ForceGraph2D from 'react-force-graph-2d';
 
 class App extends Component {
 
@@ -43,17 +44,18 @@ class App extends Component {
         if (node == null)
             return;
         messages.push({
-                member: {
-                    username: node["node"]["author"],
-                    color: "#" + intToRGB(hashCode(node["node"]["author"]))
-                },
-                text: node["node"]["text"],
-                depth: node["node"]["depth"]
-            }
+            member: {
+                username: node["node"]["author"],
+                color: "#" + intToRGB(hashCode(node["node"]["author"]))
+            },
+            text: node["node"]["text"],
+            depth: node["node"]["depth"]
+        }
         );
         nodes.push({
             id: node["node"]["author"],
-            color: "#" + intToRGB(hashCode(node["node"]["author"]))
+            color: "#" + intToRGB(hashCode(node["node"]["author"])),
+            name: node["node"]["author"]
         });
         node["children"].map(child => {
             let link = {
@@ -111,8 +113,8 @@ class App extends Component {
                     <div className="container-fluid px-5">
                         <a className="navbar-brand" href="#"><i className="fas fa-dungeon pr-2"></i>Kamin</a>
                         <button className="navbar-toggler" type="button" data-toggle="collapse"
-                                data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                                aria-expanded="false" aria-label="Toggle navigation">
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
 
@@ -154,26 +156,29 @@ class App extends Component {
                             <div className="col-2"></div>
                             <div className="col-2">
                                 <button type="button" className="btn btn-primary btn-lg"
-                                        onClick={this.handleBackClick}>Back
+                                    onClick={this.handleBackClick}>Back
                                 </button>
                             </div>
                             <div className="col-2">
                                 <button type="button" className="btn btn-primary btn-lg"
-                                        onClick={this.handleNextClick}>Next
+                                    onClick={this.handleNextClick}>Next
                                 </button>
                             </div>
                             <div className="col-2">
                                 <button type="button" className="btn btn-primary btn-lg"
-                                        onClick={this.handleSimulateClick}>Run
+                                    onClick={this.handleSimulateClick}>Run
                                 </button>
                             </div>
 
                         </div>
                         <h2 className="text-center">Conversation Insights:</h2>
-                        {this.state.showGraph ? <GraphDrawer className="w-100 h-100"
-                                                             nodes={this.state.shownNodes}
-                                                             links={this.state.shownLinks}
-                        /> : <div/>}                    </div>
+                        <div id="graph">
+                            <ForceGraph2D graphData={{
+                                "nodes": this.state.shownNodes,
+                                "links": this.state.shownLinks
+                            }}></ForceGraph2D>
+                        </div>
+                    </div>
                 </div>
                 <div className="row footer-copyright text-center bg-primary w-100" id="footer">
                     <div className="col">
