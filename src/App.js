@@ -140,7 +140,7 @@ class App extends Component {
                         </div>
                     </div>
                 </nav>
-                <div className="row px-5">
+                <div className="row px-5 content">
                     <div className="col-6 py-3">
                         <Messages
                             messages={this.state.shownMessages}
@@ -152,7 +152,7 @@ class App extends Component {
                     </div>
                     <div className="col-6">
                         <h2 className="text-center py-2">Simulation:</h2>
-                        <div className="row justify-content-around py-3 w-75">
+                        <div className="row justify-content-around py-3 w-85">
                             <div className="col-2"></div>
                             <div className="col-2">
                                 <button type="button" className="btn btn-primary btn-lg"
@@ -178,11 +178,6 @@ class App extends Component {
                                 "links": this.state.shownLinks
                             }}></ForceGraph2D>
                         </div>
-                    </div>
-                </div>
-                <div className="row footer-copyright text-center bg-primary w-100" id="footer">
-                    <div className="col">
-                        <p>© Kamin Chat App</p>
                     </div>
                 </div>
             </div>
