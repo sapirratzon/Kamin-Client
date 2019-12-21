@@ -89,7 +89,15 @@ svg[name="svg-container-graph-id"] {
 }
 
 canvas{
-    height: 80% !important;
-    width: 80% !important;
+    /* height: 65% !important;
+    width: 100% !important; */
     border: 5px solid #006BA6;
+}
+
+#graph  *{
+    height: 100%;
+}
+
+#graph{
+    height: 100%;
 }
