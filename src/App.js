@@ -6,6 +6,7 @@ import "./DiscussionPage/Graph/Graph.css";
 import "./DiscussionPage/Simulation/Simulation";
 import Simulation from './DiscussionPage/Simulation/Simulation';
 import Graph from "./DiscussionPage/Graph/Graph";
+import AlertList from "./DiscussionPage/Alert/AlertsList";
 
 class App extends Component {
     constructor() {
@@ -13,7 +14,8 @@ class App extends Component {
         this.state = {
             shownMessages: [],
             shownNodes: [],
-            shownLinks: []
+            shownLinks: [],
+            alerts: [{ "text": "This is an alert test :)" }]
         };
     }
 
@@ -22,8 +24,6 @@ class App extends Component {
             shownMessages: newMessages,
             shownNodes: newNodes,
             shownLinks: newLinks
-        }, () => {
-            console.log(this.state)
         });
     }
 
@@ -39,12 +39,12 @@ class App extends Component {
                         <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} />
                         <h2 className="text-center">Conversation Insights:</h2>
                         <Graph shownNodes={this.state.shownNodes} shownLinks={this.state.shownLinks} />
+                        <AlertList alerts={this.state.alerts} />
                     </div>
                 </div>
             </div>
         );
     }
 }
-
 
 export default App;

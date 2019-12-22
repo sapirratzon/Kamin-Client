@@ -1,11 +1,10 @@
-import {Component} from "react";
-import React from "react";
+import React, { Component } from "react";
 
 
 class Message extends Component {
     render() {
-        const {member, text, depth} = this.props;
-        let depthPixels = depth * 30;
+        const { member, text, depth } = this.props;
+        let depthPixels = depth * 20;
         let depthString = depthPixels.toString() + "px";
         return (
             <li className="Messages-message">

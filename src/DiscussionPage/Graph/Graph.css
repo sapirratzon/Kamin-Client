@@ -1,5 +1,5 @@
 canvas{
-    height: 65% !important;
+    height: 100% !important;
     width: 100% !important;
     border: 5px solid #006BA6;
 }
@@ -9,5 +9,5 @@ canvas{
 }
 
 #graph{
-    height: 100%;
+    height: 60%;
 }

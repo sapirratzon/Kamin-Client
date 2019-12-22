@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import "./Simulation.css"
 
 class Simulation extends Component {
 
@@ -104,22 +105,21 @@ class Simulation extends Component {
 
     render() {
         return (
-            <div>
-                <h2 className="text-center py-2">Simulation:</h2>
-                <div className="row justify-content-around py-3" id="simulation-nav">
-                    <div className="col-2"></div>
+            <div id="simulation pt-2 pb-0">
+                <h2 className="text-center">Simulation:</h2>
+                <div className="row justify-content-around py-1" id="simulation-nav">
                     <div className="col-2">
-                        <button type="button" className="btn btn-primary btn-lg"
+                        <button type="button" className="btn btn-primary btn-m"
                             onClick={this.handleBackClick}>Back
                 </button>
                     </div>
                     <div className="col-2">
-                        <button type="button" className="btn btn-primary btn-lg"
+                        <button type="button" className="btn btn-primary btn-m"
                             onClick={this.handleNextClick}>Next
                 </button>
                     </div>
                     <div className="col-2">
-                        <button type="button" className="btn btn-primary btn-lg"
+                        <button type="button" className="btn btn-primary btn-m"
                             onClick={this.handleSimulateClick}>Run
                 </button>
                     </div>
