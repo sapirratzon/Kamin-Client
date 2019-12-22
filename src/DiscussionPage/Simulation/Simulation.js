@@ -79,18 +79,18 @@ class Simulation extends Component {
                 console.log(this.state)
             })
         }
-        this.props.messagesHandler(this.state.shownMessages,this.state.shownNodes,this.state.shownLinks);
+        this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
 
     };
 
     handleNextClick = () => {
         this.renderMessageNodeLink(1);
-        this.props.messagesHandler(this.state.shownMessages,this.state.shownNodes,this.state.shownLinks);
+        this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
     };
 
     handleBackClick = () => {
         this.renderMessageNodeLink(-1);
-        this.props.messagesHandler(this.state.shownMessages,this.state.shownNodes,this.state.shownLinks);
+        this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
     };
 
     handleSimulateClick = async () => {
@@ -129,8 +129,6 @@ class Simulation extends Component {
     }
 
 }
-
-
 
 function hashCode(str) {
     var hash = 0;

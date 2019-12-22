@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import './App.css';
 import NavigationBar from "./NavigationBar/NavigationBar";
-import ForceGraph2D from 'react-force-graph-2d';
 import Chat from "./DiscussionPage/Chat/Chat";
 import "./DiscussionPage/Graph/Graph.css";
 import "./DiscussionPage/Simulation/Simulation";
 import Simulation from './DiscussionPage/Simulation/Simulation';
+import Graph from "./DiscussionPage/Graph/Graph";
 
 class App extends Component {
     constructor() {
@@ -38,12 +38,7 @@ class App extends Component {
                     <div className="col-6">
                         <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} />
                         <h2 className="text-center">Conversation Insights:</h2>
-                        <div id="graph">
-                            <ForceGraph2D className="graph" graphData={{
-                                "nodes": this.state.shownNodes,
-                                "links": this.state.shownLinks
-                            }}></ForceGraph2D>
-                        </div>
+                        <Graph shownNodes={this.state.shownNodes} shownLinks={this.state.shownLinks} />
                     </div>
                 </div>
             </div>
