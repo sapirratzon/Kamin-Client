@@ -66,6 +66,7 @@ class App extends Component {
         });
     };
 
+
     //presenting one messeage and matching graph
     renderMessageNodeLink = (dif) => {
         let i = this.state.currentMessageIndex;
@@ -96,14 +97,20 @@ class App extends Component {
     };
 
     handleSimulateClick = async () => {
-        while (this.state.currentMessageIndex + 1 < this.state.allMessages.length) {
-            await this.renderMessageNodeLink(1);
-            await (async () => {
-                console.time("Slept for");
-                await sleep(1000);
-                console.timeEnd("Slept for")
-            })();
-        }
+        // while (this.state.currentMessageIndex + 1 < this.state.allMessages.length) {
+        //     await this.renderMessageNodeLink(1);
+        //     await (async () => {
+        //         console.time("Slept for");
+        //         await sleep(1000);
+        //         console.timeEnd("Slept for")
+        //     })();
+        // }
+        this.setState({
+            shownMessages: this.state.allMessages.copyWithin(0,0),
+            shownNodes: this.state.allNodes.copyWithin(0,0),
+            shownLinks: this.state.allLinks.copyWithin(0,0),
+            currentMessageIndex: this.state.allMessages.length,
+        });
     };
 
     render() {
