@@ -3,7 +3,6 @@ import Messages from "./MessagesList"
 import Input from "./Input"
 import "./Chat.css"
 
-
 const Chat = (props) => {
     return (
         <div className="chat">

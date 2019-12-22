@@ -3,11 +3,11 @@ html, body{
     height:100%;
 }
 
-.App{
+#root{
     height:100%;
 }
 
-#root{
+.App{
     height:100%;
 }
 
@@ -15,25 +15,6 @@ html, body{
     height:100%;
 }
 
-
-canvas{
-    height: 65% !important;
-    width: 100% !important;
-    border: 5px solid #006BA6;
-}
-
 #simulation-nav{
     width:85%;
-}
-
-.chat{
-    height:100%;
-}
-
-#graph div{
-    height: 100%;
-}
-
-#graph{
-    height: 100%;
 }

@@ -1,0 +1,13 @@
+canvas{
+    height: 65% !important;
+    width: 100% !important;
+    border: 5px solid #006BA6;
+}
+
+#graph div{
+    height: 100%;
+}
+
+#graph{
+    height: 100%;
+}

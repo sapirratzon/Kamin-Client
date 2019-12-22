@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import NavigationBar from "./NavigationBar/NavigationBar";
 import ForceGraph2D from 'react-force-graph-2d';
-import Chat from "./Chat/Chat";
-
+import Chat from "./DiscussionPage/Chat/Chat";
+import "./DiscussionPage/Graph/Graph.css"
 class App extends Component {
 
     constructor() {
@@ -19,7 +19,7 @@ class App extends Component {
             allLinks: [],
             showGraph: true
         };
-
+        
         this.handleNextClick = this.handleNextClick.bind(this);
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSimulateClick = this.handleSimulateClick.bind(this);
@@ -130,7 +130,6 @@ class App extends Component {
                                     onClick={this.handleSimulateClick}>Run
                                 </button>
                             </div>
-
                         </div>
                         <h2 className="text-center">Conversation Insights:</h2>
                         <div id="graph">
