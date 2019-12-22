@@ -1,7 +1,5 @@
-import {Component} from "react";
+import React,{Component} from "react";
 import Message from './Message';
-
-import React from "react";
 
 class Messages extends Component {
     render() {

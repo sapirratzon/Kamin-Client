@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import './App.css';
-import Messages from "./Messages";
-import Input from "./Input";
-import GraphDrawer from "./Graph"
+import NavigationBar from "./NavigationBar/NavigationBar";
 import ForceGraph2D from 'react-force-graph-2d';
+import Chat from "./Chat/Chat";
 
 class App extends Component {
 
@@ -99,9 +98,7 @@ class App extends Component {
         while (this.state.currentMessageIndex + 1 < this.state.allMessages.length) {
             await this.renderMessageNodeLink(1);
             await (async () => {
-                console.time("Slept for");
                 await sleep(1000);
-                console.timeEnd("Slept for")
             })();
         }
     };
@@ -109,50 +106,14 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1">
-                    <div className="container-fluid px-5">
-                        <a className="navbar-brand" href="#"><i className="fas fa-dungeon pr-2"></i>Kamin</a>
-                        <button className="navbar-toggler" type="button" data-toggle="collapse"
-                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                            <span className="navbar-toggler-icon"></span>
-                        </button>
-
-                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul className="navbar-nav mr-auto">
-                                <li className="nav-item active">
-                                    <a className="nav-link" href="#">Home <span className="sr-only">(current)</span></a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link" href="#">Popular <span className="sr-only">(current)</span></a>
-                                </li>
-                            </ul>
-                            <ul className="navbar-nav ml-auto">
-                                <li className="nav-item">
-                                    <a className="nav-link" href="#"><i className="fas fa-sign-in-alt pr-2"></i>Sign
-                                        In <span className="sr-only">(current)</span></a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link" href="#"><i className="fas fa-user-plus pr-2"></i>Sign
-                                        Up <span className="sr-only">(current)</span></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
+                <NavigationBar />
                 <div className="row px-5 content">
-                    <div className="col-6 py-3">
-                        <Messages
-                            messages={this.state.shownMessages}
-                            currentMember={this.state.member}
-                        />
-                        <Input
-                            onSendMessage={this.onSendMessage}
-                        />
+                    <div className="chat col-6 py-3">
+                        <Chat messages={this.state.shownMessages} />
                     </div>
                     <div className="col-6">
                         <h2 className="text-center py-2">Simulation:</h2>
-                        <div className="row justify-content-around py-3 w-85">
+                        <div className="row justify-content-around py-3" id="simulation-nav">
                             <div className="col-2"></div>
                             <div className="col-2">
                                 <button type="button" className="btn btn-primary btn-lg"
@@ -173,7 +134,7 @@ class App extends Component {
                         </div>
                         <h2 className="text-center">Conversation Insights:</h2>
                         <div id="graph">
-                            <ForceGraph2D graphData={{
+                            <ForceGraph2D className="graph" graphData={{
                                 "nodes": this.state.shownNodes,
                                 "links": this.state.shownLinks
                             }}></ForceGraph2D>
@@ -186,7 +147,7 @@ class App extends Component {
 }
 
 
-function hashCode(str) { // java String#hashCode
+function hashCode(str) {
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);

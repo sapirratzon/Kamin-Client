@@ -1,0 +1,43 @@
+.Messages-list {
+    height: 85%;
+    width: 100%;
+    overflow-x: scroll;
+    overflow: auto;
+}
+
+.Messages-message {
+    display: flex;
+    margin-top: 0.5em;
+    text-align: left;
+
+}
+
+.Messages-message > .avatar {
+    height: 35px;
+    width: 35px;
+    min-height: 35px;
+    min-width: 35px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 10px -10px;
+}
+
+.Message-content > .username {
+    display: block;
+    color: gray;
+    font-size: 14px;
+    padding-bottom: 4px;
+}
+
+.Message-content > .text {
+    padding: 10px;
+    border-radius: 12px;
+    color: black;
+    display: inline-block;
+    background-color:lightblue;
+}
+
+input {
+    border: 1px solid black;
+    width:90%;
+}

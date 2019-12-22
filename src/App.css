@@ -3,10 +3,6 @@ html, body{
     height:100%;
 }
 
-#graph-id-graph-wrapper{
-    height:100%;
-}
-
 .App{
     height:100%;
 }
@@ -19,82 +15,22 @@ html, body{
     height:100%;
 }
 
-.col-6{
+
+canvas{
+    height: 65% !important;
+    width: 100% !important;
+    border: 5px solid #006BA6;
+}
+
+#simulation-nav{
+    width:85%;
+}
+
+.chat{
     height:100%;
 }
 
-#footer {
-    max-height:1.5em
-}
-
-.Messages-list {
-    height: 85%;
-    width: 100%;
-    overflow-x: scroll;
-    overflow: auto;
-}
-
-.Messages-message {
-    display: flex;
-    margin-top: 0.5em;
-    text-align: left;
-
-}
-
-.Messages-message > .avatar {
-    height: 35px;
-    width: 35px;
-    min-height: 35px;
-    min-width: 35px;
-    border-radius: 50%;
-    display: inline-block;
-    margin: 0 10px -10px;
-}
-
-.Message-content > .username {
-    display: block;
-    color: gray;
-    font-size: 14px;
-    padding-bottom: 4px;
-}
-
-.Message-content > .text {
-    padding: 10px;
-    border-radius: 12px;
-    color: black;
-    display: inline-block;
-    background-color:lightblue;
-}
-
-form {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    max-width: 700px;
-}
-
-input {
-    border: 1px solid black;
-    flex-grow: 1;
-}
-
-.w-85{
-    width:85% !important;
-}
-
-svg[name="svg-container-graph-id"] {
-    border: 5px solid #006BA6;
-    width: 100% !important;
-    height: 65% !important;
-}
-
-canvas{
-    /* height: 65% !important;
-    width: 100% !important; */
-    border: 5px solid #006BA6;
-}
-
-#graph  *{
+#graph div{
     height: 100%;
 }
 
