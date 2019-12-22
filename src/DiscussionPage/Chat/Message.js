@@ -13,7 +13,7 @@ class Message extends Component {
                     className="avatar"
                     style={{
                         "backgroundColor": member.color,
-                        "margin-left": depthString
+                        "marginLeft": depthString
                     }}
                 />
                 <div className="Message-content">
