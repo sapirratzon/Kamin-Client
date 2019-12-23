@@ -10,7 +10,7 @@ class Simulation extends Component {
             shownNodes: [],
             shownLinks: [],
             linksSet: new Set(),
-            nodesMap: new Map (),
+            nodesMap: new Map(),
             currentMessageIndex: 1,
             allMessages: [],
             allNodes: [],
@@ -31,8 +31,10 @@ class Simulation extends Component {
             let response = JSON.parse(xhr.responseText);
             this.getMessagesNodesLinks(response["tree"], messages, nodes, links);
             this.state.nodesMap.set(nodes[0].id, nodes[0]);
-            this.state.shownMessages = messages.slice(0,1);
-            this.state.shownNodes = nodes.slice(0,1);
+            this.setState({
+                shownMessages: messages.slice(0, 1),
+                shownNodes: nodes.slice(0, 1)
+            });
             this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
         });
         xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
@@ -56,8 +58,8 @@ class Simulation extends Component {
             color: "#" + intToRGB(hashCode(node["node"]["author"])),
             name: node["node"]["author"]
         });
-        node["children"].map(child => {
-            let link = {source: child["node"]["author"], target: node["node"]["author"]};
+        node["children"].forEach(child => {
+            let link = { source: child["node"]["author"], target: node["node"]["author"] };
             links.push(link);
             this.getMessagesNodesLinks(child, messages, nodes, links);
         });
@@ -67,11 +69,13 @@ class Simulation extends Component {
     renderMessageNodeLink = (dif) => {
         let i = this.state.currentMessageIndex;
         if (i + dif > 0 && i + dif < this.state.allMessages.length) {
-            let messages = this.state.allMessages.slice(0, i+dif);
-            let nodes = this.state.allNodes.slice(0, i+dif);
-            let links = this.state.allLinks.slice(0, i+dif-1);
-            this.state.shownMessages = messages;
-            return {messages, nodes, links};
+            let messages = this.state.allMessages.slice(0, i + dif);
+            let nodes = this.state.allNodes.slice(0, i + dif);
+            let links = this.state.allLinks.slice(0, i + dif - 1);
+            this.setState({
+                shownMessages: messages
+            });
+            return { messages, nodes, links };
         }
     };
 
@@ -80,8 +84,8 @@ class Simulation extends Component {
         const nextMessage = result.messages[this.state.currentMessageIndex];
         const userName = nextMessage["member"]["username"];
         if (!result.nodes.includes(userName))
-            this.state.nodesMap.set(userName, this.state.allNodes.find(node=> node.id === userName));
-        const link = {source: this.state.allLinks[this.state.currentMessageIndex - 1].source, target: this.state.allLinks[this.state.currentMessageIndex - 1].target};
+            this.state.nodesMap.set(userName, this.state.allNodes.find(node => node.id === userName));
+        const link = { source: this.state.allLinks[this.state.currentMessageIndex - 1].source, target: this.state.allLinks[this.state.currentMessageIndex - 1].target };
         if (!result.links.includes(link))
             this.state.linksSet.add(link);
         this.updateState(1);
@@ -90,12 +94,12 @@ class Simulation extends Component {
 
     handleBackClick = () => {
         const result = this.renderMessageNodeLink(-1);
-        const deleteMessage = this.state.allMessages[this.state.currentMessageIndex-1];
+        const deleteMessage = this.state.allMessages[this.state.currentMessageIndex - 1];
         const userName = deleteMessage["member"]["username"];
         if (result.nodes.find(node => node.id === userName) == null)
             this.state.nodesMap.delete(userName);
-        const link = {source: this.state.allLinks[this.state.currentMessageIndex - 2].source, target: this.state.allLinks[this.state.currentMessageIndex - 2].target};
-        const ans = result.links.find(currLink => (currLink.source ===link.source && currLink.target === link.target));
+        const link = { source: this.state.allLinks[this.state.currentMessageIndex - 2].source, target: this.state.allLinks[this.state.currentMessageIndex - 2].target };
+        const ans = result.links.find(currLink => (currLink.source === link.source && currLink.target === link.target));
         if (ans == null)
             this.state.linksSet.delete(ans);
         this.updateState(-1);
@@ -117,17 +121,17 @@ class Simulation extends Component {
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <div className="col-2">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleBackClick}>Back
+                            onClick={this.handleBackClick}>Back
                         </button>
                     </div>
                     <div className="col-2">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleNextClick}>Next
+                            onClick={this.handleNextClick}>Next
                         </button>
                     </div>
                     <div className="col-2">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleSimulateClick}>Run
+                            onClick={this.handleSimulateClick}>Run
                         </button>
                     </div>
                 </div>
@@ -136,9 +140,11 @@ class Simulation extends Component {
     }
 
     updateState(dif) {
-        this.state.shownLinks = Array.from(this.state.linksSet);
-        this.state.shownNodes = Array.from(this.state.nodesMap.values());
-        this.state.currentMessageIndex+=dif;
+        this.setState({
+            shownLinks: Array.from(this.state.linksSet),
+            shownNodes: Array.from(this.state.nodesMap.values()),
+            currentMessageIndex: this.state.currentMessageIndex + dif
+        });
         this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
     }
 }
