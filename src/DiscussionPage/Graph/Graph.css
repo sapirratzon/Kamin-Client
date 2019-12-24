@@ -9,6 +9,7 @@
 }
 
 #graph-container{
-    height: 60%;
+    height: 55%;
     border: 5px solid #006BA6;
+    overflow: auto;
 }

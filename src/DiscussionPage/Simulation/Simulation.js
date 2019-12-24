@@ -116,24 +116,46 @@ class Simulation extends Component {
         }
     };
 
+    handleShowAllClick = () => {
+        const uniqueIds = new Set();
+        const uniqueNodes = [];
+        for(let node of this.allNodes){
+            if(!node.id in uniqueNodes){
+                uniqueNodes.push(node);
+                uniqueIds.add(node.id);
+            }
+        }
+        this.props.messagesHandler(this.allMessages, uniqueNodes, this.graphLinks);
+    };
+
+    handleResetClick =  () => {
+        this.props.messagesHandler(this.allMessages[0], this.allNodes[0], []);
+    }
+
+
     render() {
         return (
             <div id="simulation pt-2 pb-0">
                 <h2 className="text-center">Simulation:</h2>
                 <div className="row justify-content-around py-1" id="simulation-nav">
-                    <div className="col-2">
+                    <div className="col">
+                        <button type="button" className="btn btn-primary btn-m"
+                                onClick={this.handleResetClick}>Reset
+                        </button>
+                    </div>
+                    <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
                                 onClick={this.handleBackClick}>Back
                         </button>
                     </div>
-                    <div className="col-2">
+                    <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
                                 onClick={this.handleNextClick}>Next
                         </button>
                     </div>
-                    <div className="col-2">
+                    <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleSimulateClick}>Run
+                                onClick={this.handleShowAllClick}>All
                         </button>
                     </div>
                 </div>
