@@ -38,7 +38,7 @@ class Simulation extends Component {
             this.shownNodes = nodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
         xhr.send();
     }
 
@@ -95,9 +95,14 @@ class Simulation extends Component {
             if (!result.nodes.includes(result.userName))
                 this.nodesMap.set(result.userName, this.allNodes.find(node => node.id === result.userName));
             const link = this.allLinks[this.currentMessageIndex - 1];
-            const ans = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
-            if (ans === -1)
+            if (this.graphLinks.length > 0) {
+                const ans = this.graphLinks.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
+                if (ans === -1)
+                    this.graphLinks.push(link);
+            }
+            else{
                 this.graphLinks.push(link);
+            }
             this.update(1);
         }
     };
@@ -109,7 +114,7 @@ class Simulation extends Component {
             if (result.nodes.find(node => node.id === result.userName) == null)
                 this.nodesMap.delete(result.userName);
             const link = this.allLinks[this.currentMessageIndex - 2];
-            const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target === link.target.id);
+            const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
             if (linkIndex === -1) {
                 const idx = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
                 this.graphLinks.splice(idx);
@@ -151,22 +156,22 @@ class Simulation extends Component {
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleResetClick}>Reset
+                                onClick={this.handleResetClick}>Reset
                         </button>
                     </div>
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleBackClick}>Back
+                                onClick={this.handleBackClick}>Back
                         </button>
                     </div>
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleNextClick}>Next
+                                onClick={this.handleNextClick}>Next
                         </button>
                     </div>
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleShowAllClick}>All
+                                onClick={this.handleShowAllClick}>All
                         </button>
                     </div>
                 </div>
