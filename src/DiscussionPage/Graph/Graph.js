@@ -10,12 +10,18 @@ class Graph extends Component{
         if (this.props.nodes!=null) {
             return (
                 <div id="graph-container" ref={this.graphContainerRef}>
-                    <ForceGraph2D ref={this.graphRef} className="graph" width={550} height={350}
-
+                    <ForceGraph2D ref={this.graphRef} className="graph" 
+                    width={550} 
+                    height={350}
+                    d3Force={"center"}
                     graphData={{
                         "nodes": this.props.nodes,
                         "links": this.props.links
-                    }}></ForceGraph2D>
+                    }}
+                    linkDirectionalArrowLength={2}
+                    linkDirectionalArrowRelPos={1}
+                    // linkDirectionalParticles={2}
+                    ></ForceGraph2D>
                 </div>
             );
         }
