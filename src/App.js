@@ -38,7 +38,7 @@ class App extends Component {
                     <div className="col-6">
                         <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} />
                         <h2 className="text-center">Conversation Insights:</h2>
-                        <Graph shownNodes={this.state.shownNodes} shownLinks={this.state.shownLinks} />
+                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         <AlertList alerts={this.state.alerts} />
                     </div>
                 </div>

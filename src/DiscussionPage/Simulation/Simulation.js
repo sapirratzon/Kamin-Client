@@ -30,7 +30,7 @@ class Simulation extends Component {
             let response = JSON.parse(xhr.responseText);
             this.getMessagesNodesLinks(response["tree"], messages, nodes, links);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/1');
         xhr.send();
     }
 
