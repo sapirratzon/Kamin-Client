@@ -13,6 +13,7 @@ class Simulation extends Component {
         this.allMessages = [];
         this.allNodes = [];
         this.allLinks = [];
+        this.allAlerts = [];
         this.showGraph = true;
         this.shownMessages = [];
         this.shownNodes = [];
@@ -20,6 +21,8 @@ class Simulation extends Component {
         this.handleNextClick = this.handleNextClick.bind(this);
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSimulateClick = this.handleSimulateClick.bind(this);
+        this.counter = 0;
+
     }
 
     componentDidMount() {
@@ -31,8 +34,8 @@ class Simulation extends Component {
             let response = JSON.parse(xhr.responseText);
             this.getMessagesNodesLinks(response["tree"], messages, nodes, links);
             this.nodesMap.set(nodes[0].id, nodes[0]);
-            this.shownMessages= messages.slice(0, 1);
-            this.shownNodes= nodes.slice(0, 1);
+            this.shownMessages = messages.slice(0, 1);
+            this.shownNodes = nodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
         xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
@@ -43,24 +46,32 @@ class Simulation extends Component {
     getMessagesNodesLinks = (node, messages, nodes, links) => {
         if (node == null)
             return;
-        messages.push({
-            member: {
-                username: node["node"]["author"],
+        if (node["node"]["author"] === "Admin") {
+            this.props.alertsHandler({ "position": this.counter, "text": node["node"]["text"] })
+        }
+        else {
+            messages.push({
+                member: {
+                    username: node["node"]["author"],
+                    color: "#" + intToRGB(hashCode(node["node"]["author"])),
+                },
+                text: node["node"]["text"],
+                depth: node["node"]["depth"]
+            });
+            nodes.push({
+                id: node["node"]["author"],
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
-            },
-            text: node["node"]["text"],
-            depth: node["node"]["depth"]
-        });
-        nodes.push({
-            id: node["node"]["author"],
-            color: "#" + intToRGB(hashCode(node["node"]["author"])),
-            name: node["node"]["author"]
-        });
-        node["children"].forEach(child => {
-            let link = { source: child["node"]["author"], target: node["node"]["author"] };
-            links.push(link);
-            this.getMessagesNodesLinks(child, messages, nodes, links);
-        });
+                name: node["node"]["author"]
+            });
+            node["children"].forEach(child => {
+                if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
+                    let link = { source: child["node"]["author"], target: node["node"]["author"] };
+                    links.push(link);
+                }
+                this.getMessagesNodesLinks(child, messages, nodes, links);
+            });
+        }
+        this.counter++;
     };
 
     //presenting one message and matching graph
@@ -71,8 +82,8 @@ class Simulation extends Component {
             const messages = this.allMessages.slice(0, i + dif);
             const nodes = this.allNodes.slice(0, i + dif);
             const links = this.allLinks.slice(0, i + dif - 1);
-            this.shownMessages= messages;
-            return {nodes, links, userName};
+            this.shownMessages = messages;
+            return { nodes, links, userName };
         }
         return 0;
     };
@@ -119,8 +130,8 @@ class Simulation extends Component {
     handleShowAllClick = () => {
         const uniqueIds = new Set();
         const uniqueNodes = [];
-        for(let node of this.allNodes){
-            if(!node.id in uniqueNodes){
+        for (let node of this.allNodes) {
+            if (!node.id in uniqueNodes) {
                 uniqueNodes.push(node);
                 uniqueIds.add(node.id);
             }
@@ -128,7 +139,7 @@ class Simulation extends Component {
         this.props.messagesHandler(this.allMessages, uniqueNodes, this.graphLinks);
     };
 
-    handleResetClick =  () => {
+    handleResetClick = () => {
         this.props.messagesHandler(this.allMessages[0], this.allNodes[0], []);
     }
 
@@ -140,22 +151,22 @@ class Simulation extends Component {
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleResetClick}>Reset
+                            onClick={this.handleResetClick}>Reset
                         </button>
                     </div>
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleBackClick}>Back
+                            onClick={this.handleBackClick}>Back
                         </button>
                     </div>
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleNextClick}>Next
+                            onClick={this.handleNextClick}>Next
                         </button>
                     </div>
                     <div className="col">
                         <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleShowAllClick}>All
+                            onClick={this.handleShowAllClick}>All
                         </button>
                     </div>
                 </div>
