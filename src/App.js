@@ -9,8 +9,8 @@ import Graph from "./DiscussionPage/Graph/Graph";
 import AlertList from "./DiscussionPage/Alert/AlertsList";
 
 class App extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             shownMessages: [],
             shownNodes: [],

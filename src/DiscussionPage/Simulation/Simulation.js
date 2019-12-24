@@ -3,32 +3,37 @@ import "./Simulation.css"
 
 class Simulation extends Component {
 
-    constructor() {
-        super();
-        this.state = {
-            shownMessages: [],
-            shownNodes: [],
-            shownLinks: [],
-            linksSet: new Set([]),
-            currentMessageIndex: 0,
-            allMessages: [],
-            allNodes: [],
-            allLinks: [],
-            showGraph: true
-        };
+    showGraph;
+
+    constructor(props) {
+        super(props);
+        this.graphLinks = [];
+        this.nodesMap = new Map();
+        this.currentMessageIndex = 1;
+        this.allMessages = [];
+        this.allNodes = [];
+        this.allLinks = [];
+        this.showGraph = true;
+        this.shownMessages = [];
+        this.shownNodes = [];
+        this.shownLinks = [];
         this.handleNextClick = this.handleNextClick.bind(this);
         this.handleBackClick = this.handleBackClick.bind(this);
         this.handleSimulateClick = this.handleSimulateClick.bind(this);
     }
 
     componentDidMount() {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            const messages = this.state.allMessages;
-            const nodes = this.state.allNodes;
-            const links = this.state.allLinks;
+            const messages = this.allMessages;
+            const nodes = this.allNodes;
+            const links = this.allLinks;
             let response = JSON.parse(xhr.responseText);
             this.getMessagesNodesLinks(response["tree"], messages, nodes, links);
+            this.nodesMap.set(nodes[0].id, nodes[0]);
+            this.shownMessages= messages.slice(0, 1);
+            this.shownNodes= nodes.slice(0, 1);
+            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
         xhr.open('GET', 'http://localhost:5000/getDiscussion/1');
         xhr.send();
@@ -41,62 +46,70 @@ class Simulation extends Component {
         messages.push({
             member: {
                 username: node["node"]["author"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"]))
+                color: "#" + intToRGB(hashCode(node["node"]["author"])),
             },
             text: node["node"]["text"],
             depth: node["node"]["depth"]
-        }
-        );
+        });
         nodes.push({
             id: node["node"]["author"],
             color: "#" + intToRGB(hashCode(node["node"]["author"])),
             name: node["node"]["author"]
         });
-        node["children"].map(child => {
-            let link = {
-                source: child["node"]["author"], target: node["node"]["author"]
-            };
+        node["children"].forEach(child => {
+            let link = { source: child["node"]["author"], target: node["node"]["author"] };
             links.push(link);
             this.getMessagesNodesLinks(child, messages, nodes, links);
         });
     };
 
-    //presenting one messeage and matching graph
-    renderMessageNodeLink = (dif) => {
-        let i = this.state.currentMessageIndex;
-        if (i + dif > 0 && i + dif < this.state.allMessages.length) {
-            let messages = this.state.allMessages.slice(0, i + dif);
-            let nodes = this.state.allNodes.slice(0, i + dif);
-            let links = [];
-            if (i > 0) {
-                links = this.state.allLinks.slice(0, i + dif - 1)
-            }
-            this.setState({
-                shownMessages: messages,
-                shownNodes: nodes,
-                shownLinks: links,
-                currentMessageIndex: i + dif,
-            }, () => {
-                console.log(this.state)
-            })
+    //presenting one message and matching graph
+    renderMessageNodeLink = (dif, message) => {
+        let i = this.currentMessageIndex;
+        if (i + dif > 0 && i + dif < this.allMessages.length) {
+            const userName = message["member"]["username"];
+            const messages = this.allMessages.slice(0, i + dif);
+            const nodes = this.allNodes.slice(0, i + dif);
+            const links = this.allLinks.slice(0, i + dif - 1);
+            this.shownMessages= messages;
+            return {nodes, links, userName};
         }
-        this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
-
+        return 0;
     };
 
     handleNextClick = () => {
-        this.renderMessageNodeLink(1);
-        this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
+        const nextMessage = this.allMessages[this.currentMessageIndex];
+        const result = this.renderMessageNodeLink(1, nextMessage);
+        if (result !== 0) {
+            if (!result.nodes.includes(result.userName))
+                this.nodesMap.set(result.userName, this.allNodes.find(node => node.id === result.userName));
+            const link = this.allLinks[this.currentMessageIndex - 1];
+            const ans = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
+            if (ans === -1)
+                this.graphLinks.push(link);
+            this.update(1);
+        }
     };
 
     handleBackClick = () => {
-        this.renderMessageNodeLink(-1);
-        this.props.messagesHandler(this.state.shownMessages, this.state.shownNodes, this.state.shownLinks);
+        const deleteMessage = this.allMessages[this.currentMessageIndex - 1];
+        const result = this.renderMessageNodeLink(-1, deleteMessage);
+        if (result !== 0) {
+            if (result.nodes.find(node => node.id === result.userName) == null)
+                this.nodesMap.delete(result.userName);
+            const link = this.allLinks[this.currentMessageIndex - 2];
+            const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target === link.target.id);
+            if (linkIndex === -1) {
+                const idx = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
+                this.graphLinks.splice(idx);
+            }
+            this.update(-1);
+        }
     };
 
     handleSimulateClick = async () => {
-        while (this.state.currentMessageIndex + 1 < this.state.allMessages.length) {
-            await this.renderMessageNodeLink(1);
+        while (this.currentMessageIndex + 1 < this.allMessages.length) {
+            await this.handleNextClick();
             await (async () => {
                 await sleep(1000);
             })();
@@ -110,41 +123,47 @@ class Simulation extends Component {
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <div className="col-2">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleBackClick}>Back
-                </button>
+                                onClick={this.handleBackClick}>Back
+                        </button>
                     </div>
                     <div className="col-2">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleNextClick}>Next
-                </button>
+                                onClick={this.handleNextClick}>Next
+                        </button>
                     </div>
                     <div className="col-2">
                         <button type="button" className="btn btn-primary btn-m"
-                            onClick={this.handleSimulateClick}>Run
-                </button>
+                                onClick={this.handleSimulateClick}>Run
+                        </button>
                     </div>
                 </div>
             </div>
         );
     }
 
+    update(dif) {
+        this.shownLinks = Array.from(this.graphLinks);
+        this.shownNodes = Array.from(this.nodesMap.values());
+        this.currentMessageIndex = this.currentMessageIndex + dif;
+        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+    }
 }
 
 function hashCode(str) {
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
     return hash;
 }
 
 function intToRGB(i) {
-    var c = (i & 0x00FFFFFF)
+    const c = (i & 0x00FFFFFF)
         .toString(16)
         .toUpperCase();
     return "00000".substring(0, 6 - c.length) + c;
 }
-
+;
 const sleep = m => new Promise(r => setTimeout(r, m));
 
 export default Simulation;
