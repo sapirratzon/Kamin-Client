@@ -7,7 +7,7 @@ class Simulation extends Component {
 
     constructor(props) {
         super(props);
-        this.linksSet = new Set();
+        this.graphLinks = [];
         this.nodesMap = new Map();
         this.currentMessageIndex = 1;
         this.allMessages = [];
@@ -64,41 +64,47 @@ class Simulation extends Component {
     };
 
     //presenting one message and matching graph
-    renderMessageNodeLink = (dif) => {
+    renderMessageNodeLink = (dif, message) => {
         let i = this.currentMessageIndex;
         if (i + dif > 0 && i + dif < this.allMessages.length) {
-            let messages = this.allMessages.slice(0, i + dif);
-            let nodes = this.allNodes.slice(0, i + dif);
-            let links = this.allLinks.slice(0, i + dif - 1);
+            const userName = message["member"]["username"];
+            const messages = this.allMessages.slice(0, i + dif);
+            const nodes = this.allNodes.slice(0, i + dif);
+            const links = this.allLinks.slice(0, i + dif - 1);
             this.shownMessages= messages;
-            return { messages, nodes, links };
+            return {nodes, links, userName};
         }
+        return 0;
     };
 
     handleNextClick = () => {
-        const result = this.renderMessageNodeLink(1);
-        const nextMessage = result.messages[this.currentMessageIndex];
-        const userName = nextMessage["member"]["username"];
-        if (!result.nodes.includes(userName))
-            this.nodesMap.set(userName, this.allNodes.find(node => node.id === userName));
-        const link = { source: this.allLinks[this.currentMessageIndex - 1].source, target: this.allLinks[this.currentMessageIndex - 1].target };
-        if (!result.links.includes(link))
-            this.linksSet.add(link);
-        this.update(1);
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        const nextMessage = this.allMessages[this.currentMessageIndex];
+        const result = this.renderMessageNodeLink(1, nextMessage);
+        if (result !== 0) {
+            if (!result.nodes.includes(result.userName))
+                this.nodesMap.set(result.userName, this.allNodes.find(node => node.id === result.userName));
+            const link = this.allLinks[this.currentMessageIndex - 1];
+            const ans = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
+            if (ans === -1)
+                this.graphLinks.push(link);
+            this.update(1);
+        }
     };
 
     handleBackClick = () => {
-        const result = this.renderMessageNodeLink(-1);
         const deleteMessage = this.allMessages[this.currentMessageIndex - 1];
-        const userName = deleteMessage["member"]["username"];
-        if (result.nodes.find(node => node.id === userName) == null)
-            this.nodesMap.delete(userName);
-        const link = { source: this.allLinks[this.currentMessageIndex - 2].source, target: this.allLinks[this.currentMessageIndex - 2].target };
-        const ans = result.links.find(currLink => (currLink.source === link.source && currLink.target === link.target));
-        if (ans == null)
-            this.linksSet.delete(ans);
-        this.update(-1);
+        const result = this.renderMessageNodeLink(-1, deleteMessage);
+        if (result !== 0) {
+            if (result.nodes.find(node => node.id === result.userName) == null)
+                this.nodesMap.delete(result.userName);
+            const link = this.allLinks[this.currentMessageIndex - 2];
+            const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target === link.target.id);
+            if (linkIndex === -1) {
+                const idx = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
+                this.graphLinks.splice(idx);
+            }
+            this.update(-1);
+        }
     };
 
     handleSimulateClick = async () => {
@@ -136,12 +142,11 @@ class Simulation extends Component {
     }
 
     update(dif) {
-        this.shownLinks = Array.from(this.linksSet);
+        this.shownLinks = Array.from(this.graphLinks);
         this.shownNodes = Array.from(this.nodesMap.values());
         this.currentMessageIndex = this.currentMessageIndex + dif;
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     }
-
 }
 
 function hashCode(str) {
