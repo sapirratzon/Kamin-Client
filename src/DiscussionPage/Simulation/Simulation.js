@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import "./Simulation.css"
 
 class Simulation extends Component {
-
     showGraph;
 
     constructor(props) {
@@ -96,13 +95,12 @@ class Simulation extends Component {
                 this.nodesMap.set(result.userName, this.allNodes.find(node => node.id === result.userName));
             const link = this.allLinks[this.currentMessageIndex - 1];
             if (this.graphLinks.length > 0) {
-                const ans = this.graphLinks.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
+                const ans = this.graphLinks.findIndex(currentLink =>
+                    currentLink.source.id === link.source && currentLink.target.id === link.target );
                 if (ans === -1)
                     this.graphLinks.push(link);
             }
-            else{
-                this.graphLinks.push(link);
-            }
+            else {this.graphLinks.push(link);}
             this.update(1);
         }
     };
@@ -111,8 +109,10 @@ class Simulation extends Component {
         const deleteMessage = this.allMessages[this.currentMessageIndex - 1];
         const result = this.renderMessageNodeLink(-1, deleteMessage);
         if (result !== 0) {
-            if (result.nodes.find(node => node.id === result.userName) == null)
+            if (result.nodes.find(node => node.id === result.userName) == null) {
+                console.log("delete: " + result.userName);
                 this.nodesMap.delete(result.userName);
+            }
             const link = this.allLinks[this.currentMessageIndex - 2];
             const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
             if (linkIndex === -1) {
@@ -133,47 +133,31 @@ class Simulation extends Component {
     };
 
     handleShowAllClick = () => {
-        const uniqueIds = new Set();
-        const uniqueNodes = [];
-        for (let node of this.allNodes) {
-            if (!node.id in uniqueNodes) {
-                uniqueNodes.push(node);
-                uniqueIds.add(node.id);
-            }
-        }
-        this.props.messagesHandler(this.allMessages, uniqueNodes, this.graphLinks);
+        this.allMessages.forEach(() => { this.handleNextClick(); });
+        this.props.messagesHandler(this.allMessages, Array.from(this.nodesMap.values()), this.graphLinks);
     };
 
     handleResetClick = () => {
-        this.props.messagesHandler(this.allMessages[0], this.allNodes[0], []);
-    }
+        this.props.messagesHandler([this.allMessages[0]], [this.allNodes[0]], []);
+    };
 
 
     render() {
         return (
             <div id="simulation pt-2 pb-0">
-                <h2 className="text-center">Simulation:</h2>
                 <div className="row justify-content-around py-1" id="simulation-nav">
-                    <div className="col">
-                        <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleResetClick}>Reset
-                        </button>
-                    </div>
-                    <div className="col">
-                        <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleBackClick}>Back
-                        </button>
-                    </div>
-                    <div className="col">
-                        <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleNextClick}>Next
-                        </button>
-                    </div>
-                    <div className="col">
-                        <button type="button" className="btn btn-primary btn-m"
-                                onClick={this.handleShowAllClick}>All
-                        </button>
-                    </div>
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleResetClick}>Reset
+                    </button>
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleBackClick}>Back
+                    </button>
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleNextClick}>Next
+                    </button>
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleShowAllClick}>All
+                    </button>
                 </div>
             </div>
         );
@@ -201,7 +185,7 @@ function intToRGB(i) {
         .toUpperCase();
     return "00000".substring(0, 6 - c.length) + c;
 }
-;
+
 const sleep = m => new Promise(r => setTimeout(r, m));
 
 export default Simulation;

@@ -48,8 +48,8 @@ class App extends Component {
                     </div>
                     <div className="col-6">
                         <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
-                        <h2 className="text-center">Conversation Insights:</h2>
-                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
+                        {/*<h2 className="text-center">Conversation Insights:</h2>*/}
+                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
                         <AlertList alerts={this.state.shownAlerts} />
                     </div>
                 </div>
