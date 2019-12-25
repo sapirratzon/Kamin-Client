@@ -60,7 +60,9 @@ class Simulation extends Component {
             nodes.push({
                 id: node["node"]["author"],
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
-                name: node["node"]["author"]
+                name: node["node"]["author"],
+                val: 3,
+                increaseVal: function (value){ this.val += value}
             });
             node["children"].forEach(child => {
                 if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
@@ -97,10 +99,15 @@ class Simulation extends Component {
             if (this.graphLinks.length > 0) {
                 const ans = this.graphLinks.findIndex(currentLink =>
                     currentLink.source.id === link.source && currentLink.target.id === link.target );
-                if (ans === -1)
+                if (ans === -1) {
                     this.graphLinks.push(link);
+                    this.nodesMap.get(link.target).increaseVal(1.5);
+                }
             }
-            else {this.graphLinks.push(link);}
+            else {
+                this.graphLinks.push(link);
+                this.nodesMap.get(link.target).increaseVal(1.5);
+            }
             this.update(1);
         }
     };
@@ -109,15 +116,14 @@ class Simulation extends Component {
         const deleteMessage = this.allMessages[this.currentMessageIndex - 1];
         const result = this.renderMessageNodeLink(-1, deleteMessage);
         if (result !== 0) {
-            if (result.nodes.find(node => node.id === result.userName) == null) {
-                console.log("delete: " + result.userName);
+            if (result.nodes.find(node => node.id === result.userName) == null)
                 this.nodesMap.delete(result.userName);
-            }
             const link = this.allLinks[this.currentMessageIndex - 2];
             const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
             if (linkIndex === -1) {
                 const idx = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
                 this.graphLinks.splice(idx);
+                this.nodesMap.get(link.target).increaseVal(-1.5);
             }
             this.update(-1);
         }
