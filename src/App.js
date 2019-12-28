@@ -21,11 +21,17 @@ class App extends Component {
     }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
+        const newAlerts = [];
         this.state.allAlerts.forEach((a) => {
-            if (a.position === newMessages.length) {
-                this.state.shownAlerts.push(a);
+            if (a.position <= newMessages.length) {
+                newAlerts.push(a);
             }
         });
+        this.setState(
+            {
+                shownAlerts: newAlerts
+            }
+        );
         this.setState({
             shownMessages: newMessages,
             shownNodes: newNodes,
@@ -35,7 +41,6 @@ class App extends Component {
 
     updateAlertsHandler(newAlert) {
         this.state.allAlerts.push(newAlert);
-        console.log("Added " + newAlert.text + " at pos " + newAlert.position)
     };
 
     render() {
@@ -48,7 +53,7 @@ class App extends Component {
                     </div>
                     <div className="col-6">
                         <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
-                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
+                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         <AlertList alerts={this.state.shownAlerts} />
                     </div>
                 </div>

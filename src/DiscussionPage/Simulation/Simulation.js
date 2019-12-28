@@ -17,10 +17,7 @@ class Simulation extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
-        this.handleNextClick = this.handleNextClick.bind(this);
-        this.handleBackClick = this.handleBackClick.bind(this);
-        this.handleSimulateClick = this.handleSimulateClick.bind(this);
-        this.counter = 0;
+        this.messagesCounter = 0;
 
     }
 
@@ -37,7 +34,7 @@ class Simulation extends Component {
             this.shownNodes = nodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
         xhr.send();
     }
 
@@ -46,7 +43,7 @@ class Simulation extends Component {
         if (node == null)
             return;
         if (node["node"]["author"] === "Admin") {
-            this.props.alertsHandler({ "position": this.counter, "text": node["node"]["text"] })
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["text"] })
         }
         else {
             messages.push({
@@ -62,7 +59,7 @@ class Simulation extends Component {
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
                 name: node["node"]["author"],
                 val: 3,
-                increaseVal: function (value){ this.val += value}
+                increaseVal: function (value) { this.val += value }
             });
             node["children"].forEach(child => {
                 if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
@@ -72,7 +69,7 @@ class Simulation extends Component {
                 this.getMessagesNodesLinks(child, messages, nodes, links);
             });
         }
-        this.counter++;
+        this.messagesCounter++;
     };
 
     //presenting one message and matching graph
@@ -98,7 +95,7 @@ class Simulation extends Component {
             const link = this.allLinks[this.currentMessageIndex - 1];
             if (this.graphLinks.length > 0) {
                 const ans = this.graphLinks.findIndex(currentLink =>
-                    currentLink.source.id === link.source && currentLink.target.id === link.target );
+                    currentLink.source.id === link.source && currentLink.target.id === link.target);
                 if (ans === -1) {
                     this.graphLinks.push(link);
                     this.nodesMap.get(link.target).increaseVal(1.5);
@@ -153,16 +150,16 @@ class Simulation extends Component {
             <div id="simulation pt-2 pb-0">
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleResetClick}>Reset
+                        onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleBackClick}>Back
+                        onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleNextClick}>Next
+                        onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleShowAllClick}>All
+                        onClick={this.handleShowAllClick}>All
                     </button>
                 </div>
             </div>
