@@ -63,8 +63,11 @@ class Simulation extends Component {
                 id: node["node"]["author"],
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
                 name: node["node"]["author"],
-                val: 3,
+                extraVal: 0,
+                val: 1,
                 changeVal: function(value) { this.val += value; } ,
+                // changeVal: function(value) { if (this.val > 4) { this.extraVal+=value; } else{ this.val += value; }} ,
+                // changeValDown: function (value) { if (this.extraVal !== 0) { this.extraVal += value; } else{ this.val+=value; }}
             });
             node["children"].forEach(child => {
                 if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
@@ -83,6 +86,7 @@ class Simulation extends Component {
     };
 
     handleNextClick = () => {
+        if (this.currentMessageIndex === this.allMessages.length) return;
         const nextMessage = this.allMessages[this.currentMessageIndex];
         const userName = nextMessage["member"]["username"];
         if (!this.nodesMap.has(userName))
@@ -90,25 +94,32 @@ class Simulation extends Component {
         const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
         const idx = this.graphLinks.findIndex(currentLink => currentLink !== null &&
             currentLink.source.id === link.source && currentLink.target.id === link.target);
+        // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
+        //     currentLink.source.id === link.target && currentLink.target.id === link.source);
         if (idx === -1) { this.graphLinks.push(link); }
-        else { this.graphLinks[idx].changeWidth(1); }
-        this.nodesMap.get(link.target).changeVal(1.5);
+        else { this.graphLinks[idx].changeWidth(0.1); }
+        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].changeWidth(0.1); }
+        this.nodesMap.get(link.target).changeVal(0.1);
         this.update(1);
     };
 
     handleBackClick = () => {
+        if (this.currentMessageIndex === 1) return;
         const messageIndex = this.currentMessageIndex - 1;
         const userName = this.allMessages[messageIndex]["member"]["username"];
         const links = this.allLinks.slice(0, messageIndex - 1);
         const nodes = this.allNodes.slice(0, messageIndex);
         const link = cloneDeep(this.allLinks[messageIndex - 1]);
-        this.nodesMap.get(link.target).changeVal(-1.5);
+        this.nodesMap.get(link.target).changeVal(-0.1);
         if (nodes.find(node => node.id === userName) == null)
             this.nodesMap.delete(userName);
         const linkIndex = links.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
         const idx = this.graphLinks.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
+        // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
+        //     currentLink.source.id === link.target && currentLink.target.id === link.source);
         if (linkIndex === -1) { this.graphLinks.splice(idx); }
-        else { this.graphLinks[idx].changeWidth(-1); }
+        else { this.graphLinks[idx].changeWidth(-0.1); }
+        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].changeWidth(-0.1); }
         this.update(-1);
     };
 

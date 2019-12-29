@@ -1,10 +1,10 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 
 class Graph extends Component{
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
 
     render(){
         if (this.props.nodes!=null) {
@@ -18,9 +18,12 @@ class Graph extends Component{
                             "nodes": this.props.nodes,
                             "links": this.props.links
                         }}
-                        linkDirectionalArrowLength={link => 2*link.width}
                         linkDirectionalArrowRelPos={1}
-                        linkWidth={link => link.width}
+                        linkWidth={link =>{
+                            if (link.width <= 5) {return link.width;} else {return 5;}}}
+                                  linkDirectionalArrowLength={2}
+                        cooldownTicks={1}
+                        //dagLevelDistance={20}
                         // linkDirectionalParticles={2}
                         />
                 </div>
