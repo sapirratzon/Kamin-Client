@@ -27,10 +27,14 @@ class App extends Component {
                 newAlerts.push(a);
             }
         });
+        this.setState(
+            {
+                shownAlerts: newAlerts
+            }
+        );
         this.setState({
             shownMessages: newMessages,
             shownNodes: newNodes,
-            shownAlerts: newAlerts,
             shownLinks: newLinks
         });
     };
