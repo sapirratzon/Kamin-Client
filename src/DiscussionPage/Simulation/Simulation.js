@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
 
 class Simulation extends Component {
@@ -18,10 +17,7 @@ class Simulation extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
-        this.handleNextClick = this.handleNextClick.bind(this);
-        this.handleBackClick = this.handleBackClick.bind(this);
-        this.handleSimulateClick = this.handleSimulateClick.bind(this);
-        this.counter = 0;
+        this.messagesCounter = 0;
 
     }
 
@@ -36,10 +32,9 @@ class Simulation extends Component {
             this.nodesMap.set(nodes[0].id, nodes[0]);
             this.shownMessages = messages.slice(0, 1);
             this.shownNodes = nodes.slice(0, 1);
-
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/777');
         xhr.send();
     }
 
@@ -48,7 +43,7 @@ class Simulation extends Component {
         if (node == null)
             return;
         if (node["node"]["author"] === "Admin") {
-            this.props.alertsHandler({ "position": this.counter, "text": node["node"]["text"] })
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["text"] })
         }
         else {
             messages.push({
@@ -64,52 +59,71 @@ class Simulation extends Component {
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
                 name: node["node"]["author"],
                 val: 3,
-                changeVal: function(value){this.val += value;},
+                increaseVal: function (value){ this.val += value}
             });
             node["children"].forEach(child => {
                 if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
-                    let link = {
-                        source: child["node"]["author"],
-                        target: node["node"]["author"],
-                        width: 1,
-                        changeWidth: function(value){this.width += value;}
-                    };
+                    let link = { source: child["node"]["author"], target: node["node"]["author"] };
                     links.push(link);
                 }
                 this.getMessagesNodesLinks(child, messages, nodes, links);
             });
         }
-        this.counter++;
+        this.messagesCounter++;
+    };
+
+    //presenting one message and matching graph
+    renderMessageNodeLink = (dif, message) => {
+        let i = this.currentMessageIndex;
+        if (i + dif > 0 && i + dif < this.allMessages.length) {
+            const userName = message["member"]["username"];
+            const messages = this.allMessages.slice(0, i + dif);
+            const nodes = this.allNodes.slice(0, i + dif);
+            const links = this.allLinks.slice(0, i + dif - 1);
+            this.shownMessages = messages;
+            return { nodes, links, userName };
+        }
+        return 0;
     };
 
     handleNextClick = () => {
         const nextMessage = this.allMessages[this.currentMessageIndex];
-        const userName = nextMessage["member"]["username"];
-        if (!this.nodesMap.has(userName))
-            this.nodesMap.set(userName, this.allNodes.find(node => node.id === userName));
-        const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
-        const idx = this.graphLinks.findIndex(currentLink => currentLink !== null &&
-            currentLink.source.id === link.source && currentLink.target.id === link.target);
-        if (idx === -1) { this.graphLinks.push(link); }
-        else { this.graphLinks[idx].changeWidth(1); }
-        this.nodesMap.get(link.target).changeVal(1.5);
-        this.update(1);
+        const result = this.renderMessageNodeLink(1, nextMessage);
+        if (result !== 0) {
+            if (!result.nodes.includes(result.userName))
+                this.nodesMap.set(result.userName, this.allNodes.find(node => node.id === result.userName));
+            const link = this.allLinks[this.currentMessageIndex - 1];
+            if (this.graphLinks.length > 0) {
+                const ans = this.graphLinks.findIndex(currentLink =>
+                    currentLink.source.id === link.source && currentLink.target.id === link.target );
+                if (ans === -1) {
+                    this.graphLinks.push(link);
+                    this.nodesMap.get(link.target).increaseVal(1.5);
+                }
+            }
+            else {
+                this.graphLinks.push(link);
+                this.nodesMap.get(link.target).increaseVal(1.5);
+            }
+            this.update(1);
+        }
     };
 
     handleBackClick = () => {
-        const messageIndex = this.currentMessageIndex - 1;
-        const userName = this.allMessages[messageIndex]["member"]["username"];
-        const links = this.allLinks.slice(0, messageIndex - 1);
-        const nodes = this.allNodes.slice(0, messageIndex);
-        const link = cloneDeep(this.allLinks[messageIndex - 1]);
-        this.nodesMap.get(link.target).changeVal(-1.5);
-        if (nodes.find(node => node.id === userName) == null)
-            console.log("true / false : " +this.nodesMap.delete(userName));
-        const linkIndex = links.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
-        const idx = this.graphLinks.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
-        if (linkIndex === -1) { this.graphLinks.splice(idx); }
-        else { this.graphLinks[idx].changeWidth(-1); }
-        this.update(-1);
+        const deleteMessage = this.allMessages[this.currentMessageIndex - 1];
+        const result = this.renderMessageNodeLink(-1, deleteMessage);
+        if (result !== 0) {
+            if (result.nodes.find(node => node.id === result.userName) == null)
+                this.nodesMap.delete(result.userName);
+            const link = this.allLinks[this.currentMessageIndex - 2];
+            const linkIndex = result.links.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
+            if (linkIndex === -1) {
+                const idx = this.graphLinks.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
+                this.graphLinks.splice(idx);
+                this.nodesMap.get(link.target).increaseVal(-1.5);
+            }
+            this.update(-1);
+        }
     };
 
     handleSimulateClick = async () => {
@@ -121,17 +135,13 @@ class Simulation extends Component {
         }
     };
 
-    handleShowAllClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
-            await this.handleNextClick();
-            await sleep(1);
-        }
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+    handleShowAllClick = () => {
+        this.allMessages.forEach(() => { this.handleNextClick(); });
+        this.props.messagesHandler(this.allMessages, Array.from(this.nodesMap.values()), this.graphLinks);
     };
 
     handleResetClick = () => {
-        while (this.currentMessageIndex !== 1) {this.handleBackClick();}
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        this.props.messagesHandler([this.allMessages[0]], [this.allNodes[0]], []);
     };
 
 
@@ -157,8 +167,6 @@ class Simulation extends Component {
     }
 
     update(dif) {
-        const messages = this.allMessages.slice(0, this.currentMessageIndex + dif);
-        this.shownMessages = messages;
         this.shownLinks = Array.from(this.graphLinks);
         this.shownNodes = Array.from(this.nodesMap.values());
         this.currentMessageIndex = this.currentMessageIndex + dif;
