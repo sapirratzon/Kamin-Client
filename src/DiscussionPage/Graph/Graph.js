@@ -18,8 +18,9 @@ class Graph extends Component{
                             "nodes": this.props.nodes,
                             "links": this.props.links
                         }}
-                        linkDirectionalArrowLength={2}
+                        linkDirectionalArrowLength={link => 2*link.width}
                         linkDirectionalArrowRelPos={1}
+                        linkWidth={link => link.width}
                         // linkDirectionalParticles={2}
                         />
                 </div>
