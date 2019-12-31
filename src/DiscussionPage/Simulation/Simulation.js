@@ -18,9 +18,6 @@ class Simulation extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
-        this.handleNextClick = this.handleNextClick.bind(this);
-        this.handleBackClick = this.handleBackClick.bind(this);
-        this.handleSimulateClick = this.handleSimulateClick.bind(this);
         this.messagesCounter = 0;
 
     }
@@ -39,7 +36,7 @@ class Simulation extends Component {
 
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/21');
         xhr.send();
     }
 
@@ -63,8 +60,8 @@ class Simulation extends Component {
                 id: node["node"]["author"],
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
                 name: node["node"]["author"],
-                extraVal: 0,
-                val: 1,
+                // extraVal: 0,
+                val: 3,
                 changeVal: function(value) { this.val += value; } ,
                 // changeVal: function(value) { if (this.val > 4) { this.extraVal+=value; } else{ this.val += value; }} ,
                 // changeValDown: function (value) { if (this.extraVal !== 0) { this.extraVal += value; } else{ this.val+=value; }}
@@ -74,6 +71,7 @@ class Simulation extends Component {
                     let link = {
                         source: child["node"]["author"],
                         target: node["node"]["author"],
+                        name: 1,
                         width: 1,
                         changeWidth: function(value){this.width += value;}
                     };
@@ -161,6 +159,9 @@ class Simulation extends Component {
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
                             onClick={this.handleShowAllClick}>All
+                    </button>
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleSimulateClick}>Simulate
                     </button>
                 </div>
             </div>
