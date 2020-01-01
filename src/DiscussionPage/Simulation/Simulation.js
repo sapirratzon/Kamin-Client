@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
+import {rgb} from "d3";
 
 class Simulation extends Component {
     showGraph;
@@ -19,7 +20,6 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
-
     }
 
     componentDidMount() {
@@ -36,7 +36,7 @@ class Simulation extends Component {
 
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/21');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
         xhr.send();
     }
 
@@ -62,18 +62,19 @@ class Simulation extends Component {
                 name: node["node"]["author"],
                 // extraVal: 0,
                 val: 3,
-                changeVal: function(value) { this.val += value; } ,
-                // changeVal: function(value) { if (this.val > 4) { this.extraVal+=value; } else{ this.val += value; }} ,
-                // changeValDown: function (value) { if (this.extraVal !== 0) { this.extraVal += value; } else{ this.val+=value; }}
+                updateVal: function(value) { this.val += value; } ,
+                // updateVal: function(value) { if (this.val > 4) { this.extraVal+=value; } else{ this.val += value; }} ,
+                // updateValDown: function (value) { if (this.extraVal !== 0) { this.extraVal += value; } else{ this.val+=value; }}
             });
             node["children"].forEach(child => {
                 if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
                     let link = {
                         source: child["node"]["author"],
                         target: node["node"]["author"],
-                        name: 1,
                         width: 1,
-                        changeWidth: function(value){this.width += value;}
+                        color: rgb(0,0,0, 1),
+                        updateWidth: function(value){this.width += value;},
+                        updateOpacity: function(value){this.color = rgb(value[0],value[1],value[2],value[3]);},
                     };
                     links.push(link);
                 }
@@ -94,10 +95,14 @@ class Simulation extends Component {
             currentLink.source.id === link.source && currentLink.target.id === link.target);
         // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
         //     currentLink.source.id === link.target && currentLink.target.id === link.source);
-        if (idx === -1) { this.graphLinks.push(link); }
-        else { this.graphLinks[idx].changeWidth(0.1); }
-        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].changeWidth(0.1); }
-        this.nodesMap.get(link.target).changeVal(0.1);
+        if (idx === -1) { this.graphLinks.unshift(link); }
+        else { this.graphLinks[idx].updateWidth(0.1);
+            let updatedLink = this.graphLinks.splice(this.graphLinks[idx], 1)[0];
+            this.graphLinks.unshift(updatedLink);
+        }
+        this.updateOpacityAll();
+        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].updateWidth(0.1); }
+        this.nodesMap.get(link.target).updateVal(0.1);
         this.update(1);
     };
 
@@ -108,16 +113,16 @@ class Simulation extends Component {
         const links = this.allLinks.slice(0, messageIndex - 1);
         const nodes = this.allNodes.slice(0, messageIndex);
         const link = cloneDeep(this.allLinks[messageIndex - 1]);
-        this.nodesMap.get(link.target).changeVal(-0.1);
+        this.nodesMap.get(link.target).updateVal(-0.1);
         if (nodes.find(node => node.id === userName) == null)
             this.nodesMap.delete(userName);
         const linkIndex = links.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
         const idx = this.graphLinks.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
         // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
         //     currentLink.source.id === link.target && currentLink.target.id === link.source);
-        if (linkIndex === -1) { this.graphLinks.splice(idx); }
-        else { this.graphLinks[idx].changeWidth(-0.1); }
-        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].changeWidth(-0.1); }
+        if (linkIndex === -1) { this.graphLinks.splice(idx, 1); }
+        else { this.graphLinks[idx].updateWidth(-0.1); }
+        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].updateWidth(-0.1); }
         this.update(-1);
     };
 
@@ -175,6 +180,14 @@ class Simulation extends Component {
         this.currentMessageIndex = this.currentMessageIndex + dif;
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     }
+
+    updateOpacityAll() {
+        this.graphLinks.forEach(link => {
+            let newOpacity = (this.graphLinks.length - link.index) /this.graphLinks.length;
+            link.updateOpacity([0,0,0, newOpacity])
+        });
+    }
+
 }
 
 function hashCode(str) {
