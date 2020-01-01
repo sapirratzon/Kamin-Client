@@ -23,20 +23,12 @@ class App extends Component {
     updateMessagesHandler(newMessages, newNodes, newLinks) {
         const newAlerts = [];
         this.state.allAlerts.forEach((a) => {
-            if (a.position <= newMessages.length) {
-                newAlerts.push(a);
-            }
-        });
-        this.setState(
-            {
-                shownAlerts: newAlerts
-            }
-        );
+            if (a.position <= newMessages.length) {newAlerts.push(a);}});
+        this.setState({shownAlerts: newAlerts});
         this.setState({
             shownMessages: newMessages,
             shownNodes: newNodes,
-            shownLinks: newLinks
-        });
+            shownLinks: newLinks});
     };
 
     updateAlertsHandler(newAlert) {

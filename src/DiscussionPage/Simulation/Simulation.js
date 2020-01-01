@@ -4,7 +4,6 @@ import "./Simulation.css"
 import {rgb} from "d3";
 
 class Simulation extends Component {
-    showGraph;
 
     constructor(props) {
         super(props);
@@ -15,7 +14,6 @@ class Simulation extends Component {
         this.allNodes = [];
         this.allLinks = [];
         this.allAlerts = [];
-        this.showGraph = true;
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
@@ -25,15 +23,11 @@ class Simulation extends Component {
     componentDidMount() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            const messages = this.allMessages;
-            const nodes = this.allNodes;
-            const links = this.allLinks;
             let response = JSON.parse(xhr.responseText);
-            this.getMessagesNodesLinks(response["tree"], messages, nodes, links);
-            this.nodesMap.set(nodes[0].id, nodes[0]);
-            this.shownMessages = messages.slice(0, 1);
-            this.shownNodes = nodes.slice(0, 1);
-
+            this.getMessagesNodesLinks(response["tree"]);
+            this.nodesMap.set(this.allNodes[0].id, this.allNodes[0]);
+            this.shownMessages = this.allMessages.slice(0, 1);
+            this.shownNodes = this.allNodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
         xhr.open('GET', 'http://localhost:5000/getDiscussion/21');
@@ -41,31 +35,23 @@ class Simulation extends Component {
     }
 
     // only converting tree to lists - gathering data
-    getMessagesNodesLinks = (node, messages, nodes, links) => {
-        if (node == null)
-            return;
+    getMessagesNodesLinks = (node) => {
+        if (node == null) return;
         if (node["node"]["author"] === "Admin") {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["text"] })
-        }
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["text"] })}
         else {
-            messages.push({
+            this.allMessages.push({
                 member: {
                     username: node["node"]["author"],
-                    color: "#" + intToRGB(hashCode(node["node"]["author"])),
-                },
+                    color: "#" + intToRGB(hashCode(node["node"]["author"])),},
                 text: node["node"]["text"],
-                depth: node["node"]["depth"]
-            });
-            nodes.push({
+                depth: node["node"]["depth"]});
+            this.allNodes.push({
                 id: node["node"]["author"],
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
                 name: node["node"]["author"],
-                // extraVal: 0,
                 val: 3,
-                updateVal: function(value) { this.val += value; } ,
-                // updateVal: function(value) { if (this.val > 4) { this.extraVal+=value; } else{ this.val += value; }} ,
-                // updateValDown: function (value) { if (this.extraVal !== 0) { this.extraVal += value; } else{ this.val+=value; }}
-            });
+                updateVal: function(value) { this.val += value; } ,});
             node["children"].forEach(child => {
                 if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
                     let link = {
@@ -76,13 +62,9 @@ class Simulation extends Component {
                         color: rgb(32,32,32, 1),
                         updateWidth: function(value){this.width = value;},
                         updateMessagesNumber: function(value) {this.messagesNumber += value;},
-                        updateOpacity: function(value){this.color = rgb(value[0],value[1],value[2],value[3]);},
-                    };
-                    links.push(link);
-                }
-                this.getMessagesNodesLinks(child, messages, nodes, links);
-            });
-        }
+                        updateOpacity: function(value){this.color = rgb(value[0],value[1],value[2],value[3]);},};
+                    this.allLinks.push(link);}
+                this.getMessagesNodesLinks(child);});}
         this.messagesCounter++;
     };
 
@@ -95,17 +77,13 @@ class Simulation extends Component {
         const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
         const idx = this.graphLinks.findIndex(currentLink => currentLink !== null &&
             currentLink.source.id === link.source && currentLink.target.id === link.target);
-        // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
-        //     currentLink.source.id === link.target && currentLink.target.id === link.source);
         if (idx === -1) { this.graphLinks.unshift(link); }
         else {
             this.graphLinks[idx].updateMessagesNumber(1);
             let updatedLink = this.graphLinks.splice(this.graphLinks[idx], 1)[0];
-            this.graphLinks.unshift(updatedLink);
-        }
+            this.graphLinks.unshift(updatedLink);}
         this.updateOpacityAll();
         this.updateWidthAll();
-        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].updateWidth(0.1); }
         this.nodesMap.get(link.target).updateVal(0.1);
         this.update(1);
     };
@@ -120,32 +98,27 @@ class Simulation extends Component {
         this.nodesMap.get(link.target).updateVal(-0.1);
         if (nodes.find(node => node.id === userName) == null)
             this.nodesMap.delete(userName);
-        const linkIndex = links.findIndex(currentLink => currentLink.source === link.source && currentLink.target === link.target);
-        const idx = this.graphLinks.findIndex(currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
-        // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
-        //     currentLink.source.id === link.target && currentLink.target.id === link.source);
+        const linkIndex = links.findIndex(
+            currentLink => currentLink.source === link.source && currentLink.target === link.target);
+        const idx = this.graphLinks.findIndex(
+            currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
         if (linkIndex === -1) { this.graphLinks.splice(idx, 1); }
         else {this.graphLinks[idx].updateMessagesNumber(-1);}
         this.updateWidthAll();
         this.updateOpacityAll();
-        // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].updateWidth(-0.1); }
         this.update(-1);
     };
 
     handleSimulateClick = async () => {
         while (this.currentMessageIndex + 1 < this.allMessages.length) {
             await this.handleNextClick();
-            await (async () => {
-                await sleep(1000);
-            })();
-        }
+            await (async () => { await sleep(1000); })(); }
     };
 
     handleShowAllClick = async () => {
         while (this.currentMessageIndex + 1 < this.allMessages.length) {
             await this.handleNextClick();
-            await sleep(1);
-        }
+            await sleep(1);}
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
@@ -191,8 +164,7 @@ class Simulation extends Component {
         this.graphLinks.forEach(link => {
             const index = this.graphLinks.indexOf(link);
             let newOpacity = (this.graphLinks.length - index) /this.graphLinks.length;
-            link.updateOpacity([32,32,32, newOpacity]);
-        });
+            link.updateOpacity([32,32,32, newOpacity]);});
     }
 
     updateWidthAll() {
@@ -200,8 +172,7 @@ class Simulation extends Component {
         const max = Math.max(...allMessagesNumber);
         this.graphLinks.forEach(link => {
             const value = link.messagesNumber;
-            link.updateWidth((4*(value - 1) / max) + 1);
-        });
+            link.updateWidth((4*(value - 1) / max) + 1);});
     }
 
 }
@@ -209,15 +180,12 @@ class Simulation extends Component {
 function hashCode(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);}
     return hash;
 }
 
 function intToRGB(i) {
-    const c = (i & 0x00FFFFFF)
-        .toString(16)
-        .toUpperCase();
+    const c = (i & 0x00FFFFFF).toString(16).toUpperCase();
     return "00000".substring(0, 6 - c.length) + c;
 }
 
