@@ -36,7 +36,7 @@ class Simulation extends Component {
 
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/getDiscussion/20');
+        xhr.open('GET', 'http://localhost:5000/getDiscussion/21');
         xhr.send();
     }
 
@@ -71,9 +71,11 @@ class Simulation extends Component {
                     let link = {
                         source: child["node"]["author"],
                         target: node["node"]["author"],
+                        messagesNumber: 1,
                         width: 1,
-                        color: rgb(0,0,0, 1),
-                        updateWidth: function(value){this.width += value;},
+                        color: rgb(32,32,32, 1),
+                        updateWidth: function(value){this.width = value;},
+                        updateMessagesNumber: function(value) {this.messagesNumber += value;},
                         updateOpacity: function(value){this.color = rgb(value[0],value[1],value[2],value[3]);},
                     };
                     links.push(link);
@@ -96,11 +98,13 @@ class Simulation extends Component {
         // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
         //     currentLink.source.id === link.target && currentLink.target.id === link.source);
         if (idx === -1) { this.graphLinks.unshift(link); }
-        else { this.graphLinks[idx].updateWidth(0.1);
+        else {
+            this.graphLinks[idx].updateMessagesNumber(1);
             let updatedLink = this.graphLinks.splice(this.graphLinks[idx], 1)[0];
             this.graphLinks.unshift(updatedLink);
         }
         this.updateOpacityAll();
+        this.updateWidthAll();
         // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].updateWidth(0.1); }
         this.nodesMap.get(link.target).updateVal(0.1);
         this.update(1);
@@ -121,7 +125,9 @@ class Simulation extends Component {
         // const oppositeLink = this.graphLinks.findIndex(currentLink => currentLink !== null &&
         //     currentLink.source.id === link.target && currentLink.target.id === link.source);
         if (linkIndex === -1) { this.graphLinks.splice(idx, 1); }
-        else { this.graphLinks[idx].updateWidth(-0.1); }
+        else {this.graphLinks[idx].updateMessagesNumber(-1);}
+        this.updateWidthAll();
+        this.updateOpacityAll();
         // if (oppositeLink !== -1){ this.graphLinks[oppositeLink].updateWidth(-0.1); }
         this.update(-1);
     };
@@ -183,8 +189,18 @@ class Simulation extends Component {
 
     updateOpacityAll() {
         this.graphLinks.forEach(link => {
-            let newOpacity = (this.graphLinks.length - link.index) /this.graphLinks.length;
-            link.updateOpacity([0,0,0, newOpacity])
+            const index = this.graphLinks.indexOf(link);
+            let newOpacity = (this.graphLinks.length - index) /this.graphLinks.length;
+            link.updateOpacity([32,32,32, newOpacity]);
+        });
+    }
+
+    updateWidthAll() {
+        const allMessagesNumber = this.graphLinks.map(link => link.messagesNumber);
+        const max = Math.max(...allMessagesNumber);
+        this.graphLinks.forEach(link => {
+            const value = link.messagesNumber;
+            link.updateWidth((4*(value - 1) / max) + 1);
         });
     }
 

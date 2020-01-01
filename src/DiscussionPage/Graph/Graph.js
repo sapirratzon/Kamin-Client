@@ -11,21 +11,18 @@ class Graph extends Component{
             return (
                 <div id="graph-container" ref={this.graphContainerRef}>
                     <ForceGraph2D ref={this.graphRef} className="graph"
-                        width={550}
-                        height={350}
-                        d3Force={"center"}
-                        graphData={{
-                            "nodes": this.props.nodes,
-                            "links": this.props.links
-                        }}
-                        linkDirectionalArrowRelPos={1}
-                        linkWidth={link =>{
-                            if (link.width <= 5) {return link.width;} else {return 5;}}}
-                                  linkDirectionalArrowLength={2}
-                        cooldownTicks={1}
-                        //dagLevelDistance={20}
-                        // linkDirectionalParticles={2}
-                        />
+                                  width={550}
+                                  height={350}
+                                  d3Force={"center"}
+                                  graphData={{
+                                      "nodes": this.props.nodes,
+                                      "links": this.props.links
+                                  }}
+                                  linkWidth={link=> link.width}
+                                  linkDirectionalArrowRelPos={1}
+                                  linkDirectionalArrowLength={2.5}
+                                  cooldownTicks={1}
+                    />
                 </div>
             );
         }
