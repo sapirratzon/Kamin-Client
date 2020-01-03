@@ -2,6 +2,13 @@ import React, { Component } from "react";
 
 
 class Message extends Component {
+
+    componentDidUpdate() {
+        let messagesDiv = document.querySelector(".Messages-list");
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    };
+
     render() {
         const { member, text, depth } = this.props;
         let depthPixels = depth * 20;
