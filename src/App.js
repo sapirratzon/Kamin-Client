@@ -16,19 +16,22 @@ class App extends Component {
             shownNodes: [],
             shownLinks: [],
             shownAlerts: [],
-            allAlerts: []
+            allAlerts: [],
+            isSimulation: false
         };
     }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
         const newAlerts = [];
         this.state.allAlerts.forEach((a) => {
-            if (a.position <= newMessages.length) {newAlerts.push(a);}});
-        this.setState({shownAlerts: newAlerts});
+            if (a.position <= newMessages.length) { newAlerts.push(a); }
+        });
+        this.setState({ shownAlerts: newAlerts });
         this.setState({
             shownMessages: newMessages,
             shownNodes: newNodes,
-            shownLinks: newLinks});
+            shownLinks: newLinks
+        });
     };
 
     updateAlertsHandler(newAlert) {
@@ -41,7 +44,7 @@ class App extends Component {
                 <NavigationBar />
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
-                        <Chat messages={this.state.shownMessages} />
+                        <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation} />
                     </div>
                     <div className="col-6">
                         <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />

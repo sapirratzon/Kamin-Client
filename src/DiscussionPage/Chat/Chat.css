@@ -8,13 +8,13 @@
     overflow-x: scroll;
     overflow: auto;
     padding-inline-start:0px;
+    
 }
 
 .Messages-message {
     display: flex;
     margin-top: 0.5em;
     text-align: left;
-
 }
 
 .Messages-message > .avatar {
@@ -42,7 +42,6 @@
     background-color:lightblue;
 }
 
-input {
-    border: 1px solid black;
-    width:90%;
+.reply{
+    color: #006BA6;
 }

@@ -11,8 +11,8 @@ class Graph extends Component{
             return (
                 <div id="graph-container" ref={this.graphContainerRef}>
                     <ForceGraph2D ref={this.graphRef} className="graph"
-                                  width={550}
-                                  height={350}
+                                  width={872}
+                                  height={566}
                                   d3Force={"center"}
                                   graphData={{
                                       "nodes": this.props.nodes,
