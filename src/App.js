@@ -8,6 +8,7 @@ import Simulation from './DiscussionPage/Simulation/Simulation';
 import Graph from "./DiscussionPage/Graph/Graph";
 import AlertList from "./DiscussionPage/Alert/AlertsList";
 
+
 class App extends Component {
     constructor(props) {
         super(props);
@@ -17,8 +18,12 @@ class App extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
+            discussionId:21,
             isSimulation: false
         };
+        this.messages = [];
+        this.nodes = [];
+        this.links = [];
     }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
@@ -44,10 +49,15 @@ class App extends Component {
                 <NavigationBar />
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
-                        <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation} />
+                        <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation}
+                            messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                            discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
-                        <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
+                        {this.state.isSimulation ?
+                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
+                            : null
+                        }
                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         <AlertList alerts={this.state.shownAlerts} />
                     </div>
@@ -56,5 +66,6 @@ class App extends Component {
         );
     }
 }
+
 
 export default App;

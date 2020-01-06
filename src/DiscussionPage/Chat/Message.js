@@ -13,9 +13,10 @@ class Message extends Component {
     }
 
     componentDidUpdate() {
-        let messagesDiv = document.querySelector(".Messages-list");
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-
+        if (this.props.isSimulation) {
+            let messagesDiv = document.querySelector(".Messages-list");
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
     };
 
     replyHandler() {
@@ -33,6 +34,11 @@ class Message extends Component {
         }
     };
 
+    sendMessageHandler(message) {
+        console.log("Send the message :" + message);
+        this.replyHandler();
+    }
+
     render() {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
@@ -49,8 +55,7 @@ class Message extends Component {
                     <div className="username">
                         {this.props.member.username}
                     </div>
-                    <div className="text"
-                    >{this.props.text}</div>
+                    <div className="text">{this.props.text}</div>
                     {!this.props.isSimulation ?
                         <div className="reply">
                             <p><i className="far fa-comment-dots" onClick={this.replyHandler.bind(this)}>{this.state.replyText}</i></p>
@@ -58,7 +63,7 @@ class Message extends Component {
                         : null
                     }
                     {this.state.showInput ?
-                        <Input></Input>
+                        <Input onSendMessage={this.sendMessageHandler.bind(this)}></Input>
                         : null
                     }
                 </div>
