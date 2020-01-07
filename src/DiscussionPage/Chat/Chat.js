@@ -47,20 +47,35 @@ class Chat extends Component {
     addMessageHelper(node, fatherNode, targetId, author, message, depth) {
         if (node == null) return;
         if (node["node"]["id"] === targetId) {
-            fatherNode["children"].push({
-                node: {
-                    author: author,
-                    depth: depth,
-                    id: 123,
-                    text: message,
+            if (fatherNode === null) {
+                this.state.root["children"].push({
+                    node: {
+                        author: author,
+                        depth: depth,
+                        id: 123,
+                        text: message,
+                        children: []
+                    },
                     children: []
-                },
-                children: []
-            });
+                });
+            }
+            else {
+                fatherNode["children"].push({
+                    node: {
+                        author: author,
+                        depth: depth,
+                        id: 123,
+                        text: message,
+                        children: []
+                    },
+                    children: []
+                });
+            }
+
 
         }
         node["children"].forEach(child => {
-            this.addMessageHelper(child, node, targetId, author, message,depth);
+            this.addMessageHelper(child, node, targetId, author, message, depth);
         });
     };
 

@@ -19,7 +19,7 @@ class App extends Component {
             shownAlerts: [],
             allAlerts: [],
             discussionId:22,
-            isSimulation: true
+            isSimulation: false
         };
         this.messages = [];
         this.nodes = [];
