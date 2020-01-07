@@ -35,7 +35,7 @@ class Message extends Component {
     };
 
     sendMessageHandler(message) {
-        console.log("Send the message :" + message);
+        this.props.newMessageHandler(this.props.member.id, "Guy", message, this.props.depth + 1);
         this.replyHandler();
     }
 
