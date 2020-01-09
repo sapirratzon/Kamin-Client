@@ -30,8 +30,7 @@ class Simulation extends Component {
             this.shownNodes = this.allNodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        let discussionId ="5e0795acccadf5b7189464dd";
-        xhr.open('GET', 'http://localhost:5000/api/getDiscussion?discussion_id=' + discussionId);
+        xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e1646da79c9da9f2113e70c');
         xhr.send();
     }
 
@@ -145,19 +144,19 @@ class Simulation extends Component {
             <div id="simulation pt-2 pb-0">
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleResetClick}>Reset
+                        onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleBackClick}>Back
+                        onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleNextClick}>Next
+                        onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleShowAllClick}>All
+                        onClick={this.handleShowAllClick}>All
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleSimulateClick}>Simulate
+                        onClick={this.handleSimulateClick}>Simulate
                     </button>
                 </div>
             </div>

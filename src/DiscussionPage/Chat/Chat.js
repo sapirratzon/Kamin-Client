@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
+import Message from './Message';
 
 
 class Chat extends Component {
@@ -30,13 +31,30 @@ class Chat extends Component {
                 this.getMessagesNodesLinks(this.state.root);
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-            xhr.open('GET', 'http://localhost:5000/api/getDiscussion?discussion_id=' + this.props.discussionId);
+            xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
             xhr.send();
         }
     };
 
     addMessage(targetId, author, message, depth) {
-        this.addMessageHelper(this.state.root, null, targetId, author, message, depth);
+        let newMessageId;
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', () => {
+            let response = JSON.parse(xhr.responseText);
+            newMessageId = response["comment_id"];
+        });
+        xhr.open('POST', 'http://localhost:5000/api/addComment');
+        xhr.send(JSON.stringify({
+            "author": "Guy",
+            "text": Message,
+            "parentId": targetId,
+            "discussionId": this.props.discussionId,
+            "extra_data": null,
+            "time_stamp": 0,
+            "depth": depth
+        }))
+
+        this.addMessageHelper(this.state.root, null, targetId, author, message, depth, newMessageId);
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
@@ -44,7 +62,7 @@ class Chat extends Component {
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
-    addMessageHelper(node, fatherNode, targetId, author, message, depth) {
+    addMessageHelper(node, fatherNode, targetId, author, message, depth, messageId) {
         if (node == null) return;
         if (node["node"]["id"] === targetId) {
             if (fatherNode === null) {
@@ -52,7 +70,7 @@ class Chat extends Component {
                     node: {
                         author: author,
                         depth: depth,
-                        id: 123,
+                        id: messageId,
                         text: message,
                         children: []
                     },
@@ -64,14 +82,14 @@ class Chat extends Component {
                     node: {
                         author: author,
                         depth: depth,
-                        id: 123,
+                        id: messageId,
                         text: message,
                         children: []
                     },
                     children: []
                 });
             }
-
+            return;
 
         }
         node["children"].forEach(child => {
