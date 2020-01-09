@@ -57,6 +57,7 @@ class Chat extends Component {
     };
 
     addComment(comment) {
+        console.log(comment.depth);
         this.addMessageHelper(this.state.root, null, comment.parentId, comment.author, comment.text, comment.text, comment.depth, comment.id);
         this.shownMessages = [];
         this.shownNodes = [];
