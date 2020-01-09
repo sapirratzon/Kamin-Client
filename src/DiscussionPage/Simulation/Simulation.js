@@ -34,46 +34,41 @@ class Simulation extends Component {
         xhr.send();
     }
 
-    // only converting tree to lists - gathering data
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
-        if (node["node"]["author"] === "Admin") {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["text"] })
-        }
-        else {
-            this.allMessages.push({
-                member: {
-                    username: node["node"]["author"],
-                    color: "#" + intToRGB(hashCode(node["node"]["author"])),
-                },
-                text: node["node"]["text"],
-                depth: node["node"]["depth"]
-            });
-            this.allNodes.push({
-                id: node["node"]["author"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"])),
-                name: node["node"]["author"],
-                val: 3,
-                updateVal: function (value) { this.val += value; },
-            });
-            node["children"].forEach(child => {
-                if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
-                    let link = {
-                        source: child["node"]["author"],
-                        target: node["node"]["author"],
-                        messagesNumber: 1,
-                        width: 1,
-                        color: rgb(32, 32, 32, 1),
-                        updateWidth: function (value) { this.width = value; },
-                        updateMessagesNumber: function (value) { this.messagesNumber += value; },
-                        updateOpacity: function (value) { this.color = rgb(value[0], value[1], value[2], value[3]); },
-                    };
-                    this.allLinks.push(link);
-                }
-                this.getMessagesNodesLinks(child);
-            });
+        if (node["node"]["isAlerted"]) {
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] })
         }
         this.messagesCounter++;
+        this.allMessages.push({
+            member: {
+                username: node["node"]["author"],
+                color: "#" + intToRGB(hashCode(node["node"]["author"])),
+            },
+            text: node["node"]["text"],
+            depth: node["node"]["depth"]
+        });
+        this.allNodes.push({
+            id: node["node"]["author"],
+            color: "#" + intToRGB(hashCode(node["node"]["author"])),
+            name: node["node"]["author"],
+            val: 0.5,
+            updateVal: function (value) { this.val += value; },
+        });
+        node["children"].forEach(child => {
+            let link = {
+                source: child["node"]["author"],
+                target: node["node"]["author"],
+                messagesNumber: 1,
+                width: 1,
+                color: rgb(32, 32, 32, 1),
+                updateWidth: function (value) { this.width = value; },
+                updateMessagesNumber: function (value) { this.messagesNumber += value; },
+                updateOpacity: function (value) { this.color = rgb(value[0], value[1], value[2], value[3]); },
+            };
+            this.allLinks.push(link);
+            this.getMessagesNodesLinks(child);
+        });
     };
 
     handleNextClick = () => {
@@ -93,7 +88,7 @@ class Simulation extends Component {
         }
         this.updateOpacityAll();
         this.updateWidthAll();
-        this.nodesMap.get(link.target).updateVal(0.1);
+        this.nodesMap.get(link.target).updateVal(0.01);
         this.update(1);
     };
 
@@ -158,6 +153,7 @@ class Simulation extends Component {
                     <button type="button" className="btn btn-primary btn-sm"
                         onClick={this.handleSimulateClick}>Simulate
                     </button>
+
                 </div>
             </div>
         );
@@ -184,7 +180,7 @@ class Simulation extends Component {
         const max = Math.max(...allMessagesNumber);
         this.graphLinks.forEach(link => {
             const value = link.messagesNumber;
-            link.updateWidth((4 * (value - 1) / max) + 1);
+            link.updateWidth((2 * (value - 1) / max) + 1);
         });
     }
 
