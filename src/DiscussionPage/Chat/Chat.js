@@ -3,6 +3,7 @@ import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
 import Message from './Message';
+import io from 'socket.io-client';
 
 
 class Chat extends Component {
@@ -14,8 +15,10 @@ class Chat extends Component {
         this.shownLinks = [];
         this.messagesCounter = 0;
         this.state = {
-            root: null
+            root: null,
+            respone:null
         }
+        this.socket = io('http://localhost:5000/');
     }
 
     componentDidMount() {
@@ -31,36 +34,36 @@ class Chat extends Component {
                 this.getMessagesNodesLinks(this.state.root);
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-            xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
+            // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
+            this.socket.on('add comment', (res) =>{
+                this.addComment(res.comment);
+            });
+            xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e1646da79c9da9f2113e70c');
             xhr.send();
         }
     };
 
-    addMessage(targetId, author, message, depth) {
-        let newMessageId;
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let response = JSON.parse(xhr.responseText);
-            newMessageId = response["comment_id"];
-        });
-        xhr.open('POST', 'http://localhost:5000/api/addComment');
-        xhr.send(JSON.stringify({
+    sendComment(targetId, author, message, depth) {
+        const comment = JSON.stringify({
             "author": "Guy",
-            "text": Message,
+            "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
             "extra_data": null,
             "time_stamp": 0,
             "depth": depth
-        }))
+        });
+        this.socket.emit('add comment', comment)
+    };
 
-        this.addMessageHelper(this.state.root, null, targetId, author, message, depth, newMessageId);
+    addComment(comment) {
+        this.addMessageHelper(this.state.root, null, comment.parentId, comment.author, comment.text, comment.text, comment.depth, comment.id);
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
         this.getMessagesNodesLinks(this.state.root);
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
-    };
+    }
 
     addMessageHelper(node, fatherNode, targetId, author, message, depth, messageId) {
         if (node == null) return;
@@ -139,7 +142,7 @@ class Chat extends Component {
         return (
             <div className="chat">
                 <Messages
-                    messages={this.props.messages} isSimulation={this.props.isSimulation} newMessageHandler={this.addMessage.bind(this)}
+                    messages={this.props.messages} isSimulation={this.props.isSimulation} newMessageHandler={this.sendComment.bind(this)}
                 />
             </div>);
     }

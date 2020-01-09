@@ -17,7 +17,7 @@ class Discussion extends Component {
             shownAlerts: [],
             allAlerts: [],
             discussionId: "5e1646da79c9da9f2113e70c",
-            isSimulation: true
+            isSimulation: false
         };
         this.messages = [];
         this.nodes = [];
