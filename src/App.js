@@ -18,7 +18,7 @@ class App extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
-            discussionId:22,
+            discussionId:"5e1646da79c9da9f2113e70c",
             isSimulation: false
         };
         this.messages = [];
