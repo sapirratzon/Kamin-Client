@@ -30,7 +30,7 @@ class Chat extends Component {
                 this.getMessagesNodesLinks(this.state.root);
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-            xhr.open('GET', 'http://localhost:5000/getDiscussion/' + this.props.discussionId);
+            xhr.open('GET', 'http://localhost:5000/api/getDiscussion?discussion_id=' + this.props.discussionId);
             xhr.send();
         }
     };

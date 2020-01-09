@@ -18,8 +18,8 @@ class App extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
-            discussionId:22,
-            isSimulation: false
+            discussionId:"5e0795acccadf5b7189464dd",
+            isSimulation: true
         };
         this.messages = [];
         this.nodes = [];
@@ -50,8 +50,8 @@ class App extends Component {
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
                         <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation}
-                            messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
-                            discussionId={this.state.discussionId} />
+                              messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                              discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
                         {this.state.isSimulation ?

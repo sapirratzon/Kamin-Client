@@ -5,10 +5,8 @@
 .Messages-list {
     height: 85%;
     width: 100%;
-    overflow-x: scroll;
     overflow: auto;
-    padding-inline-start:0px;
-    
+    padding-inline-start:0;
 }
 
 .Messages-message {
