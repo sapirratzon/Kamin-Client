@@ -19,7 +19,7 @@ class HomePage extends Component {
                             <h3>Simulation</h3>
                             <p>Enter to simulate discussion</p>
                             <p>You will see a real time analysis on this discussion</p>
-                            <button type="button" className="btn btn-info btn-sm" onClick={this.simulateHandler}>Start
+                            <button type="button" className="btn btn-info btn-sm" onClick={this.discussionHandler}>Start
                                 Simulation
                             </button>
                         </div>
@@ -38,7 +38,7 @@ class HomePage extends Component {
         );
     }
 
-    simulateHandler = () => {
+    discussionHandler = () => {
         let path = `Discussion`;
         this.props.history.push(path);
     };

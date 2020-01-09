@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
+import '../App.css';
 import Chat from "./Chat/Chat";
-import "./Graph/Graph.css";
-import "./Simulation/Simulation";
 import Simulation from './Simulation/Simulation';
 import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
 
 
-class Discussion extends Component {
+class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,8 +15,8 @@ class Discussion extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
-            discussionId: "5e1646da79c9da9f2113e70c",
-            isSimulation: true
+            discussionId:"5e1646da79c9da9f2113e70c",
+            isSimulation: false
         };
         this.messages = [];
         this.nodes = [];
@@ -43,19 +42,21 @@ class Discussion extends Component {
 
     render() {
         return (
-            <div className="row px-5 content">
-                <div className="chat col-6 py-3">
-                    <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation}
-                        messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
-                        discussionId={this.state.discussionId} />
-                </div>
-                <div className="col-6">
-                    {this.state.isSimulation ?
-                        <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
-                        : null
-                    }
-                    <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
-                    <AlertList alerts={this.state.shownAlerts} />
+            <div className="App">
+                <div className="row px-5 content">
+                    <div className="chat col-6 py-3">
+                        <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation}
+                              messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                              discussionId={this.state.discussionId} />
+                    </div>
+                    <div className="col-6">
+                        {this.state.isSimulation ?
+                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
+                            : null
+                        }
+                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
+                        <AlertList alerts={this.state.shownAlerts} />
+                    </div>
                 </div>
             </div>
         );
@@ -63,4 +64,4 @@ class Discussion extends Component {
 }
 
 
-export default Discussion;
+export default App;

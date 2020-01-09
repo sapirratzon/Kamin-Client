@@ -30,7 +30,7 @@ class Simulation extends Component {
             this.shownNodes = this.allNodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e1646da79c9da9f2113e70c');
+        xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
         xhr.send();
     }
 
