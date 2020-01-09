@@ -1,0 +1,16 @@
+.HomePage{
+    text-align: center;
+}
+
+
+.headline {
+    background-image: url("background.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: white;
+    padding-top: 20%;
+}
+
+.col-sm-6{
+    border-color: black;
+}
