@@ -26,11 +26,11 @@ class HomePage extends Component {
                         <div className="col-sm-6">
                             <h3>Real-time discussion</h3>
                             <p>You can join quickly to an exist discussion</p>
-                            <button type="button" className="btn btn-info btn-sm">Enter</button>
+                            <button type="button" className="btn btn-info btn-sm" onClick={this.discussionHandler}>Enter</button>
                         </div>
                     </div>
                     <div>
-                        <button type="button" className="btn btn-info btn-sm" onClick={this.updateModalHandler.bind(true)}>Create a new discussion</button>
+                        <button type="button" className="btn btn-info btn-sm" onClick={this.updateModalHandler}>Create a new discussion</button>
                         {/*<CreateDiscussionModal isOpen={this.showCreateDiscussionModal}/>*/}
                     </div>
                 </div>
@@ -38,12 +38,23 @@ class HomePage extends Component {
         );
     }
 
-    discussionHandler = () => {
-        let path = `Discussion`;
-        this.props.history.push(path);
+    discussionHandler () {
+        // let path = `Discussion`;
+        // this.props.history.push(path);
+        // this.updateRouteToDiscussion();
+        this.props.updateIsSimulation2();
     };
 
-    updateModalHandler = (show) => {
+    updateRouteToDiscussion() {
+        let path = `Discussion`;
+        this.props.history.push(path);
+    }
+
+    updateIsSimulation() {
+        this.props.updateIsSimulation2();
+    };
+
+    updateModalHandler (show) {
         console.log(this.state.showCreateDiscussionModal);
         this.showCreateDiscussionModal= show;
         console.log(this.state.showCreateDiscussionModal);

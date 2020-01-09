@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
-import "./Graph.css"
 
 class Graph extends Component{
     // constructor(props){

@@ -16,11 +16,16 @@ class App extends Component {
             shownAlerts: [],
             allAlerts: [],
             discussionId:"5e1646da79c9da9f2113e70c",
-            isSimulation: false
         };
         this.messages = [];
         this.nodes = [];
         this.links = [];
+    }
+
+    changeIsSimulation(value){
+        this.setState({
+            isSimulation: value
+        })
     }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
@@ -50,7 +55,7 @@ class App extends Component {
                               discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
-                        {this.state.isSimulation ?
+                        {this.props.isSimulation ?
                             <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)} />
                             : null
                         }
