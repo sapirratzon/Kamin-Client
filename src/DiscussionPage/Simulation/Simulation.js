@@ -88,7 +88,7 @@ class Simulation extends Component {
         }
         this.updateOpacityAll();
         this.updateWidthAll();
-        this.nodesMap.get(link.target).updateVal(0.01);
+        this.nodesMap.get(link.target).updateVal(0.02);
         this.update(1);
     };
 
@@ -99,7 +99,7 @@ class Simulation extends Component {
         const links = this.allLinks.slice(0, messageIndex - 1);
         const nodes = this.allNodes.slice(0, messageIndex);
         const link = cloneDeep(this.allLinks[messageIndex - 1]);
-        this.nodesMap.get(link.target).updateVal(-0.1);
+        this.nodesMap.get(link.target).updateVal(-0.02);
         if (nodes.find(node => node.id === userName) == null)
             this.nodesMap.delete(userName);
         const linkIndex = links.findIndex(

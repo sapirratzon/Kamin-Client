@@ -6,7 +6,7 @@ import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
 
 
-class App extends Component {
+class Discussion extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,7 +16,6 @@ class App extends Component {
             shownAlerts: [],
             allAlerts: [],
             discussionId: "5e0795acccadf5b7189464dd",
-            isSimulation: false
         };
         this.messages = [];
         this.nodes = [];
@@ -43,21 +42,20 @@ class App extends Component {
         this.state.allAlerts.push(newAlert);
     };
 
-    render() {
+    render(props) {
         return (
             <div className="App">
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
-                        <Chat messages={this.state.shownMessages} isSimulation={this.state.isSimulation}
-                            messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
-                            discussionId={this.state.discussionId} />
+                        <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
+                              messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                              discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
-                        {this.state.isSimulation ?
+                        {this.props.isSimulation === 'true' ?
                             <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
                                 discussionId={this.state.discussionId} />
-                            : null
-                        }
+                            : null}
                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         <AlertList alerts={this.state.shownAlerts} />
                     </div>
@@ -68,4 +66,4 @@ class App extends Component {
 }
 
 
-export default App;
+export default Discussion;

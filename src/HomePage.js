@@ -19,14 +19,14 @@ class HomePage extends Component {
                             <h3>Simulation</h3>
                             <p>Enter to simulate discussion</p>
                             <p>You will see a real time analysis on this discussion</p>
-                            <button type="button" className="btn btn-info btn-sm" onClick={this.discussionHandler}>Start
+                            <button type="button" className="btn btn-info btn-sm" onClick={this.simulationHandler}>Start
                                 Simulation
                             </button>
                         </div>
                         <div className="col-sm-6">
                             <h3>Real-time discussion</h3>
                             <p>You can join quickly to an exist discussion</p>
-                            <button type="button" className="btn btn-info btn-sm">Enter</button>
+                            <button type="button" className="btn btn-info btn-sm" onClick={this.realTimeHandler}>Enter</button>
                         </div>
                     </div>
                     <div>
@@ -38,8 +38,13 @@ class HomePage extends Component {
         );
     }
 
-    discussionHandler = () => {
-        let path = `Discussion`;
+    simulationHandler = () => {
+        let path = `Discussion/true`;
+        this.props.history.push(path);
+    };
+
+    realTimeHandler = () => {
+        let path = `Discussion/false`;
         this.props.history.push(path);
     };
 
