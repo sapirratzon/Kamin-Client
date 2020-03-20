@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import '../App.css';
+import './Discussion.css';
 import Chat from "./Chat/Chat";
 import Simulation from './Simulation/Simulation';
 import Graph from "./Graph/Graph";
@@ -48,12 +48,13 @@ class Discussion extends Component {
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
-                              messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                              messagesHandler={this.updateMessagesHandler.bind(this)}
+                              alertsHandler={this.updateAlertsHandler.bind(this)}
                               discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
                         {this.props.isSimulation === 'true' ?
-                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}alertsHandler={this.updateAlertsHandler.bind(this)}
                                 discussionId={this.state.discussionId} />
                             : null}
                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />

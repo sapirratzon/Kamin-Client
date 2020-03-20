@@ -1,12 +1,16 @@
 import React, {Component} from "react";
 import './HomePage.css';
+import CreateDiscussionModal from "./DiscussionPage/CreateDiscussionModal";
 // import CreateDiscussionModal from "./DiscussionPage/CreateDiscussionModal";
 
 
 class HomePage extends Component {
     constructor(props){
         super(props);
-        this.showCreateDiscussionModal = false
+        this.showCreateDiscussionModal = false;
+        this.state = {
+            discussionModal: false
+        }
     }
 
     render() {
@@ -30,12 +34,23 @@ class HomePage extends Component {
                         </div>
                     </div>
                     <div>
-                        <button type="button" className="btn btn-info btn-sm" onClick={this.updateModalHandler.bind(true)}>Create a new discussion</button>
-                        {/*<CreateDiscussionModal isOpen={this.showCreateDiscussionModal}/>*/}
+                        <button type="button" className="btn btn-info btn-sm"
+                                onClick={() => this.updateModalHandler(true)}>Create a new discussion
+                        </button>
+                        <CreateDiscussionModal isOpen={this.state.discussionModal}
+                                               updateVisibility={this.updateModalHandler.bind(this)}
+                                               loadWeather={this.createDiscussionTest}/>
                     </div>
                 </div>
             </div>
         );
+    }
+
+    createDiscussionTest = (event) =>{
+        event.preventDefault();
+        console.log(event);
+        console.log(event.target.cityZipCode.value);
+
     }
 
     simulationHandler = () => {
@@ -48,10 +63,10 @@ class HomePage extends Component {
         this.props.history.push(path);
     };
 
-    updateModalHandler = (show) => {
-        console.log(this.state.showCreateDiscussionModal);
-        this.showCreateDiscussionModal= show;
-        console.log(this.state.showCreateDiscussionModal);
+    updateModalHandler = (isOpen) => {
+        this.setState ({
+            discussionModal: isOpen
+        });
     };
 
     createDiscussion(title, categories, description) {
@@ -66,7 +81,6 @@ class HomePage extends Component {
     };
 
     addComment(discussion_id, description){
-
     }
 }
 

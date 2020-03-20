@@ -15,7 +15,7 @@ class Chat extends Component {
         this.messagesCounter = 0;
         this.state = {
             root: null
-        }
+        };
         this.socket = io('http://localhost:5000/');
     }
 
@@ -35,7 +35,7 @@ class Chat extends Component {
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
             // For Chat Debug
             // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e1646da79c9da9f2113e70c');
-            xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e0795acccadf5b7189464dd');
+            // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e0795acccadf5b7189464dd');
             xhr.send();
             this.socket.on('add comment', (res) => {
                 this.addMessage(res.comment);
@@ -93,8 +93,6 @@ class Chat extends Component {
                     children: []
                 });
             }
-
-
         }
         node["children"].forEach(child => {
             this.addMessageHelper(child, node, targetId, author, message, depth, messageId);

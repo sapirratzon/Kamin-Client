@@ -11,7 +11,7 @@
 
 .Messages-message {
     display: flex;
-    margin-top: 0.5em;
+    /*margin-top: 0.5em;*/
     text-align: left;
 }
 
