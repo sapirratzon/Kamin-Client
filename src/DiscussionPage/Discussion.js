@@ -15,6 +15,7 @@ class Discussion extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
+            // discussionId: "5e74b8556bbd9546ab101491", Sapir new discussion
             discussionId: "5e0795acccadf5b7189464dd",
         };
         this.messages = [];
