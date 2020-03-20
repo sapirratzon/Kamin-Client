@@ -12,6 +12,10 @@ class Chat extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
+        this.linksMap = new Map();
+        this.nodesMap = new Map();
+        this.messagesCounter = 0;
+        this.currentMessageIndex = 1;
         this.messagesCounter = 0;
         this.state = {
             root: null
@@ -30,6 +34,12 @@ class Chat extends Component {
                     }
                 );
                 this.getMessagesNodesLinks(this.state.root);
+                this.shownLinks = Array.from(this.linksMap.values());
+                this.shownNodes = Array.from(this.nodesMap.values());
+                this.shownLinks.sort(function (a, b) { return b.timestamp - a.timestamp; });
+                this.updateLinksOpacity();
+                this.updateLinksWidth();
+
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
@@ -58,15 +68,41 @@ class Chat extends Component {
 
     addMessage(message) {
         console.log(message.depth);
-        this.addMessageHelper(this.state.root, null, message.parentId, message.author, message.text, message.depth, message.id);
+        this.addMessageHelper(this.state.root, null, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
+        this.linksMap = new Map();
+        this.nodesMap = new Map();
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
         this.getMessagesNodesLinks(this.state.root);
+        this.shownLinks = Array.from(this.linksMap.values());
+        this.shownNodes = Array.from(this.nodesMap.values());
+        this.shownLinks.sort(function (a, b) { return b.timestamp - a.timestamp; });
+        this.updateLinksOpacity();
+        this.updateLinksWidth();
+
+        // this.updateGraph();
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
-    addMessageHelper(node, fatherNode, targetId, author, message, depth, messageId) {
+    updateLinksOpacity() {
+        this.shownLinks.forEach(link => {
+            const index = this.shownLinks.indexOf(link);
+            let newOpacity = (this.shownLinks.length - index) / this.shownLinks.length;
+            link.updateOpacity([32, 32, 32, newOpacity]);
+        });
+    }
+
+    updateLinksWidth() {
+        const allMessagesNumber = this.shownLinks.map(link => link.messagesNumber);
+        const max = Math.max(...allMessagesNumber);
+        this.shownLinks.forEach(link => {
+            const value = link.messagesNumber;
+            link.updateWidth((2 * (value - 1) / max) + 1);
+        });
+    }
+
+    addMessageHelper(node, fatherNode, targetId, author, message, depth, messageId, timestamp) {
         if (node == null) return;
         if (node["node"]["id"] === targetId) {
             if (fatherNode === null) {
@@ -76,6 +112,7 @@ class Chat extends Component {
                         depth: depth,
                         id: messageId,
                         text: message,
+                        timestamp: timestamp,
                         children: []
                     },
                     children: []
@@ -99,30 +136,39 @@ class Chat extends Component {
         });
     };
 
-
-    getMessagesNodesLinks = (node) => {
-        if (node == null) return;
+    getMessagesNodesLinks = (commentNode) => {
+        if (commentNode == null) return;
+        if (commentNode["node"]["isAlerted"]) {
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
+        }
+        this.messagesCounter++;
         this.shownMessages.push({
             member: {
-                username: node["node"]["author"],
-                id: node["node"]["id"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"])),
+                username: commentNode["node"]["author"],
+                id: commentNode["node"]["id"],
+                color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
             },
-            text: node["node"]["text"],
-            depth: node["node"]["depth"]
+            text: commentNode["node"]["text"],
+            depth: commentNode["node"]["depth"]
         });
-        this.shownNodes.push({
-            id: node["node"]["author"],
-            color: "#" + intToRGB(hashCode(node["node"]["author"])),
-            name: node["node"]["author"],
-            val: 3,
-            updateVal: function (value) { this.val += value; },
-        });
-        node["children"].forEach(child => {
-            if (child["node"]["author"] !== "Admin" && node["node"]["author"] !== "Admin") {
-                let link = {
-                    source: child["node"]["author"],
-                    target: node["node"]["author"],
+        if (!this.nodesMap.has(commentNode["node"]["author"])) {
+            let node = {
+                id: commentNode["node"]["author"],
+                color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
+                name: commentNode["node"]["author"],
+                val: 0.5,
+                updateVal: function (value) { this.val += value; },
+            }
+            this.nodesMap.set(commentNode["node"]["author"], node)
+        }
+
+        commentNode["children"].forEach(childComment => {
+            const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
+            if (!this.linksMap.has(key)) {
+                const link = {
+                    source: childComment["node"]["author"],
+                    target: commentNode["node"]["author"],
+                    timestamp: childComment["node"]["timestamp"],
                     messagesNumber: 1,
                     width: 1,
                     color: rgb(32, 32, 32, 1),
@@ -130,9 +176,15 @@ class Chat extends Component {
                     updateMessagesNumber: function (value) { this.messagesNumber += value; },
                     updateOpacity: function (value) { this.color = rgb(value[0], value[1], value[2], value[3]); },
                 };
-                this.shownLinks.push(link);
+                this.linksMap.set(key, link);
             }
-            this.getMessagesNodesLinks(child);
+            else {
+                const link = this.linksMap.get(key);
+                link.timestamp = childComment["node"]["timestamp"];
+                link.messagesNumber += 1;
+                this.nodesMap.get(link.source).updateVal(0.02);
+            }
+            this.getMessagesNodesLinks(childComment);
         });
     };
 

@@ -47,10 +47,10 @@ class Discussion extends Component {
             <div className="App">
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
-                        <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
-                              messagesHandler={this.updateMessagesHandler.bind(this)}
-                              alertsHandler={this.updateAlertsHandler.bind(this)}
-                              discussionId={this.state.discussionId} />
+                        <RealTime messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
+                                  messagesHandler={this.updateMessagesHandler.bind(this)} alertsHandler={this.updateAlertsHandler.bind(this)}
+                                  alertsHandler={this.updateAlertsHandler.bind(this)}
+                                  discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
                         {this.props.isSimulation === 'true' ?
