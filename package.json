@@ -5,11 +5,13 @@
   "dependencies": {
     "d3": "^5.12.0",
     "react": "^16.10.0",
+    "react-bootstrap4-modal": "^1.7.4",
     "react-d3-graph": "^2.3.0",
     "react-dom": "^16.10.0",
     "react-force-graph-2d": "^1.13.6",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
+    "reactstrap": "^8.4.1",
     "socket.io-client": "^2.3.0"
   },
   "scripts": {
