@@ -26,9 +26,28 @@ class Chat extends Component {
 
     componentDidMount() {
         if (!this.props.isSimulation) {
-            const xhr = new XMLHttpRequest();
-            xhr.addEventListener('load', () => {
-                let response = JSON.parse(xhr.responseText);
+            // const xhr = new XMLHttpRequest();
+            // xhr.addEventListener('load', () => {
+            //     let response = JSON.parse(xhr.responseText);
+            //     this.setState(
+            //         {
+            //             root: response["tree"]
+            //         }
+            //     );
+            //     this.loadDiscussion(this.state.root);
+            //     this.updateGraph();
+
+            //     this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+            // });
+            // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
+            // xhr.send();
+
+            const data = {
+                'room': this.props.discussionId,
+                'username': 'ron'
+            };
+
+            this.socket.on('join', (response) => {
                 this.setState(
                     {
                         root: response["tree"]
@@ -38,17 +57,12 @@ class Chat extends Component {
                 this.updateGraph();
 
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
-            });
-            xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
 
-            const data = {'room': this.props.discussionId,
-                    'username':'ron'};
+            });
+
             this.socket.emit('join', data);
 
-            this.socket.on('join',(res) =>
-                this.discussionId = res
-            )
-            xhr.send();
+
             this.socket.on('add comment', (res) => {
                 this.addComment(res.comment);
             });
