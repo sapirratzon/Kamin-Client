@@ -15,8 +15,9 @@ class Discussion extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
-            // discussionId: "5e74b8556bbd9546ab101491", Sapir new discussion
-            discussionId: "5e0795acccadf5b7189464dd",
+            // discussionId: "5e74b8556bbd9546ab101491", Test 1
+            // discussionId: "5e76687d456abd7add8485a3", Test 2
+            discussionId: "5e74b0106bbd9546ab10148c",
         };
         this.messages = [];
         this.nodes = [];
@@ -54,9 +55,9 @@ class Discussion extends Component {
                                   discussionId={this.state.discussionId} />
                     </div>
                     <div className="col-6">
-                        {this.props.isSimulation === 'true' ?
+                        {this.props.simulationCode !== '' ?
                             <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}alertsHandler={this.updateAlertsHandler.bind(this)}
-                                discussionId={this.state.discussionId} />
+                                discussionId={this.props.simulationCode} />
                             : null}
                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         <AlertList alerts={this.state.shownAlerts} />

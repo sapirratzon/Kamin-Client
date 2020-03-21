@@ -15,10 +15,13 @@ class App extends Component {
                     <Route component={NavigationBar} />
                     <div className="content">
                         <Route exact path="/" component={HomePage} />
-                        <Route path="/Discussion/:isSimulation"
-                            render={(props) => <Discussion {...props} isSimulation={props.match.params.isSimulation} />} />
+                        <Route path="/Discussion/:isSimulation/:simulationCode"
+                            render={(props) => <Discussion {...props}
+                                isSimulation={props.match.params.isSimulation}
+                                simulationCode={props.match.params.simulationCode} />} />
                         <Route path="/login/" component={Login} />
                         <Route path="/registration/" component={Registration} />
+
                     </div>
                 </div>
             </BrowserRouter>

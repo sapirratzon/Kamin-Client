@@ -33,29 +33,40 @@ class Chat extends Component {
                         root: response["tree"]
                     }
                 );
-                this.getMessagesNodesLinks(this.state.root);
-                this.shownLinks = Array.from(this.linksMap.values());
-                this.shownNodes = Array.from(this.nodesMap.values());
-                this.shownLinks.sort(function (a, b) { return b.timestamp - a.timestamp; });
-                this.updateLinksOpacity();
-                this.updateLinksWidth();
+                this.loadDiscussion(this.state.root);
+                this.updateGraph();
 
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
-            // For Chat Debug
-            // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e1646da79c9da9f2113e70c');
-            // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/5e0795acccadf5b7189464dd');
             xhr.send();
             this.socket.on('add comment', (res) => {
-                this.addMessage(res.comment);
+                this.addComment(res.comment);
             });
         }
     };
 
-    sendMessage(targetId, author, message, depth) {
+    updateGraph() {
+        this.shownLinks = Array.from(this.linksMap.values());
+        this.shownNodes = Array.from(this.nodesMap.values());
+        this.shownLinks.sort(function (a, b) { return b.timestamp - a.timestamp; });
+        this.updateLinksOpacity();
+        this.updateLinksWidth();
+    }
+
+    reloadChat() {
+        this.linksMap = new Map();
+        this.nodesMap = new Map();
+        this.shownMessages = [];
+        this.shownNodes = [];
+        this.shownLinks = [];
+        this.loadDiscussion(this.state.root);
+        this.updateGraph();
+    }
+
+    sendComment(targetId, author, message, depth) {
         const comment = JSON.stringify({
-            "author": "Guy",
+            "author": "Sap",
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
@@ -66,22 +77,11 @@ class Chat extends Component {
         this.socket.emit('add comment', comment)
     };
 
-    addMessage(message) {
+    addComment(message) {
         console.log(message.depth);
-        this.addMessageHelper(this.state.root, null, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
-        this.linksMap = new Map();
-        this.nodesMap = new Map();
-        this.shownMessages = [];
-        this.shownNodes = [];
-        this.shownLinks = [];
-        this.getMessagesNodesLinks(this.state.root);
-        this.shownLinks = Array.from(this.linksMap.values());
-        this.shownNodes = Array.from(this.nodesMap.values());
-        this.shownLinks.sort(function (a, b) { return b.timestamp - a.timestamp; });
-        this.updateLinksOpacity();
-        this.updateLinksWidth();
+        this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
+        this.reloadChat();
 
-        // this.updateGraph();
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
@@ -102,41 +102,28 @@ class Chat extends Component {
         });
     }
 
-    addMessageHelper(node, fatherNode, targetId, author, message, depth, messageId, timestamp) {
-        if (node == null) return;
-        if (node["node"]["id"] === targetId) {
-            if (fatherNode === null) {
-                this.state.root["children"].push({
-                    node: {
-                        author: author,
-                        depth: depth,
-                        id: messageId,
-                        text: message,
-                        timestamp: timestamp,
-                        children: []
-                    },
+    addMessageHelper(currentNode, targetId, author, message, depth, messageId, timestamp) {
+        if (currentNode == null) return;
+        if (currentNode["node"]["id"] === targetId) {
+            currentNode["children"].push({
+                node: {
+                    author: author,
+                    depth: depth,
+                    id: messageId,
+                    text: message,
+                    timestamp: timestamp,
                     children: []
-                });
-            }
-            else {
-                fatherNode["children"].push({
-                    node: {
-                        author: author,
-                        depth: depth,
-                        id: messageId,
-                        text: message,
-                        children: []
-                    },
-                    children: []
-                });
-            }
+                },
+                children: []
+            });
+            return;
         }
-        node["children"].forEach(child => {
-            this.addMessageHelper(child, node, targetId, author, message, depth, messageId);
+        currentNode["children"].forEach(child => {
+            this.addMessageHelper(child, targetId, author, message, depth, messageId);
         });
     };
 
-    getMessagesNodesLinks = (commentNode) => {
+    loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["isAlerted"]) {
             this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
@@ -184,7 +171,7 @@ class Chat extends Component {
                 link.messagesNumber += 1;
                 this.nodesMap.get(link.source).updateVal(0.02);
             }
-            this.getMessagesNodesLinks(childComment);
+            this.loadDiscussion(childComment);
         });
     };
 
@@ -193,7 +180,7 @@ class Chat extends Component {
         return (
             <div className="chat">
                 <Messages
-                    messages={this.props.messages} isSimulation={this.props.isSimulation} newMessageHandler={this.sendMessage.bind(this)}
+                    messages={this.props.messages} isSimulation={this.props.isSimulation} newMessageHandler={this.sendComment.bind(this)}
                 />
             </div>);
     }
