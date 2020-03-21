@@ -13,15 +13,18 @@ class CreateDiscussionModal extends Component {
         event.preventDefault();
         let title = event.target.title.value;
         let description = event.target.description.value;
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let discussion_id = JSON.parse(xhr.responseText)["discussion"];
-            this.addMessage(discussion_id, 0, 'Sapir', description, 0);
+        // const xhr = new XMLHttpRequest();
+        // xhr.addEventListener('load', () => {
+        //     let discussion_id = JSON.parse(xhr.responseText)["discussion"];
+        //     this.addMessage(discussion_id, 0, 'Sapir', description, 0);
+        // });
+        this.socket.on('join_room', function(msg) {
+            console.log(msg);
         });
-        this.socket.emit.createDiscussion(JSON.stringify({title: title, categories: [], comment}));
-        xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({title: title, categories: []}));
+        this.socket.emit.createDiscussion(JSON.stringify({title: title, categories: [], description}));
+        // xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
+        // xhr.setRequestHeader("Content-Type", "application/json");
+        // xhr.send(JSON.stringify({title: title, categories: []}));
         this.updateVisibility(false);
     };
 
