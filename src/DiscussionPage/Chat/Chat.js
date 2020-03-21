@@ -40,6 +40,11 @@ class Chat extends Component {
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
+
+            data = {'room':props.discussionId,
+                    'username':'ron'};
+            this.socket.emit('join', data)
+
             this.socket.emit('join',(res) =>
                 this.discussionId = res
             )
