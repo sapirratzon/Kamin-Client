@@ -21,6 +21,7 @@ class Chat extends Component {
             root: null
         };
         this.socket = io('http://localhost:5000/');
+        this.discussionId = "";
     }
 
     componentDidMount() {
@@ -39,6 +40,9 @@ class Chat extends Component {
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
+            this.socket.emit('join',(res) =>
+                this.discussionId = res
+            )
             xhr.send();
             this.socket.on('add comment', (res) => {
                 this.addComment(res.comment);
@@ -69,7 +73,7 @@ class Chat extends Component {
             "author": "Sap",
             "text": message,
             "parentId": targetId,
-            "discussionId": this.props.discussionId,
+            "discussionId": this.discussionId,
             "extra_data": null,
             "time_stamp": 0,
             "depth": depth
