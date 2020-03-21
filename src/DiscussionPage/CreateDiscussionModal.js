@@ -21,7 +21,16 @@ class CreateDiscussionModal extends Component {
         this.socket.on('join_room', function(msg) {
             console.log(msg);
         });
-        this.socket.emit.createDiscussion(JSON.stringify({title: title, categories: [], description}));
+        this.socket.emit("createDiscussion", JSON.stringify({title: title, categories: [], root_comment_dict:
+                JSON.stringify({
+                    "author": "gal",
+                    "text": description,
+                    "parentId": null,
+                    "discussionId": null,
+                    "extra_data": null,
+                    "time_stamp": 0,
+                    "depth": 0
+                })}));
         // xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
         // xhr.setRequestHeader("Content-Type", "application/json");
         // xhr.send(JSON.stringify({title: title, categories: []}));
