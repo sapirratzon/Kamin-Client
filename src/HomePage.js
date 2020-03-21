@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import './HomePage.css';
-import CreateDiscussionModal from "./DiscussionPage/CreateDiscussionModal";
+import CreateDiscussionModal from "./DiscussionPage/Modals/CreateDiscussionModal";
 // import CreateDiscussionModal from "./DiscussionPage/CreateDiscussionModal";
 
 
