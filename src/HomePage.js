@@ -1,8 +1,6 @@
 import React, {Component} from "react";
 import './HomePage.css';
 import CreateDiscussionModal from "./DiscussionPage/CreateDiscussionModal";
-// import CreateDiscussionModal from "./DiscussionPage/CreateDiscussionModal";
-
 
 class HomePage extends Component {
     constructor(props){

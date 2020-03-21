@@ -9,9 +9,11 @@
     "react-d3-graph": "^2.3.0",
     "react-dom": "^16.10.0",
     "react-force-graph-2d": "^1.13.6",
+    "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "reactstrap": "^8.4.1",
+    "redux": "^4.0.5",
     "socket.io-client": "^2.3.0"
   },
   "scripts": {
