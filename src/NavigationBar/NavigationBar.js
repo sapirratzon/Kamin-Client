@@ -8,7 +8,8 @@ class NavigationBar extends Component {
 
     buttonClick = (path) => {
         this.props.history.push(path);
-    }
+    };
+    
     render() {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1" >

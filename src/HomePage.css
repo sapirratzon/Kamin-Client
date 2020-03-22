@@ -2,7 +2,6 @@
     text-align: center;
 }
 
-
 .headline {
     background-image: url("background.png");
     background-position: center;
@@ -11,6 +10,38 @@
     padding-top: 20%;
 }
 
-.col-sm-6{
-    border-color: black;
+form {
+    margin-top: 1rem;
 }
+
+form input[name="unique"] {
+    background-color: transparent;
+    border: 0;
+    color: white;
+    border-bottom: 2px solid whitesmoke;
+    border-radius: 0;
+    width: 30%;
+}
+
+.create-discussion{
+    margin-top: 10px;
+    alignment: center;
+}
+
+form input:focus {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.container{
+    font-weight: bold;
+}
+
+form input{
+    margin: auto;
+}
+
+form input .container::-webkit-input-placeholder {
+    color: white !important;
+}
+

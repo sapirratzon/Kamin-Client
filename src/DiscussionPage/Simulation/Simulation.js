@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
-import { rgb } from "d3";
+import {rgb} from "d3";
 
 class Simulation extends Component {
 
@@ -37,7 +37,7 @@ class Simulation extends Component {
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
         if (node["node"]["isAlerted"]) {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] })
+            this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]})
         }
         this.messagesCounter++;
         this.allMessages.push({
@@ -53,7 +53,9 @@ class Simulation extends Component {
             color: "#" + intToRGB(hashCode(node["node"]["author"])),
             name: node["node"]["author"],
             val: 0.5,
-            updateVal: function (value) { this.val += value; },
+            updateVal: function (value) {
+                this.val += value;
+            },
         });
         node["children"].forEach(child => {
             let link = {
@@ -62,9 +64,15 @@ class Simulation extends Component {
                 messagesNumber: 1,
                 width: 1,
                 color: rgb(32, 32, 32, 1),
-                updateWidth: function (value) { this.width = value; },
-                updateMessagesNumber: function (value) { this.messagesNumber += value; },
-                updateOpacity: function (value) { this.color = rgb(value[0], value[1], value[2], value[3]); },
+                updateWidth: function (value) {
+                    this.width = value;
+                },
+                updateMessagesNumber: function (value) {
+                    this.messagesNumber += value;
+                },
+                updateOpacity: function (value) {
+                    this.color = rgb(value[0], value[1], value[2], value[3]);
+                },
             };
             this.allLinks.push(link);
             this.getMessagesNodesLinks(child);
@@ -80,8 +88,9 @@ class Simulation extends Component {
         const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
         const idx = this.graphLinks.findIndex(currentLink => currentLink !== null &&
             currentLink.source.id === link.source && currentLink.target.id === link.target);
-        if (idx === -1) { this.graphLinks.unshift(link); }
-        else {
+        if (idx === -1) {
+            this.graphLinks.unshift(link);
+        } else {
             this.graphLinks[idx].updateMessagesNumber(1);
             let updatedLink = this.graphLinks.splice(this.graphLinks[idx], 1)[0];
             this.graphLinks.unshift(updatedLink);
@@ -106,8 +115,11 @@ class Simulation extends Component {
             currentLink => currentLink.source === link.source && currentLink.target === link.target);
         const idx = this.graphLinks.findIndex(
             currentLink => currentLink.source.id === link.source && currentLink.target.id === link.target);
-        if (linkIndex === -1) { this.graphLinks.splice(idx, 1); }
-        else { this.graphLinks[idx].updateMessagesNumber(-1); }
+        if (linkIndex === -1) {
+            this.graphLinks.splice(idx, 1);
+        } else {
+            this.graphLinks[idx].updateMessagesNumber(-1);
+        }
         this.updateWidthAll();
         this.updateOpacityAll();
         this.update(-1);
@@ -116,7 +128,9 @@ class Simulation extends Component {
     handleSimulateClick = async () => {
         while (this.currentMessageIndex + 1 < this.allMessages.length) {
             await this.handleNextClick();
-            await (async () => { await sleep(1000); })();
+            await (async () => {
+                await sleep(1000);
+            })();
         }
     };
 
@@ -129,7 +143,9 @@ class Simulation extends Component {
     };
 
     handleResetClick = () => {
-        while (this.currentMessageIndex !== 1) { this.handleBackClick(); }
+        while (this.currentMessageIndex !== 1) {
+            this.handleBackClick();
+        }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
@@ -139,19 +155,19 @@ class Simulation extends Component {
             <div id="simulation pt-2 pb-0">
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleResetClick}>Reset
+                            onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleBackClick}>Back
+                            onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleNextClick}>Next
+                            onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleShowAllClick}>All
+                            onClick={this.handleShowAllClick}>All
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleSimulateClick}>Simulate
+                            onClick={this.handleSimulateClick}>Simulate
                     </button>
 
                 </div>

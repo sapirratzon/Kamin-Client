@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import Messages from "./MessagesList"
 import "./Chat.css"
-import { rgb } from "d3";
+import {rgb} from "d3";
 import io from 'socket.io-client';
 
 
@@ -49,7 +49,9 @@ class Chat extends Component {
     updateGraph() {
         this.shownLinks = Array.from(this.linksMap.values());
         this.shownNodes = Array.from(this.nodesMap.values());
-        this.shownLinks.sort(function (a, b) { return b.timestamp - a.timestamp; });
+        this.shownLinks.sort(function (a, b) {
+            return b.timestamp - a.timestamp;
+        });
         this.updateLinksOpacity();
         this.updateLinksWidth();
     }
@@ -126,7 +128,7 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["isAlerted"]) {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
+            this.props.alertsHandler({"position": this.messagesCounter, "text": commentNode["node"]["actions"][0]})
         }
         this.messagesCounter++;
         this.shownMessages.push({
@@ -144,7 +146,9 @@ class Chat extends Component {
                 color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
                 name: commentNode["node"]["author"],
                 val: 0.5,
-                updateVal: function (value) { this.val += value; },
+                updateVal: function (value) {
+                    this.val += value;
+                },
             }
             this.nodesMap.set(commentNode["node"]["author"], node)
         }
@@ -159,13 +163,18 @@ class Chat extends Component {
                     messagesNumber: 1,
                     width: 1,
                     color: rgb(32, 32, 32, 1),
-                    updateWidth: function (value) { this.width = value; },
-                    updateMessagesNumber: function (value) { this.messagesNumber += value; },
-                    updateOpacity: function (value) { this.color = rgb(value[0], value[1], value[2], value[3]); },
+                    updateWidth: function (value) {
+                        this.width = value;
+                    },
+                    updateMessagesNumber: function (value) {
+                        this.messagesNumber += value;
+                    },
+                    updateOpacity: function (value) {
+                        this.color = rgb(value[0], value[1], value[2], value[3]);
+                    },
                 };
                 this.linksMap.set(key, link);
-            }
-            else {
+            } else {
                 const link = this.linksMap.get(key);
                 link.timestamp = childComment["node"]["timestamp"];
                 link.messagesNumber += 1;
@@ -180,7 +189,8 @@ class Chat extends Component {
         return (
             <div className="chat">
                 <Messages
-                    messages={this.props.messages} isSimulation={this.props.isSimulation} newMessageHandler={this.sendComment.bind(this)}
+                    messages={this.props.messages} isSimulation={this.props.isSimulation}
+                    newMessageHandler={this.sendComment.bind(this)}
                 />
             </div>);
     }

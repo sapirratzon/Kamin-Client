@@ -1,12 +1,12 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import './HomePage.css';
 import CreateDiscussionModal from "./DiscussionPage/Modals/CreateDiscussionModal";
-import EnterSimulationCodeModal from "./DiscussionPage/Modals/EnterSimulationCodeModal";
 
 class HomePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isSimulation: "false",
             discussionModal: false,
             simulationCodeModal: false
         }
@@ -15,50 +15,36 @@ class HomePage extends Component {
     render() {
         return (
             <div className="HomePage">
-                <div className="headline" />
+                <div className="headline"/>
                 <div className="container">
-                    <div className="row">
-                        <div className="col-sm-6">
-                            <h3>Simulation</h3>
-                            <p>Enter to simulate discussion</p>
-                            <p>You will see a real time analysis on this discussion</p>
-                            <button type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.updateSimulationCodeModalHandler(true)}>Start Simulation
-                            </button>
-                            <EnterSimulationCodeModal isOpen={this.state.simulationCodeModal}
-                                updateVisibility={this.updateSimulationCodeModalHandler.bind(this)}
-                                updateHistoryPath={this.updateSimulationCode.bind(this)} />
-                        </div>
-                        <div className="col-sm-6">
-                            <h3>Real-time discussion</h3>
-                            <p>You can join quickly to an exist discussion</p>
-                            <button type="button" className="btn btn-info btn-sm" onClick={this.realTimeHandler}>Enter</button>
-                        </div>
-                    </div>
-                    <div>
+                    <div className="create-discussion">
                         <button type="button" className="btn btn-info btn-sm"
-                            onClick={() => this.updateModalHandler(true)}>Create a new discussion
+                                onClick={() => this.updateModalHandler(true)}>Create New Discussion
                         </button>
                         <CreateDiscussionModal isOpen={this.state.discussionModal}
-                            updateVisibility={this.updateModalHandler.bind(this)}
-                            path={this.props.history} />
+                                               updateVisibility={this.updateModalHandler.bind(this)}
+                                               path={this.props.history}/>
                     </div>
+                    <form onSubmit={this.discussionHandler}>
+                        <p>Join to exists discussion</p>
+                        <input type="text" className="form-control" name="unique"
+                               placeholder="Enter code"/>
+                        <button className="btn btn-info btn-sm"
+                                onClick={() => this.discussionTypeHandler("true")}>Simulation
+                        </button>
+                        <button className="btn btn-info btn-sm"
+                                onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
+                        </button>
+                    </form>
                 </div>
             </div>
         );
     }
 
-    simulationHandler = () => {
-        let path = `Discussion/true`;
-        this.props.history.push(path);
-    };
-
-    updateSimulationCode = (path) => {
-        this.props.history.push(path);
-    };
-
-    realTimeHandler = () => {
-        let path = `Discussion/false`;
+    discussionHandler = (event) => {
+        event.preventDefault();
+        let uniqueCode = event.target.unique.value;
+        let path = `Discussion/` + this.state.isSimulation + "/" + uniqueCode;
         this.props.history.push(path);
     };
 
@@ -68,9 +54,9 @@ class HomePage extends Component {
         });
     };
 
-    updateSimulationCodeModalHandler = (isOpen) => {
+    discussionTypeHandler = (isSimulation) => {
         this.setState({
-            simulationCodeModal: isOpen
+            isSimulation: isSimulation
         });
     };
 
@@ -82,7 +68,7 @@ class HomePage extends Component {
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ title: title, categories: categories }));
+        xhr.send(JSON.stringify({title: title, categories: categories}));
     };
 
     addComment(discussion_id, description) {
