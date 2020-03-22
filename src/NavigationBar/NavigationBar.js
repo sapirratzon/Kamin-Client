@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import "./Navigation.css"
 
 class NavigationBar extends Component {
-    constructor(props) {
-        super(props);
-    }
 
-    buttonClick = (path) => {
+    changePath = (path) => {
         this.props.history.push(path);
     };
-    
-    render() {
+
+    logOut = (e) => {
+        e.preventDefault();
+        this.props.onLogOut();
+    };
+
+    render(props) {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1" >
                 <div className="container-fluid px-5">
@@ -27,16 +30,25 @@ class NavigationBar extends Component {
                                 <a className="nav-link" href="/">Home <span className="sr-only">(current)</span></a>
                             </li>
                         </ul>
-                        <ul className="navbar-nav ml-auto">
-                            <li className="nav-item" onClick={() => this.buttonClick('/login')}>
-                                <a className="nav-link"><i className="fas fa-sign-in-alt pr-2" />Sign
-                                In <span className="sr-only">(current)</span></a>
-                            </li>
-                            <li className="nav-item" onClick={() => this.buttonClick('/registration')}>
-                                <a className="nav-link" href="/registration/"><i className="fas fa-user-plus pr-2" />Sign
-                                Up <span className="sr-only">(current)</span></a>
-                            </li>
-                        </ul>
+                        {this.props.currentUser ?
+                            <ul className="navbar-nav ml-auto">
+                                <li className="nav-item">
+                                    <a className="nav-link">Welcome, {this.props.currentUser}!<span className="sr-only">(current)</span></a>
+                                </li>
+                                <li className="nav-item" onClick={this.logOut}>
+                                    <a className="nav-link"><i className="fas fa-sign-out-alt pr-2" />Log Out<span className="sr-only">(current)</span></a>
+                                </li>
+                            </ul>
+                            : <ul className="navbar-nav ml-auto">
+                                <li className="nav-item" onClick={() => this.changePath('/login')}>
+                                    <a className="nav-link"><i className="fas fa-sign-in-alt pr-2" />Sign
+                            In <span className="sr-only">(current)</span></a>
+                                </li>
+                                <li className="nav-item" onClick={() => this.changePath('/registration')}>
+                                    <a className="nav-link" href="/registration/"><i className="fas fa-user-plus pr-2" />Sign
+                            Up <span className="sr-only">(current)</span></a>
+                                </li>
+                            </ul>}
                     </div>
                 </div>
             </nav >
@@ -44,4 +56,16 @@ class NavigationBar extends Component {
     };
 }
 
-export default NavigationBar;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationBar);
