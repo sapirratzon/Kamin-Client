@@ -27,7 +27,7 @@ class HomePage extends Component {
                             path={this.props.history} />
                     </div>
                     <form onSubmit={this.discussionHandler}>
-                        <p>Join to exists discussion</p>
+                        <p>Join existing discussions:</p>
                         <input type="text" className="form-control" name="unique"
                             placeholder="Enter code" />
                         <button className="btn btn-info btn-sm"

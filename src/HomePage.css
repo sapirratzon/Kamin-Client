@@ -17,7 +17,6 @@ form {
 form input[name="unique"] {
     background-color: transparent;
     border: 0;
-    color: white;
     border-bottom: 2px solid whitesmoke;
     border-radius: 0;
     width: 30%;
