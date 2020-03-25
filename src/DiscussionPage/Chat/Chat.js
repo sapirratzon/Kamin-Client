@@ -67,7 +67,7 @@ class Chat extends Component {
         this.updateGraph();
     }
 
-    sendComment(targetId, message, depth) {
+    sendComment(targetId, author, message, depth) {
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
