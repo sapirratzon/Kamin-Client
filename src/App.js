@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Route } from "react-router-dom";
 import './App.css';
-import HomePage from "./HomePage";
+import HomePage from "./HomePage/HomePage";
 import Discussion from "./DiscussionPage/Discussion"
 import NavigationBar from "./NavigationBar/NavigationBar"
 import Login from './LoginPage/Login'
 import Registration from './RegistrationPage/Registration'
+import Moderators from './ModeratorsPage/ModeratorsPage'
 
 class App extends Component {
     render() {
@@ -21,6 +22,7 @@ class App extends Component {
                                 simulationCode={props.match.params.simulationCode} />} />
                         <Route path="/login/" component={Login} />
                         <Route path="/registration/" component={Registration} />
+                        <Route path="/moderatorsManagement/" component={Moderators} />
 
                     </div>
                 </div>
