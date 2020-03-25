@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
@@ -66,9 +67,9 @@ class Chat extends Component {
         this.updateGraph();
     }
 
-    sendComment(targetId, author, message, depth) {
+    sendComment(targetId, message, depth) {
         const comment = JSON.stringify({
-            "author": "Sap",
+            "author": this.props.currentUser,
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
@@ -210,4 +211,11 @@ function intToRGB(i) {
     return "00000".substring(0, 6 - c.length) + c;
 }
 
-export default Chat;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser
+    };
+};
+
+
+export default connect(mapStateToProps)(Chat);
