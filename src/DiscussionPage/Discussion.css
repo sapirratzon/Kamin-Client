@@ -18,3 +18,8 @@ html, body{
     height:100%;
     width:100%;
 }
+
+.chatwindow{
+    border: solid 3px #4285f4;
+    height: 82%;
+}
