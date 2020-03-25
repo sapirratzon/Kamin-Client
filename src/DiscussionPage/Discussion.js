@@ -50,6 +50,7 @@ class Discussion extends Component {
     };
 
     setTitle = (title) => {
+        console.log('set title');
         this.setState(
             {
                 title: title
@@ -60,11 +61,12 @@ class Discussion extends Component {
     render(props) {
         return (
             <div className="App">
-                <div className="text-center">
+                <div className="text-center text-body">
                     <h1><b>{this.state.title}</b></h1>
                 </div>
+                <hr width="95%"/>
                 <div className="row px-5 content">
-                    <div className="chat col-6 py-3">
+                    <div className="chatwindow col-6 py-3">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
                             messagesHandler={this.updateMessagesHandler.bind(this)}
                             alertsHandler={this.updateAlertsHandler.bind(this)}
@@ -75,7 +77,9 @@ class Discussion extends Component {
                         {this.props.isSimulation === 'true' ?
                             <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
                                 alertsHandler={this.updateAlertsHandler.bind(this)}
-                                discussionId={this.props.simulationCode} />
+                                discussionId={this.props.simulationCode} 
+                                setTitle={this.setTitle}
+                                />
                             : null}
                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         <AlertList alerts={this.state.shownAlerts} />

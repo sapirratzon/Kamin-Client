@@ -1,6 +1,6 @@
 #alerts-list{
-    border: 5px solid #006BA6;
-    height:20%;
+    border: 3px solid #4285f4;
+    height:11.5%;
     overflow: auto;
     list-style-type:none
 }

@@ -43,12 +43,12 @@ class Message extends Component {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
         return (
-            <li className="Messages-message">
+            <li className="Messages-message" style={{"marginLeft": depthString}}>
+                <div class="vl"/>
                 <span
                     className="avatar"
                     style={{
                         "backgroundColor": this.props.member.color,
-                        "marginLeft": depthString
                     }}
                 />
                 <div className="Message-content">

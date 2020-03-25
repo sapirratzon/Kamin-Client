@@ -25,6 +25,7 @@ class Simulation extends Component {
         xhr.addEventListener('load', () => {
             let response = JSON.parse(xhr.responseText);
             this.getMessagesNodesLinks(response["tree"]);
+            this.props.setTitle(response["discussion"]["title"]);
             this.nodesMap.set(this.allNodes[0].id, this.allNodes[0]);
             this.shownMessages = this.allMessages.slice(0, 1);
             this.shownNodes = this.allNodes.slice(0, 1);
