@@ -8,7 +8,8 @@ class Login extends Component {
             username: '',
             password: '',
             submitted: false,
-            loginMessage: ''
+            loginMessage: '',
+            messageType:''
         };
     }
 
@@ -29,11 +30,13 @@ class Login extends Component {
                 setTimeout(() => this.props.history.push('/'), 2000);
                 this.setState({
                     loginMessage: 'Login successfully! Redirecting to the homepage.',
+                    messageType:'text-success'
                 })
             });
             xhr.addEventListener('progress', () => {
                 this.setState({
-                    loginMessage: 'Incorrect username or password',
+                    loginMessage: 'Incorrect username or password.',
+                    messageType:'text-danger'
                 })
             });
             xhr.open('GET', 'http://localhost:5000/api/login');
@@ -45,29 +48,31 @@ class Login extends Component {
     render() {
         const { username, password, submitted } = this.state;
         return (
-            <div className="col-md-6 col-md-offset-3">
-                <h2>Login</h2>
-                <form name="form" onSubmit={this.handleSubmit}>
-                    <div>
-                        <label htmlFor="username">Username</label>
-                        <input type="text" className="form-control" name="username" value={username} onChange={this.handleChange} />
-                        {submitted && !username &&
-                            <div className="help-block">Username is required</div>
-                        }
-                    </div>
-                    <div>
-                        <label htmlFor="password">Password</label>
-                        <input type="password" className="form-control" name="password" value={password} onChange={this.handleChange} />
-                        {submitted && !password &&
-                            <div className="help-block">Password is required</div>
-                        }
-                    </div>
-                    <div className="form-group">
-                        <button className="btn btn-primary">Login</button>
-                    </div>
-                </form>
-                {submitted ? <h4>{this.state.loginMessage}</h4> : null}
-            </div>
+            <React.Fragment>
+                <div className="container col-md-2 p-5">
+                    <h2>Login</h2>
+                    <form name="form" onSubmit={this.handleSubmit}>
+                        <div>
+                            <label htmlFor="username">Username</label>
+                            <input type="text" className="form-control" name="username" value={username} onChange={this.handleChange} />
+                            {submitted && !username &&
+                                <div className="help-block">Username is required</div>
+                            }
+                        </div>
+                        <div>
+                            <label htmlFor="password">Password</label>
+                            <input type="password" className="form-control" name="password" value={password} onChange={this.handleChange} />
+                            {submitted && !password &&
+                                <div className="help-block">Password is required</div>
+                            }
+                        </div>
+                        <div className="form-group">
+                            <button className="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+                {submitted ? <h3 class={"confirmMessage text-center " + this.state.messageType}><b>{this.state.loginMessage}</b></h3> : null}
+            </React.Fragment>
         );
     }
 }
