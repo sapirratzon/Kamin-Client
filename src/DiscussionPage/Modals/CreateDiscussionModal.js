@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Modal from 'react-bootstrap4-modal';
 import "./CreateDiscussionModal.css"
-import io from "socket.io-client";
 
 class CreateDiscussionModal extends Component {
     constructor() {
         super();
-        this.socket = io('http://localhost:5000/');
     }
 
     createDiscussion = (event) => {
@@ -16,28 +14,24 @@ class CreateDiscussionModal extends Component {
         let description = event.target.description.value;
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            let discussion_id = JSON.parse(xhr.responseText)["discussion"];
-            this.addMessage(discussion_id, 0, this.props.currentUser, description, 0);
+            let discussion_id = JSON.parse(xhr.responseText)["discussionId"];
+            console.log("Created Discussion: " + discussion_id);
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ title: title, categories: [] }));
+        const comment = JSON.stringify({
+            "author": this.props.currentUser,
+            "text": description,
+            "parentId": null,
+            "discussionId": "",
+            "extra_data": null,
+            "time_stamp": 0,
+            "depth": 0
+        });
+        xhr.send(JSON.stringify({ title: title, categories: [], comment: comment }));
         this.updateVisibility(false);
     };
 
-
-    addMessage = (discussionId, targetId, author, message, depth) => {
-        const comment = JSON.stringify({
-            "author": author,
-            "text": message,
-            "parentId": targetId,
-            "discussionId": discussionId,
-            "extra_data": null,
-            "time_stamp": 0,
-            "depth": depth
-        });
-        this.socket.emit('add comment', comment)
-    };
 
     updateVisibility = (isOpen) => {
         this.props.updateVisibility(isOpen);
