@@ -1,4 +1,5 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
+import { connect } from 'react-redux'
 import './HomePage.css';
 import CreateDiscussionModal from "./DiscussionPage/Modals/CreateDiscussionModal";
 
@@ -15,31 +16,45 @@ class HomePage extends Component {
     render() {
         return (
             <div className="HomePage">
-                <div className="headline"/>
-                <div className="container">
+                <div className="headline" />
+                {this.props.currentUser ? <div className="container">
                     <div className="create-discussion">
                         <button type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.updateModalHandler(true)}>Create New Discussion
+                            onClick={() => this.updateModalHandler(true)}>Create New Discussion
                         </button>
                         <CreateDiscussionModal isOpen={this.state.discussionModal}
-                                               updateVisibility={this.updateModalHandler.bind(this)}
-                                               path={this.props.history}/>
+                            updateVisibility={this.updateModalHandler.bind(this)}
+                            path={this.props.history} />
                     </div>
                     <form onSubmit={this.discussionHandler}>
                         <p>Join to exists discussion</p>
                         <input type="text" className="form-control" name="unique"
-                               placeholder="Enter code"/>
+                            placeholder="Enter code" />
                         <button className="btn btn-info btn-sm"
-                                onClick={() => this.discussionTypeHandler("true")}>Simulation
+                            onClick={() => this.discussionTypeHandler("true")}>Simulation
                         </button>
                         <button className="btn btn-info btn-sm"
-                                onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
+                            onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
                         </button>
                     </form>
-                </div>
+                </div> : <div>
+                        <h1>Hi and welcome to Kamin!</h1>
+                        <h3>In order to use the application you need to create an account or sign in if you already have one.</h3>
+                        <button type="button" className="btn btn-info btn-sm"
+                            onClick={() => this.changePath('/login')}>Sign in
+                        </button>
+                        <button type="button" className="btn btn-info btn-sm"
+                            onClick={() => this.changePath('/registration')}>Sign up
+                        </button>
+                    </div>}
+
             </div>
         );
     }
+
+    changePath = (path) => {
+        this.props.history.push(path);
+    };
 
     discussionHandler = (event) => {
         event.preventDefault();
@@ -68,11 +83,15 @@ class HomePage extends Component {
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({title: title, categories: categories}));
+        xhr.send(JSON.stringify({ title: title, categories: categories }));
     };
 
-    addComment(discussion_id, description) {
-    }
 }
 
-export default HomePage;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser
+    };
+};
+
+export default connect(mapStateToProps)(HomePage);
