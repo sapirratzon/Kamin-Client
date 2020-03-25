@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './Discussion.css';
 import Chat from "./Chat/Chat";
 import Simulation from './Simulation/Simulation';
@@ -15,10 +15,8 @@ class Discussion extends Component {
             shownLinks: [],
             shownAlerts: [],
             allAlerts: [],
-            // discussionId: "5e74b8556bbd9546ab101491", Test 1
-            // discussionId: "5e76687d456abd7add8485a3", Test 2
-            // discussionId: "5e74b0106bbd9546ab10148c",
-            discussionId: this.props.simulationCode
+            discussionId: this.props.simulationCode,
+            title: ""
         };
         this.messages = [];
         this.nodes = [];
@@ -51,24 +49,36 @@ class Discussion extends Component {
         this.state.allAlerts.push(newAlert);
     };
 
+    setTitle = (title) => {
+        this.setState(
+            {
+                title: title
+            }
+        );
+    };
+
     render(props) {
         return (
             <div className="App">
+                <div className="text-center">
+                    <h1><b>{this.state.title}</b></h1>
+                </div>
                 <div className="row px-5 content">
                     <div className="chat col-6 py-3">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
-                              messagesHandler={this.updateMessagesHandler.bind(this)}
-                              alertsHandler={this.updateAlertsHandler.bind(this)}
-                              discussionId={this.props.simulationCode}/>
+                            messagesHandler={this.updateMessagesHandler.bind(this)}
+                            alertsHandler={this.updateAlertsHandler.bind(this)}
+                            discussionId={this.props.simulationCode}
+                            setTitle={this.setTitle} />
                     </div>
                     <div className="col-6">
                         {this.props.isSimulation === 'true' ?
                             <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
-                                        alertsHandler={this.updateAlertsHandler.bind(this)}
-                                        discussionId={this.props.simulationCode}/>
+                                alertsHandler={this.updateAlertsHandler.bind(this)}
+                                discussionId={this.props.simulationCode} />
                             : null}
-                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
-                        <AlertList alerts={this.state.shownAlerts}/>
+                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
+                        <AlertList alerts={this.state.shownAlerts} />
                     </div>
                 </div>
             </div>

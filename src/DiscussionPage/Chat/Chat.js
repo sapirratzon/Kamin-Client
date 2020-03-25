@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Messages from "./MessagesList"
 import "./Chat.css"
-import {rgb} from "d3";
+import { rgb } from "d3";
 import io from 'socket.io-client';
 
 
@@ -30,12 +30,12 @@ class Chat extends Component {
                 let response = JSON.parse(xhr.responseText);
                 this.setState(
                     {
-                        root: response["tree"]
+                        root: response["tree"],
                     }
                 );
+                this.props.setTitle(response["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
-
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
@@ -128,7 +128,7 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["isAlerted"]) {
-            this.props.alertsHandler({"position": this.messagesCounter, "text": commentNode["node"]["actions"][0]})
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
         }
         this.messagesCounter++;
         this.shownMessages.push({
