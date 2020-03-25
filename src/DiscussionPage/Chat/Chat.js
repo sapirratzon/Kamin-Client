@@ -213,7 +213,8 @@ function intToRGB(i) {
 
 const mapStateToProps = state => {
     return {
-        currentUser: state.currentUser
+        currentUser: state.currentUser,
+        token:state.token
     };
 };
 
