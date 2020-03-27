@@ -14,7 +14,7 @@ class CreateDiscussionModal extends Component {
         let description = event.target.description.value;
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            let discussion_id = JSON.parse(xhr.responseText)["discussionId"];
+            let discussion_id = JSON.parse(xhr.responseText)["discussion_id"];
             console.log("Created Discussion: " + discussion_id);
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
@@ -28,7 +28,7 @@ class CreateDiscussionModal extends Component {
             "time_stamp": 0,
             "depth": 0
         });
-        xhr.send(JSON.stringify({ title: title, categories: [], comment: comment }));
+        xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment }));
         this.updateVisibility(false);
     };
 
