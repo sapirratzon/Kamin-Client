@@ -61,7 +61,7 @@ class Chat extends Component {
 
             this.socket.emit('join', data);
 
-            this.socket.on('add comment', (res) => {
+            this.socket.on('message', (res) => {
                 this.addComment(res.comment);
             });
         }
