@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
 import './HomePage.css';
-import CreateDiscussionModal from "./DiscussionPage/Modals/CreateDiscussionModal";
+import CreateDiscussionModal from "../DiscussionPage/Modals/CreateDiscussionModal";
 
 class HomePage extends Component {
     constructor(props) {
@@ -18,14 +18,17 @@ class HomePage extends Component {
             <div className="HomePage">
                 <div className="headline" />
                 {this.props.currentUser ? <div className="container">
-                    <div className="create-discussion">
-                        <button type="button" className="btn btn-info btn-sm"
-                            onClick={() => this.updateModalHandler(true)}>Create New Discussion
-                        </button>
-                        <CreateDiscussionModal isOpen={this.state.discussionModal}
-                            updateVisibility={this.updateModalHandler.bind(this)}
-                            path={this.props.history} />
-                    </div>
+                    {this.props.userType == 'moderatorUser' || this.props.userType == 'rootUser' ?
+                        <React.Fragment>
+                            <p>Moderation tools:</p>
+                            <button type="button" className="btn btn-info btn-sm"
+                                onClick={() => this.updateModalHandler(true)}>Create New Discussion</button>
+                            {this.props.userType == 'rootUser' ? <button type="button" className="btn btn-info btn-sm"
+                                onClick={() => this.changePath('/moderatorsManagement')}>Manage moderators</button> : null}
+                            <CreateDiscussionModal isOpen={this.state.discussionModal}
+                                updateVisibility={this.updateModalHandler.bind(this)}
+                                path={this.props.history} />
+                        </React.Fragment> : null}
                     <form onSubmit={this.discussionHandler}>
                         <p>Join existing discussions:</p>
                         <input type="text" className="form-control" name="unique"
@@ -90,7 +93,8 @@ class HomePage extends Component {
 
 const mapStateToProps = state => {
     return {
-        currentUser: state.currentUser
+        currentUser: state.currentUser,
+        userType: state.userType
     };
 };
 

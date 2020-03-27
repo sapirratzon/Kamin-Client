@@ -3,7 +3,7 @@
 }
 
 .headline {
-    background-image: url("background.png");
+    background-image: url("../background.png");
     background-position: center;
     background-repeat: no-repeat;
     background-color: white;
@@ -24,7 +24,6 @@ form input[name="unique"] {
 
 .create-discussion{
     margin-top: 10px;
-    alignment: center;
 }
 
 form input:focus {
@@ -43,4 +42,3 @@ form input{
 form input .container::-webkit-input-placeholder {
     color: white !important;
 }
-

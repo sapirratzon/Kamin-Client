@@ -9,7 +9,7 @@ class Login extends Component {
             password: '',
             submitted: false,
             loginMessage: '',
-            messageType:''
+            messageType: ''
         };
     }
 
@@ -26,17 +26,29 @@ class Login extends Component {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', () => {
                 let token = JSON.parse(xhr.responseText)['token'];
-                this.props.onLogin(username, token);
+                let userType;
+                switch (JSON.parse(xhr.responseText)['permission']) {
+                    case 1:
+                        userType = 'regularUser';
+                        break;
+                    case 2:
+                        userType = 'moderatorUser';
+                        break;
+                    case 3:
+                        userType = 'rootUser';
+                        break;
+                }
+                this.props.onLogin(username, token, userType);
                 setTimeout(() => this.props.history.push('/'), 2000);
                 this.setState({
                     loginMessage: 'Login successfully! Redirecting to the homepage.',
-                    messageType:'text-success'
+                    messageType: 'text-success'
                 })
             });
             xhr.addEventListener('progress', () => {
                 this.setState({
                     loginMessage: 'Incorrect username or password.',
-                    messageType:'text-danger'
+                    messageType: 'text-danger'
                 })
             });
             xhr.open('GET', 'http://localhost:5000/api/login');
@@ -79,7 +91,7 @@ class Login extends Component {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogin: (username, token) => dispatch({ type: 'LOGIN', payload: { username: username, token: token } })
+        onLogin: (username, token, userType) => dispatch({ type: 'LOGIN', payload: { username: username, token: token, userType: userType } })
     };
 };
 
