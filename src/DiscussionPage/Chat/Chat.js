@@ -40,6 +40,7 @@ class Chat extends Component {
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
             xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
+            xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhr.send();
             this.socket.on('add comment', (res) => {
                 this.addComment(res.comment);
