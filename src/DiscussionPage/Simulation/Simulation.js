@@ -9,6 +9,9 @@ class Simulation extends Component {
         super(props);
         this.graphLinks = [];
         this.nodesMap = new Map();
+        this.nodesChildren = new Map();
+        this.messagesByTimestamp = [];
+        this.timestampIndex = 1;
         this.currentMessageIndex = 1;
         this.allMessages = [];
         this.allNodes = [];
@@ -24,16 +27,27 @@ class Simulation extends Component {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
             let response = JSON.parse(xhr.responseText);
+            console.log(response);
             this.getMessagesNodesLinks(response["tree"]);
             this.props.setTitle(response["discussion"]["title"]);
             this.nodesMap.set(this.allNodes[0].id, this.allNodes[0]);
+            this.sortAll();
             this.shownMessages = this.allMessages.slice(0, 1);
             this.shownNodes = this.allNodes.slice(0, 1);
+            this.nodesChildren.set(this.shownMessages[0].id, []);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
         xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
         xhr.send();
     }
+
+    sortAll = () => {
+        this.messagesByTimestamp.forEach(structure => {
+            structure.sort(function (a, b) {
+                return a.timestamp - b.timestamp;
+            });
+        });
+    };
 
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
@@ -47,13 +61,16 @@ class Simulation extends Component {
                 color: "#" + intToRGB(hashCode(node["node"]["author"])),
             },
             text: node["node"]["text"],
-            depth: node["node"]["depth"]
+            depth: node["node"]["depth"],
+            timestamp: node["node"]["time_stamp"]
         });
         this.allNodes.push({
             id: node["node"]["author"],
             color: "#" + intToRGB(hashCode(node["node"]["author"])),
             name: node["node"]["author"],
+            timestamp: node["node"]["time_stamp"],
             val: 0.5,
+            children: [],
             updateVal: function (value) {
                 this.val += value;
             },
@@ -64,6 +81,7 @@ class Simulation extends Component {
                 target: node["node"]["author"],
                 messagesNumber: 1,
                 width: 1,
+                timestamp: node["node"]["time_stamp"],
                 color: rgb(32, 32, 32, 1),
                 updateWidth: function (value) {
                     this.width = value;
@@ -81,9 +99,30 @@ class Simulation extends Component {
     };
 
     handleNextClick = () => {
-        if (this.currentMessageIndex === this.allMessages.length) return;
-        const nextMessage = this.allMessages[this.currentMessageIndex];
+        if (this.timestampIndex === this.messagesByTimestamp.length) return;
+        const nextMessage = this.messagesByTimestamp[this.timestampIndex];
+        this.timestampIndex++;
         const userName = nextMessage["member"]["username"];
+        const parentId = nextMessage["member"]["parentId"];
+        const parentIndex = this.shownMessages.indexOf(message => message.id === parentId);
+        let children = this.nodesChildren.get(parentId);
+        // case: the parent doesn't have children yet
+        if (children.length > 0){
+            this.shownMessages.splice(parentIndex + 1, 0, nextMessage);
+            children.push(nextMessage.id);
+        }
+        // case: the parent have children, want to find the last one
+        else {
+            const lastChildId = children[children.length - 1];
+            const prevMessageIndex = this.shownMessages.find(node => node.id === lastChildId);
+            this.shownMessages.splice(prevMessageIndex + 1, 0, nextMessage);
+        }
+        // add the child to the parent's children array
+        children.push(nextMessage.id);
+        this.nodesChildren.set(parentId, children); // add the node to the children list of the parent
+        // if (this.currentMessageIndex === this.allMessages.length) return;
+        // const nextMessage = this.allMessages[this.currentMessageIndex];
+        // const userName = nextMessage["member"]["username"];
         if (!this.nodesMap.has(userName))
             this.nodesMap.set(userName, this.allNodes.find(node => node.id === userName));
         const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
@@ -127,7 +166,7 @@ class Simulation extends Component {
     };
 
     handleSimulateClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
+        while (this.currentMessageIndex + 1 < this.messagesByTimestamp.length) {
             await this.handleNextClick();
             await (async () => {
                 await sleep(1000);
@@ -136,7 +175,7 @@ class Simulation extends Component {
     };
 
     handleShowAllClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
+        while (this.currentMessageIndex + 1 < this.messagesByTimestamp.length) {
             await this.handleNextClick();
             await sleep(1);
         }
@@ -177,7 +216,7 @@ class Simulation extends Component {
     }
 
     update(dif) {
-        this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + dif);
+        // this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + dif);
         this.shownLinks = Array.from(this.graphLinks);
         this.shownNodes = Array.from(this.nodesMap.values());
         this.currentMessageIndex = this.currentMessageIndex + dif;

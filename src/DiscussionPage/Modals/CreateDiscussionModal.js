@@ -4,9 +4,6 @@ import Modal from 'react-bootstrap4-modal';
 import "./CreateDiscussionModal.css"
 
 class CreateDiscussionModal extends Component {
-    constructor() {
-        super();
-    }
 
     createDiscussion = (event) => {
         event.preventDefault();
@@ -19,13 +16,14 @@ class CreateDiscussionModal extends Component {
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
         xhr.setRequestHeader("Content-Type", "application/json");
+        console.log(Date.now());
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": description,
             "parentId": null,
             "discussionId": "",
             "extra_data": null,
-            "time_stamp": 0,
+            "time_stamp": Date.now(),
             "depth": 0
         });
         xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment }));

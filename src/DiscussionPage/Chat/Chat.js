@@ -4,6 +4,7 @@ import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
 import io from 'socket.io-client';
+import reducer from "../../Store/reducer";
 
 
 class Chat extends Component {
@@ -15,8 +16,6 @@ class Chat extends Component {
         this.shownLinks = [];
         this.linksMap = new Map();
         this.nodesMap = new Map();
-        this.messagesCounter = 0;
-        this.currentMessageIndex = 1;
         this.messagesCounter = 0;
         this.state = {
             root: null
@@ -34,6 +33,7 @@ class Chat extends Component {
                         root: response["tree"],
                     }
                 );
+                console.log(this.state.root);
                 this.props.setTitle(response["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
@@ -68,13 +68,14 @@ class Chat extends Component {
     }
 
     sendComment(targetId, author, message, depth) {
+        console.log(reducer);
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
             "extra_data": null,
-            "time_stamp": 0,
+            "time_stamp": Date.now(),
             "depth": depth
         });
         this.socket.emit('add comment', comment)
@@ -139,28 +140,29 @@ class Chat extends Component {
                 color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
             },
             text: commentNode["node"]["text"],
-            depth: commentNode["node"]["depth"]
+            depth: commentNode["node"]["depth"],
+            timestamp: commentNode["node"]["time_stamp"]
         });
         if (!this.nodesMap.has(commentNode["node"]["author"])) {
             let node = {
                 id: commentNode["node"]["author"],
                 color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
                 name: commentNode["node"]["author"],
+                timestamp: commentNode["node"]["time_stamp"],
                 val: 0.5,
                 updateVal: function (value) {
                     this.val += value;
                 },
-            }
+            };
             this.nodesMap.set(commentNode["node"]["author"], node)
         }
-
         commentNode["children"].forEach(childComment => {
             const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
             if (!this.linksMap.has(key)) {
                 const link = {
                     source: childComment["node"]["author"],
                     target: commentNode["node"]["author"],
-                    timestamp: childComment["node"]["timestamp"],
+                    timestamp: childComment["node"]["time_stamp"],
                     messagesNumber: 1,
                     width: 1,
                     color: rgb(32, 32, 32, 1),
@@ -177,7 +179,7 @@ class Chat extends Component {
                 this.linksMap.set(key, link);
             } else {
                 const link = this.linksMap.get(key);
-                link.timestamp = childComment["node"]["timestamp"];
+                link.timestamp = childComment["node"]["time_stamp"];
                 link.messagesNumber += 1;
                 this.nodesMap.get(link.source).updateVal(0.02);
             }
@@ -196,7 +198,7 @@ class Chat extends Component {
             </div>);
     }
 
-};
+}
 
 function hashCode(str) {
     let hash = 0;
