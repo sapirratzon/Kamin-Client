@@ -16,8 +16,6 @@ class Chat extends Component {
         this.linksMap = new Map();
         this.nodesMap = new Map();
         this.messagesCounter = 0;
-        this.currentMessageIndex = 1;
-        this.messagesCounter = 0;
         this.state = {
             root: null
         };
@@ -42,7 +40,8 @@ class Chat extends Component {
             // xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
             // xhr.send();
 
-            this.socket.on('join_room', (response) => {
+            this.socket.on('join room', (response) => {
+                this.reloadChat();
                 this.setState(
                     {
                         root: response["tree"],
@@ -53,6 +52,8 @@ class Chat extends Component {
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
+
+            this.socket.on('user joined', (response) => console.log(response))
 
             const data = {
                 discussion_id: this.props.discussionId,
@@ -83,6 +84,7 @@ class Chat extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
+        this.messagesCounter = 0;
         this.loadDiscussion(this.state.root);
         this.updateGraph();
     }
