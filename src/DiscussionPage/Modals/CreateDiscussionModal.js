@@ -18,6 +18,7 @@ class CreateDiscussionModal extends Component {
             console.log("Created Discussion: " + discussion_id);
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
         const comment = JSON.stringify({
             "author": this.props.currentUser,
@@ -29,6 +30,7 @@ class CreateDiscussionModal extends Component {
             "depth": 0
         });
         xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment }));
+        
         this.updateVisibility(false);
     };
 
@@ -65,7 +67,8 @@ class CreateDiscussionModal extends Component {
 
 const mapStateToProps = state => {
     return {
-        currentUser: state.currentUser
+        currentUser: state.currentUser,
+        token:state.token
     };
 };
 

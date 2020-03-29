@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
-import {rgb} from "d3";
+import { rgb } from "d3";
+import { connect } from 'react-redux'
+import io from 'socket.io-client';
+
 
 class Simulation extends Component {
 
@@ -18,12 +21,11 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
+        this.socket = io('http://localhost:5000/');
     }
 
     componentDidMount() {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let response = JSON.parse(xhr.responseText);
+        this.socket.on('join room', (response) => {
             this.getMessagesNodesLinks(response["tree"]);
             this.props.setTitle(response["discussion"]["title"]);
             this.nodesMap.set(this.allNodes[0].id, this.allNodes[0]);
@@ -31,14 +33,18 @@ class Simulation extends Component {
             this.shownNodes = this.allNodes.slice(0, 1);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
-        xhr.send();
+        const data = {
+            discussion_id: this.props.discussionId,
+            token: this.props.token
+        }
+        this.socket.emit('join', data);
+        this.socket.on('user joined', (response) => console.log(response))
     }
 
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
         if (node["node"]["isAlerted"]) {
-            this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]})
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] })
         }
         this.messagesCounter++;
         this.allMessages.push({
@@ -136,7 +142,7 @@ class Simulation extends Component {
     };
 
     handleShowAllClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
+        while (this.currentMessageIndex < this.allMessages.length) {
             await this.handleNextClick();
             await sleep(1);
         }
@@ -156,19 +162,19 @@ class Simulation extends Component {
             <div id="simulation pt-2 pb-0">
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleResetClick}>Reset
+                        onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleBackClick}>Back
+                        onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleNextClick}>Next
+                        onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleShowAllClick}>All
+                        onClick={this.handleShowAllClick}>All
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleSimulateClick}>Simulate
+                        onClick={this.handleSimulateClick}>Simulate
                     </button>
 
                 </div>
@@ -218,4 +224,11 @@ function intToRGB(i) {
 
 const sleep = m => new Promise(r => setTimeout(r, m));
 
-export default Simulation;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser,
+        token: state.token
+    };
+};
+
+export default connect(mapStateToProps)(Simulation);

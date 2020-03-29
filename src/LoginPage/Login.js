@@ -29,17 +29,17 @@ class Login extends Component {
                 let userType;
                 switch (JSON.parse(xhr.responseText)['permission']) {
                     case 1:
-                        userType = 'regularUser';
+                        userType = 'USER';
                         break;
                     case 2:
-                        userType = 'moderatorUser';
+                        userType = 'MODERATOR';
                         break;
                     case 3:
-                        userType = 'rootUser';
+                        userType = 'ROOT';
                         break;
                 }
                 this.props.onLogin(username, token, userType);
-                setTimeout(() => this.props.history.push('/'), 2000);
+                setTimeout(() => this.props.history.push('/'), 1500);
                 this.setState({
                     loginMessage: 'Login successfully! Redirecting to the homepage.',
                     messageType: 'text-success'

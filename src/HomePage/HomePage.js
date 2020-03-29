@@ -18,12 +18,12 @@ class HomePage extends Component {
             <div className="HomePage">
                 <div className="headline" />
                 {this.props.currentUser ? <div className="container">
-                    {this.props.userType == 'moderatorUser' || this.props.userType == 'rootUser' ?
+                    {this.props.userType == 'MODERATOR' || this.props.userType == 'ROOT' ?
                         <React.Fragment>
                             <p>Moderation tools:</p>
                             <button type="button" className="btn btn-info btn-sm"
                                 onClick={() => this.updateModalHandler(true)}>Create New Discussion</button>
-                            {this.props.userType == 'rootUser' ? <button type="button" className="btn btn-info btn-sm"
+                            {this.props.userType == 'ROOT' ? <button type="button" className="btn btn-info btn-sm"
                                 onClick={() => this.changePath('/moderatorsManagement')}>Manage moderators</button> : null}
                             <CreateDiscussionModal isOpen={this.state.discussionModal}
                                 updateVisibility={this.updateModalHandler.bind(this)}
