@@ -25,9 +25,8 @@ class Chat extends Component {
 
     componentDidMount() {
         if (!this.props.isSimulation) {
-            const xhr = new XMLHttpRequest();
-            xhr.addEventListener('load', () => {
-                let response = JSON.parse(xhr.responseText);
+            this.socket.on('join room', (response) => {
+                this.reloadChat();
                 this.setState(
                     {
                         root: response["tree"],
@@ -39,10 +38,15 @@ class Chat extends Component {
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-            xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
-            xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-            xhr.send();
-            this.socket.on('add comment', (res) => {
+
+            this.socket.on('user joined', (response) => console.log(response))
+
+            const data = {
+                discussion_id: this.props.discussionId,
+                token: this.props.token
+            }
+            this.socket.emit('join', data);
+            this.socket.on('message', (res) => {
                 this.addComment(res.comment);
             });
         }

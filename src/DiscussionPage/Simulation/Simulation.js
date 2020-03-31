@@ -1,7 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
-import {rgb} from "d3";
+import { rgb } from "d3";
+import { connect } from 'react-redux'
+import io from 'socket.io-client';
+
 
 class Simulation extends Component {
 
@@ -9,9 +12,6 @@ class Simulation extends Component {
         super(props);
         this.graphLinks = [];
         this.nodesMap = new Map();
-        this.nodesChildren = new Map();
-        this.messagesByTimestamp = [];
-        this.timestampIndex = 1;
         this.currentMessageIndex = 1;
         this.allMessages = [];
         this.allNodes = [];
@@ -21,38 +21,30 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
+        this.socket = io('http://localhost:5000/');
     }
 
     componentDidMount() {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let response = JSON.parse(xhr.responseText);
-            console.log(response);
+        this.socket.on('join room', (response) => {
             this.getMessagesNodesLinks(response["tree"]);
             this.props.setTitle(response["discussion"]["title"]);
             this.nodesMap.set(this.allNodes[0].id, this.allNodes[0]);
-            this.sortAll();
             this.shownMessages = this.allMessages.slice(0, 1);
             this.shownNodes = this.allNodes.slice(0, 1);
-            this.nodesChildren.set(this.shownMessages[0].id, []);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
-        xhr.open('GET', 'http://localhost:5000/api/getDiscussion/' + this.props.discussionId);
-        xhr.send();
+        const data = {
+            discussion_id: this.props.discussionId,
+            token: this.props.token
+        }
+        this.socket.emit('join', data);
+        this.socket.on('user joined', (response) => console.log(response))
     }
-
-    sortAll = () => {
-        this.messagesByTimestamp.forEach(structure => {
-            structure.sort(function (a, b) {
-                return a.timestamp - b.timestamp;
-            });
-        });
-    };
 
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
         if (node["node"]["isAlerted"]) {
-            this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]})
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] })
         }
         this.messagesCounter++;
         this.allMessages.push({
@@ -70,7 +62,6 @@ class Simulation extends Component {
             name: node["node"]["author"],
             timestamp: node["node"]["time_stamp"],
             val: 0.5,
-            children: [],
             updateVal: function (value) {
                 this.val += value;
             },
@@ -99,30 +90,9 @@ class Simulation extends Component {
     };
 
     handleNextClick = () => {
-        if (this.timestampIndex === this.messagesByTimestamp.length) return;
-        const nextMessage = this.messagesByTimestamp[this.timestampIndex];
-        this.timestampIndex++;
+        if (this.currentMessageIndex === this.allMessages.length) return;
+        const nextMessage = this.allMessages[this.currentMessageIndex];
         const userName = nextMessage["member"]["username"];
-        const parentId = nextMessage["member"]["parentId"];
-        const parentIndex = this.shownMessages.indexOf(message => message.id === parentId);
-        let children = this.nodesChildren.get(parentId);
-        // case: the parent doesn't have children yet
-        if (children.length > 0){
-            this.shownMessages.splice(parentIndex + 1, 0, nextMessage);
-            children.push(nextMessage.id);
-        }
-        // case: the parent have children, want to find the last one
-        else {
-            const lastChildId = children[children.length - 1];
-            const prevMessageIndex = this.shownMessages.find(node => node.id === lastChildId);
-            this.shownMessages.splice(prevMessageIndex + 1, 0, nextMessage);
-        }
-        // add the child to the parent's children array
-        children.push(nextMessage.id);
-        this.nodesChildren.set(parentId, children); // add the node to the children list of the parent
-        // if (this.currentMessageIndex === this.allMessages.length) return;
-        // const nextMessage = this.allMessages[this.currentMessageIndex];
-        // const userName = nextMessage["member"]["username"];
         if (!this.nodesMap.has(userName))
             this.nodesMap.set(userName, this.allNodes.find(node => node.id === userName));
         const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
@@ -166,7 +136,7 @@ class Simulation extends Component {
     };
 
     handleSimulateClick = async () => {
-        while (this.currentMessageIndex + 1 < this.messagesByTimestamp.length) {
+        while (this.currentMessageIndex + 1 < this.allMessages.length) {
             await this.handleNextClick();
             await (async () => {
                 await sleep(1000);
@@ -175,7 +145,7 @@ class Simulation extends Component {
     };
 
     handleShowAllClick = async () => {
-        while (this.currentMessageIndex + 1 < this.messagesByTimestamp.length) {
+        while (this.currentMessageIndex < this.allMessages.length) {
             await this.handleNextClick();
             await sleep(1);
         }
@@ -195,19 +165,19 @@ class Simulation extends Component {
             <div id="simulation pt-2 pb-0">
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleResetClick}>Reset
+                        onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleBackClick}>Back
+                        onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleNextClick}>Next
+                        onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleShowAllClick}>All
+                        onClick={this.handleShowAllClick}>All
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleSimulateClick}>Simulate
+                        onClick={this.handleSimulateClick}>Simulate
                     </button>
 
                 </div>
@@ -216,7 +186,7 @@ class Simulation extends Component {
     }
 
     update(dif) {
-        // this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + dif);
+        this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + dif);
         this.shownLinks = Array.from(this.graphLinks);
         this.shownNodes = Array.from(this.nodesMap.values());
         this.currentMessageIndex = this.currentMessageIndex + dif;
@@ -257,4 +227,11 @@ function intToRGB(i) {
 
 const sleep = m => new Promise(r => setTimeout(r, m));
 
-export default Simulation;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser,
+        token: state.token
+    };
+};
+
+export default connect(mapStateToProps)(Simulation);

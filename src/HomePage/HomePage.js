@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {connect} from 'react-redux'
+import React, { Component } from "react";
+import { connect } from 'react-redux'
 import './HomePage.css';
 import CreateDiscussionModal from "../DiscussionPage/Modals/CreateDiscussionModal";
 
@@ -16,43 +16,40 @@ class HomePage extends Component {
     render() {
         return (
             <div className="HomePage">
-                <div className="headline"/>
+                <div className="headline" />
                 {this.props.currentUser ? <div className="container">
-                    {this.props.userType === 'moderatorUser' || this.props.userType === 'rootUser' ?
+                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                         <React.Fragment>
                             <p>Moderation tools:</p>
                             <button type="button" className="btn btn-info btn-sm"
-                                    onClick={() => this.updateModalHandler(true)}>Create New Discussion
-                            </button>
-                            {this.props.userType === 'rootUser' ? <button type="button" className="btn btn-info btn-sm"
-                                                                          onClick={() => this.changePath('/moderatorsManagement')}>Manage
-                                moderators</button> : null}
+                                onClick={() => this.updateModalHandler(true)}>Create New Discussion</button>
+                            {this.props.userType === 'ROOT' ? <button type="button" className="btn btn-info btn-sm"
+                                onClick={() => this.changePath('/moderatorsManagement')}>Manage moderators</button> : null}
                             <CreateDiscussionModal isOpen={this.state.discussionModal}
-                                                   updateVisibility={this.updateModalHandler.bind(this)}
-                                                   path={this.props.history}/>
+                                updateVisibility={this.updateModalHandler.bind(this)}
+                                path={this.props.history} />
                         </React.Fragment> : null}
                     <form onSubmit={this.discussionHandler}>
                         <p>Join existing discussions:</p>
                         <input type="text" className="form-control" name="unique"
-                               placeholder="Enter code"/>
+                            placeholder="Enter code" />
                         <button className="btn btn-info btn-sm"
-                                onClick={() => this.discussionTypeHandler("true")}>Simulation
+                            onClick={() => this.discussionTypeHandler("true")}>Simulation
                         </button>
                         <button className="btn btn-info btn-sm"
-                                onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
+                            onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
                         </button>
                     </form>
                 </div> : <div>
-                    <h1>Hi and welcome to Kamin!</h1>
-                    <h3>In order to use the application you need to create an account or sign in if you already have
-                        one.</h3>
-                    <button type="button" className="btn btn-info btn-sm"
+                        <h1>Hi and welcome to Kamin!</h1>
+                        <h3>In order to use the application you need to create an account or sign in if you already have one.</h3>
+                        <button type="button" className="btn btn-info btn-sm"
                             onClick={() => this.changePath('/login')}>Sign in
-                    </button>
-                    <button type="button" className="btn btn-info btn-sm"
+                        </button>
+                        <button type="button" className="btn btn-info btn-sm"
                             onClick={() => this.changePath('/registration')}>Sign up
-                    </button>
-                </div>}
+                        </button>
+                    </div>}
 
             </div>
         );
@@ -89,7 +86,7 @@ class HomePage extends Component {
         });
         xhr.open('POST', 'http://localhost:5000/api/createDiscussion');
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({title: title, categories: categories}));
+        xhr.send(JSON.stringify({ title: title, categories: categories }));
     };
 
 }
