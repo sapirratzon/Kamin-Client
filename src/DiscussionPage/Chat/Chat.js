@@ -78,17 +78,15 @@ class Chat extends Component {
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
-            "extra_data": null,
-            "timestamp": null,
             "depth": depth
         });
         this.socket.emit('add comment', comment)
     };
 
     addComment(message) {
+        console.log(message);
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
-
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
@@ -126,7 +124,7 @@ class Chat extends Component {
             return;
         }
         currentNode["children"].forEach(child => {
-            this.addMessageHelper(child, targetId, author, message, depth, messageId);
+            this.addMessageHelper(child, targetId, author, message, depth, messageId, timestamp);
         });
     };
 
