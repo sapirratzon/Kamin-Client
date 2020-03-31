@@ -4,7 +4,6 @@ import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
 import io from 'socket.io-client';
-import reducer from "../../Store/reducer";
 
 
 class Chat extends Component {

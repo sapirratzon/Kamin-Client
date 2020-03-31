@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import Input from "./Input";
+import { connect } from 'react-redux'
+
 
 
 class Message extends Component {
@@ -85,8 +87,9 @@ class Message extends Component {
                                 <p>
                                     <i className="far fa-comment-dots"
                                         onClick={this.replyHandler.bind(this)}><b>{this.state.replyText}</b></i>
-                                    <i className="fas fa-exclamation-circle"
-                                        onClick={this.alertHandler.bind(this)}><b>{this.state.alertText}</b></i>
+                                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ? <i className="fas fa-exclamation-circle"
+                                        onClick={this.alertHandler.bind(this)}><b>{this.state.alertText}</b></i> : null}
+
                                 </p>
                             </div>
                         </React.Fragment>
@@ -102,4 +105,12 @@ class Message extends Component {
     }
 }
 
-export default Message;
+
+const mapStateToProps = state => {
+    return {
+        userType: state.userType,
+    };
+};
+
+
+export default connect(mapStateToProps)(Message);
