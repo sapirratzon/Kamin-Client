@@ -38,13 +38,12 @@ class Chat extends Component {
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-
-            this.socket.on('user joined', (response) => console.log(response))
+            this.socket.on('user joined', (response) => console.log(response));
 
             const data = {
                 discussion_id: this.props.discussionId,
                 token: this.props.token
-            }
+            };
             this.socket.emit('join', data);
             this.socket.on('message', (res) => {
                 this.addComment(res.comment);
@@ -221,7 +220,7 @@ function intToRGB(i) {
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        token:state.token
+        token: state.token
     };
 };
 

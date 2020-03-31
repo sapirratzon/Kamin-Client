@@ -2,7 +2,7 @@ const initialState = {
     currentUser: localStorage.getItem('currentUser'),
     token: localStorage.getItem('token'),
     userType: localStorage.getItem('userType')
-}
+};
 
 const reducer = (state = initialState, action) => {
     if (action.type === 'LOGIN') {
