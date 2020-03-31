@@ -50,18 +50,11 @@ class Simulation extends Component {
             this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]})
         }
         this.messagesCounter++;
-        this.allMessages.push({
-            member: {
-                username: node["node"]["author"],
-                color: "#" + intToRGB(hashCode(node["node"]["author"])),
-            },
-            text: node["node"]["text"],
-            depth: node["node"]["depth"],
-            timestamp: node["node"]["timestamp"]
-        });
+        Object.assign(node["node"], {color: "#" + intToRGB(hashCode(node["node"]["author"]))});
+        this.allMessages.push(node["node"]);
         this.allNodes.push({
             id: node["node"]["author"],
-            color: "#" + intToRGB(hashCode(node["node"]["author"])),
+            color: node["node"]["color"],
             name: node["node"]["author"],
             timestamp: node["node"]["timestamp"],
             val: 0.5,
@@ -95,7 +88,7 @@ class Simulation extends Component {
     handleNextClick = () => {
         if (this.currentMessageIndex === this.allMessages.length) return;
         const nextMessage = this.allMessages[this.currentMessageIndex];
-        const userName = nextMessage["member"]["username"];
+        const userName = nextMessage["author"];
         if (!this.nodesMap.has(userName))
             this.nodesMap.set(userName, this.allNodes.find(node => node.id === userName));
         const link = cloneDeep(this.allLinks[this.currentMessageIndex - 1]);
@@ -117,7 +110,7 @@ class Simulation extends Component {
     handleBackClick = () => {
         if (this.currentMessageIndex === 1) return;
         const messageIndex = this.currentMessageIndex - 1;
-        const userName = this.allMessages[messageIndex]["member"]["username"];
+        const userName = this.allMessages[messageIndex]["author"];
         const links = this.allLinks.slice(0, messageIndex - 1);
         const nodes = this.allNodes.slice(0, messageIndex);
         const link = cloneDeep(this.allLinks[messageIndex - 1]);
@@ -182,7 +175,6 @@ class Simulation extends Component {
                     <button type="button" className="btn btn-primary btn-sm"
                             onClick={this.handleSimulateClick}>Simulate
                     </button>
-
                 </div>
             </div>
         );
@@ -212,7 +204,6 @@ class Simulation extends Component {
             link.updateWidth((2 * (value - 1) / max) + 1);
         });
     }
-
 }
 
 function hashCode(str) {

@@ -34,7 +34,7 @@ class Message extends Component {
     };
 
     sendMessageHandler = (message) => {
-        this.props.newMessageHandler(this.props.member.id, "Guy", message, this.props.depth + 1);
+        this.props.newMessageHandler(this.props.id, "Guy", message, this.props.depth + 1);
         this.replyHandler();
     };
 
@@ -54,12 +54,12 @@ class Message extends Component {
                 <span
                     className="avatar"
                     style={{
-                        "backgroundColor": this.props.member.color,
+                        "backgroundColor": this.props.color,
                     }}
                 />
                 <div className="Message-content">
                     <div className="username">
-                        {this.props.member.username}{"  "}{this.getDate(this.props.timestamp)}
+                        {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                     </div>
                     <div className="text">{this.props.text}</div>
                     {!this.props.isSimulation ?
@@ -74,7 +74,6 @@ class Message extends Component {
                         : null
                     }
                 </div>
-
             </li>
         );
     }

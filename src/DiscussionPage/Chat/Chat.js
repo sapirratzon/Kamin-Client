@@ -72,7 +72,6 @@ class Chat extends Component {
     }
 
     sendComment(targetId, author, message, depth) {
-        console.log(reducer);
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,

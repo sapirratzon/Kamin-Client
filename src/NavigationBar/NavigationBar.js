@@ -35,15 +35,15 @@ class NavigationBar extends Component {
                         {this.props.currentUser ?
                             <ul className="navbar-nav ml-auto">
                                 <li className="nav-item">
-                                    <a className="nav-link">Welcome, {this.props.currentUser}!<span className="sr-only">(current)</span></a>
+                                    <a className="nav-link" href="/">Welcome, {this.props.currentUser}!<span className="sr-only">(current)</span></a>
                                 </li>
                                 <li className="nav-item" onClick={this.logOut}>
-                                    <a className="nav-link"><i className="fas fa-sign-out-alt pr-2" />Log Out<span className="sr-only">(current)</span></a>
+                                    <a className="nav-link" href="/logOut"><i className="fas fa-sign-out-alt pr-2" />Log Out<span className="sr-only">(current)</span></a>
                                 </li>
                             </ul>
                             : <ul className="navbar-nav ml-auto">
                                 <li className="nav-item" onClick={() => this.changePath('/login')}>
-                                    <a className="nav-link"><i className="fas fa-sign-in-alt pr-2" />Sign
+                                    <a className="nav-link" href="/login"><i className="fas fa-sign-in-alt pr-2" />Sign
                             In <span className="sr-only">(current)</span></a>
                                 </li>
                                 <li className="nav-item" onClick={() => this.changePath('/registration')}>
