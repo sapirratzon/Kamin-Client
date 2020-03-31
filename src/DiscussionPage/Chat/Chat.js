@@ -134,11 +134,9 @@ class Chat extends Component {
         }
         this.messagesCounter++;
         this.shownMessages.push({
-            member: {
-                username: commentNode["node"]["author"],
-                id: commentNode["node"]["id"],
-                color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
-            },
+            author: commentNode["node"]["author"],
+            id: commentNode["node"]["id"],
+            color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
             text: commentNode["node"]["text"],
             depth: commentNode["node"]["depth"],
             timestamp: commentNode["node"]["timestamp"]
