@@ -57,13 +57,13 @@ class Simulation extends Component {
             },
             text: node["node"]["text"],
             depth: node["node"]["depth"],
-            timestamp: node["node"]["time_stamp"]
+            timestamp: node["node"]["timestamp"]
         });
         this.allNodes.push({
             id: node["node"]["author"],
             color: "#" + intToRGB(hashCode(node["node"]["author"])),
             name: node["node"]["author"],
-            timestamp: node["node"]["time_stamp"],
+            timestamp: node["node"]["timestamp"],
             val: 0.5,
             updateVal: function (value) {
                 this.val += value;
@@ -75,7 +75,7 @@ class Simulation extends Component {
                 target: node["node"]["author"],
                 messagesNumber: 1,
                 width: 1,
-                timestamp: node["node"]["time_stamp"],
+                timestamp: node["node"]["timestamp"],
                 color: rgb(32, 32, 32, 1),
                 updateWidth: function (value) {
                     this.width = value;

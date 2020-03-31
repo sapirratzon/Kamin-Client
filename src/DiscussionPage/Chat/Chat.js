@@ -79,14 +79,13 @@ class Chat extends Component {
             "parentId": targetId,
             "discussionId": this.props.discussionId,
             "extra_data": null,
-            "time_stamp": Date.now(),
+            "timestamp": null,
             "depth": depth
         });
         this.socket.emit('add comment', comment)
     };
 
     addComment(message) {
-        console.log(message.depth);
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
 
@@ -145,14 +144,14 @@ class Chat extends Component {
             },
             text: commentNode["node"]["text"],
             depth: commentNode["node"]["depth"],
-            timestamp: commentNode["node"]["time_stamp"]
+            timestamp: commentNode["node"]["timestamp"]
         });
         if (!this.nodesMap.has(commentNode["node"]["author"])) {
             let node = {
                 id: commentNode["node"]["author"],
                 color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
                 name: commentNode["node"]["author"],
-                timestamp: commentNode["node"]["time_stamp"],
+                timestamp: commentNode["node"]["timestamp"],
                 val: 0.5,
                 updateVal: function (value) {
                     this.val += value;
@@ -166,7 +165,7 @@ class Chat extends Component {
                 const link = {
                     source: childComment["node"]["author"],
                     target: commentNode["node"]["author"],
-                    timestamp: childComment["node"]["time_stamp"],
+                    timestamp: childComment["node"]["timestamp"],
                     messagesNumber: 1,
                     width: 1,
                     color: rgb(32, 32, 32, 1),
@@ -183,7 +182,7 @@ class Chat extends Component {
                 this.linksMap.set(key, link);
             } else {
                 const link = this.linksMap.get(key);
-                link.timestamp = childComment["node"]["time_stamp"];
+                link.timestamp = childComment["node"]["timestamp"];
                 link.messagesNumber += 1;
                 this.nodesMap.get(link.source).updateVal(0.02);
             }

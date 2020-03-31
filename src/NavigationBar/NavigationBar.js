@@ -11,6 +11,8 @@ class NavigationBar extends Component {
     logOut = (e) => {
         e.preventDefault();
         this.props.onLogOut();
+        this.changePath('/');
+
     };
 
     render(props) {

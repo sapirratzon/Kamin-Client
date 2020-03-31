@@ -24,7 +24,7 @@ class CreateDiscussionModal extends Component {
             "parentId": null,
             "discussionId": "",
             "extra_data": null,
-            "time_stamp": Date.now(),
+            "timestamp": null,
             "depth": 0
         });
         xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment }));
