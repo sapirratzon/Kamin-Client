@@ -4,7 +4,6 @@ import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
 import io from 'socket.io-client';
-import reducer from "../../Store/reducer";
 
 
 class Chat extends Component {
@@ -80,6 +79,16 @@ class Chat extends Component {
             "depth": depth
         });
         this.socket.emit('add comment', comment)
+    };
+
+    sendAlert(targetId, message) {
+        const comment = JSON.stringify({
+            "author": this.props.currentUser,
+            "text": message,
+            "parentId": targetId,
+            "discussionId": this.props.discussionId,
+        });
+        this.socket.emit('add alert', comment)
     };
 
     addComment(message) {
@@ -191,7 +200,7 @@ class Chat extends Component {
             <div className="chat">
                 <Messages
                     messages={this.props.messages} isSimulation={this.props.isSimulation}
-                    newMessageHandler={this.sendComment.bind(this)}
+                    newMessageHandler={this.sendComment.bind(this)} newAlertHandler={this.sendAlert.bind(this)}
                 />
             </div>);
     }
