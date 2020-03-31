@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
 import "./SettingsModal.css"
 import io from "socket.io-client";
@@ -6,7 +6,7 @@ import io from "socket.io-client";
 class SettingsModal extends Component {
     constructor() {
         super();
-        this.socket = io('http://localhost:5000/');
+        this.socket = io(process.env.REACT_APP_API);
     }
 
     updateVisibility = (isOpen) => {
@@ -22,19 +22,19 @@ class SettingsModal extends Component {
                 <div className="modal-body">
                     <form onSubmit={this.createDiscussion}>
                         <p className={"title"}>Which screens would you like to present?</p>
-                        <input className="graph" type="checkbox" checked="checked"/><span className="container">Graph</span>
-                        <input className="alerts" type="checkbox" checked="checked"/><span className="container">Alerts</span>
-                        <input className="statistics" type="checkbox" checked="checked"/><span className="container">User Statistics</span>
+                        <input className="graph" type="checkbox" checked="checked" /><span className="container">Graph</span>
+                        <input className="alerts" type="checkbox" checked="checked" /><span className="container">Alerts</span>
+                        <input className="statistics" type="checkbox" checked="checked" /><span className="container">User Statistics</span>
                         <p className={"title"}>Which message would you like as the default response will refer to?</p>
                         <div className={"defaultMessage"}>
-                            <label className="container"><input className="first" type="radio" name="radio"/>First message
-                                <span className="checkmark"/>
+                            <label className="container"><input className="first" type="radio" name="radio" />First message
+                                <span className="checkmark" />
                             </label>
-                            <label className="container"><input className="last" type="radio" name="radio"/>Last message
-                                <span className="checkmark"/>
+                            <label className="container"><input className="last" type="radio" name="radio" />Last message
+                                <span className="checkmark" />
                             </label>
-                            <label className="container"><input className="none" type="radio" name="radio"/>None (only by user choice)
-                                <span className="checkmark"/>
+                            <label className="container"><input className="none" type="radio" name="radio" />None (only by user choice)
+                                <span className="checkmark" />
                             </label>
                         </div>
                     </form>

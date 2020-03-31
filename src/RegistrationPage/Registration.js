@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 class Registration extends Component {
     constructor(props) {
@@ -16,8 +16,8 @@ class Registration extends Component {
     }
 
     handleChange = (event) => {
-        const {name, value} = event.target;
-        const {user} = this.state;
+        const { name, value } = event.target;
+        const { user } = this.state;
         this.setState({
             user: {
                 ...user,
@@ -28,15 +28,15 @@ class Registration extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        this.setState({submitted: true});
-        const {user} = this.state;
+        this.setState({ submitted: true });
+        const { user } = this.state;
         if (user.firstName && user.lastName && user.username && user.password) {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', () => {
-                this.setState({registered: true});
+                this.setState({ registered: true });
                 setTimeout(() => this.props.history.push('/login/'), 2000);
             });
-            xhr.open('POST', 'http://localhost:5000/api/newUser');
+            xhr.open('POST', process.env.REACT_APP_API + '/api/newUser');
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(JSON.stringify({
                 username: user.username,
@@ -48,7 +48,7 @@ class Registration extends Component {
     };
 
     render() {
-        const {user, submitted, registered} = this.state;
+        const { user, submitted, registered } = this.state;
         return (
             <React.Fragment>
                 <div className="container col-md-2 p-5">
@@ -57,33 +57,33 @@ class Registration extends Component {
                         <div className={'form-group' + (submitted && !user.username ? ' has-error' : '')}>
                             <label htmlFor="username">Username</label>
                             <input type="text" className="form-control" name="username" value={user.username}
-                                   onChange={this.handleChange}/>
+                                onChange={this.handleChange} />
                             {submitted && !user.username &&
-                            <div className="help-block text-danger">Username is required</div>
+                                <div className="help-block text-danger">Username is required</div>
                             }
                         </div>
                         <div className={'form-group' + (submitted && !user.password ? ' has-error' : '')}>
                             <label htmlFor="password">Password</label>
                             <input type="password" className="form-control" name="password" value={user.password}
-                                   onChange={this.handleChange}/>
+                                onChange={this.handleChange} />
                             {submitted && !user.password &&
-                            <div className="help-block text-danger">Password is required</div>
+                                <div className="help-block text-danger">Password is required</div>
                             }
                         </div>
                         <div className={'form-group' + (submitted && !user.firstName ? ' has-error' : '')}>
                             <label htmlFor="firstName">First Name</label>
                             <input type="text" className="form-control" name="firstName" value={user.firstName}
-                                   onChange={this.handleChange}/>
+                                onChange={this.handleChange} />
                             {submitted && !user.firstName &&
-                            <div className="help-block text-danger">First Name is required</div>
+                                <div className="help-block text-danger">First Name is required</div>
                             }
                         </div>
                         <div className={'form-group' + (submitted && !user.lastName ? ' has-error' : '')}>
                             <label htmlFor="lastName">Last Name</label>
                             <input type="text" className="form-control" name="lastName" value={user.lastName}
-                                   onChange={this.handleChange}/>
+                                onChange={this.handleChange} />
                             {submitted && !user.lastName &&
-                            <div className="help-block text-danger">Last Name is required</div>
+                                <div className="help-block text-danger">Last Name is required</div>
                             }
                         </div>
 

@@ -53,7 +53,7 @@ class Login extends Component {
                     messageType: 'text-danger'
                 })
             });
-            xhr.open('GET', 'http://localhost:5000/api/login');
+            xhr.open('GET', process.env.REACT_APP_API+'/api/login');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
             xhr.send(JSON.stringify());
         }

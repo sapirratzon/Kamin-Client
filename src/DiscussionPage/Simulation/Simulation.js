@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
-import {rgb} from "d3";
-import {connect} from 'react-redux'
+import { rgb } from "d3";
+import { connect } from 'react-redux'
 import io from 'socket.io-client';
 
 
@@ -24,7 +24,7 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
-        this.socket = io('http://localhost:5000/');
+        this.socket = io(process.env.REACT_APP_API);
     }
 
     componentDidMount() {
@@ -47,10 +47,10 @@ class Simulation extends Component {
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
         if (node["node"]["isAlerted"]) {
-            this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]})
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] })
         }
         this.messagesCounter++;
-        Object.assign(node["node"], {color: "#" + intToRGB(hashCode(node["node"]["author"]))});
+        Object.assign(node["node"], { color: "#" + intToRGB(hashCode(node["node"]["author"])) });
         this.allMessages.push(node["node"]);
         this.allNodes.push({
             id: node["node"]["author"],
@@ -161,19 +161,19 @@ class Simulation extends Component {
             <div id="simulation pt-2 pb-0">
                 <div className="row justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleResetClick}>Reset
+                        onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleBackClick}>Back
+                        onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleNextClick}>Next
+                        onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleShowAllClick}>All
+                        onClick={this.handleShowAllClick}>All
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleSimulateClick}>Simulate
+                        onClick={this.handleSimulateClick}>Simulate
                     </button>
                 </div>
             </div>

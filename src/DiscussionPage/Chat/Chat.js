@@ -20,7 +20,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket = io('http://localhost:5000/');
+        this.socket = io( process.env.REACT_APP_API);
     }
 
     componentDidMount() {

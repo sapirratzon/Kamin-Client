@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
 import "./ModeratorManagementModal.css"
 
 class ModeratorManagementModal extends Component {
     constructor() {
         super();
-        this.socket = io('http://localhost:5000/');
+        this.socket = io(process.env.REACT_APP_API);
     }
 
     updateVisibility = (isOpen) => {
@@ -22,13 +22,13 @@ class ModeratorManagementModal extends Component {
                     <div className="modal-body">
                         <p className="title">Title:</p>
                         <input type="text" className="title-input" name="title"
-                               placeholder="Enter Title"/>
+                            placeholder="Enter Title" />
                         <p className="description">Description:</p>
-                        <textarea className="description-input" name="description" placeholder={"Write Something"}/>
+                        <textarea className="description-input" name="description" placeholder={"Write Something"} />
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-grey"
-                                onClick={() => this.updateVisibility(false)}>Cancel
+                            onClick={() => this.updateVisibility(false)}>Cancel
                         </button>
                         <button className="btn btn-info">Create</button>
                     </div>
