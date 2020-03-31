@@ -78,17 +78,6 @@ class HomePage extends Component {
         });
     };
 
-    createDiscussion(title, categories, description) {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let discussion_id = JSON.parse(xhr.responseText);
-            this.addComment(discussion_id, description);
-        });
-        xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ title: title, categories: categories }));
-    };
-
 }
 
 const mapStateToProps = state => {
