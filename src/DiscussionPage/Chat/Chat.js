@@ -33,7 +33,7 @@ class Chat extends Component {
                     }
                 );
                 console.log(this.state.root);
-                this.props.setTitle(response["discussion"]["title"]);
+                this.props.setTitle(response["discussion"]["title"] + ": " + this.props.discussionId);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
