@@ -31,7 +31,6 @@ class Chat extends Component {
                         root: response["tree"],
                     }
                 );
-                console.log(this.state.root);
                 this.props.setTitle(response["discussion"]["title"] + ": " + this.props.discussionId);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
@@ -92,7 +91,6 @@ class Chat extends Component {
     };
 
     addComment(message) {
-        console.log(message);
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);

@@ -17,7 +17,7 @@ class CreateDiscussionModal extends Component {
     handleChange = (e) => {
         const { name, value } = e.target;
         this.setState({ [name]: value });
-    }
+    };
 
 
     changePath = (path) => {
@@ -30,7 +30,7 @@ class CreateDiscussionModal extends Component {
         if (description && title) {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', (res) => {
-                if (res.status == 400) {
+                if (res.status === 400) {
                     // this.alert.show("Create Discussion Failed! No title or description");
                     console.log("Create discussion failed - status 400");
                 }

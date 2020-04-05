@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import Input from "./Input";
-import { connect } from 'react-redux'
-
+import {connect} from 'react-redux'
 
 
 class Message extends Component {
@@ -59,8 +58,14 @@ class Message extends Component {
 
     getDate = (timestamp) => {
         const date = new Date(timestamp * 1000);
-        console.log(timestamp);
-        return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(date);
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        }).format(date);
         // return date.format("dd.mm.yyyy hh:MM:ss");
     };
 
@@ -68,8 +73,8 @@ class Message extends Component {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
         return (
-            <li className="Messages-message" style={{ "marginLeft": depthString }}>
-                <div className="vl" />
+            <li className="Messages-message" style={{"marginLeft": depthString}}>
+                <div className="vl"/>
                 <span
                     className="avatar"
                     style={{
@@ -86,9 +91,10 @@ class Message extends Component {
                             <div className="reply">
                                 <p>
                                     <i className="far fa-comment-dots"
-                                        onClick={this.replyHandler.bind(this)}><b>{this.state.replyText}</b></i>
-                                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ? <i className="fas fa-exclamation-circle"
-                                        onClick={this.alertHandler.bind(this)}><b>{this.state.alertText}</b></i> : null}
+                                       onClick={this.replyHandler.bind(this)}><b>{this.state.replyText}</b></i>
+                                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                                        <i className="fas fa-exclamation-circle"
+                                           onClick={this.alertHandler.bind(this)}><b>{this.state.alertText}</b></i> : null}
 
                                 </p>
                             </div>
@@ -96,7 +102,7 @@ class Message extends Component {
                         : null
                     }
                     {this.state.showReplyInput || this.state.showAlertInput ?
-                        <Input onSendMessage={this.sendMessageHandler.bind(this)} />
+                        <Input onSendMessage={this.sendMessageHandler.bind(this)}/>
                         : null
                     }
                 </div>
