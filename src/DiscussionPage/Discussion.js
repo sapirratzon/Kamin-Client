@@ -76,9 +76,9 @@ class Discussion extends Component {
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         </div>
                         <div className="row">
-                            <div className="col-6 pl-0 pr-0">
-                                    <UserStats userName={this.currentUser} />
-                                    <DiscussionStats className="h-50" discussionId={this.state.discussionId} />
+                            <div className="stats h-50 col-6 pl-0 pr-0" >
+                                    <UserStats className="stats" userName={this.currentUser} />
+                                    <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
                             </div>
                             <div className="col pl-0 pr-0">
                                 <AlertList alerts={this.state.shownAlerts} />
