@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import "./Simulation.css"
 import {rgb} from "d3";
 import {connect} from 'react-redux'
@@ -23,7 +22,7 @@ class Simulation extends Component {
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            // e.log(response);
+            console.log(response);
             this.getMessagesNodesLinks(response["tree"]);
             this.props.setTitle(response["discussion"]["title"]);
             this.shownMessages = this.allMessages.slice(0, 1);
@@ -35,7 +34,7 @@ class Simulation extends Component {
             }
             this.shownNodes.push({
                 id: this.shownMessages[0].author,
-                color: "#" + intToRGB(hashCode(this.shownMessages[0].author)),
+                color: "#" + this.props.nodeColor(this.shownMessages[0].author),
                 name: this.shownMessages[0].author,
                 val: 0.5
             });
@@ -46,7 +45,7 @@ class Simulation extends Component {
             token: this.props.token
         };
         this.socket.emit('join', data);
-        this.socket.on('user joined', (response) => console.log(response))
+        this.socket.on('user joined', (response) => console.log(response));
     }
 
     getMessagesNodesLinks = (node) => {
@@ -54,7 +53,7 @@ class Simulation extends Component {
         if (node["node"]["isAlerted"])
             this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]});
         this.messagesCounter++;
-        Object.assign(node["node"], {color: "#" + intToRGB(hashCode(node["node"]["author"]))});
+        Object.assign(node["node"], {color: "#" + this.props.nodeColor(node["node"]["author"])});
         this.allMessages.push(node["node"]);
         node["children"].forEach(child => {
             this.getMessagesNodesLinks(child);
@@ -170,7 +169,7 @@ class Simulation extends Component {
         if (idx === -1) {
             this.shownNodes.push({
                 id: userName,
-                color: "#" + intToRGB(hashCode(userName)),
+                color: "#" + this.props.nodeColor(userName),
                 name: userName,
                 val: 0.5,
                 children: []
@@ -263,19 +262,6 @@ class Simulation extends Component {
             this.shownLinks[index] = Object.assign(this.shownLinks[index], {width: (2 * (value - 1) / max) + 1});
         }
     }
-}
-
-function hashCode(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-}
-
-function intToRGB(i) {
-    const c = (i & 0x00FFFFFF).toString(16).toUpperCase();
-    return "00000".substring(0, 6 - c.length) + c;
 }
 
 const sleep = m => new Promise(r => setTimeout(r, m));

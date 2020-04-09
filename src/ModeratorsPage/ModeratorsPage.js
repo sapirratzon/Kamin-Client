@@ -17,7 +17,7 @@ class Moderators extends Component {
 
     handleChange = (event) => {
         const { name, value } = event.target;
-        if (value != "")
+        if (value !== "")
             this.setState({
                 [name]: value
             });
@@ -33,7 +33,7 @@ class Moderators extends Component {
         });
         xhr.open('GET', process.env.REACT_APP_API + '/api/getUsers');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.state.token));
-        xhr.send(JSON.stringify());
+        xhr.send();
     }
 
     handleSaveClick = () => {
@@ -67,12 +67,12 @@ class Moderators extends Component {
                 statusMessage: 'The changes were saved successfully!',
                 messageType: 'text-success',
                 submitted: true
-            })
+            });
             setTimeout(() => window.location.reload(), 1500);
 
         })
 
-    }
+    };
 
     render() {
         return (
@@ -92,7 +92,7 @@ class Moderators extends Component {
                             <option value={user}>{user}</option>)}
                     </select>
                 </div>
-                <button type="button mx-auto" class="btn btn-primary" onClick={this.handleSaveClick}>Save</button>
+                <button type="button mx-auto" className="btn btn-primary" onClick={this.handleSaveClick}>Save</button>
                 {this.state.submitted ? <h3 className={"confirmMessage text-center " + this.state.messageType}>
                     <b>{this.state.statusMessage}</b></h3> : null}
             </div >

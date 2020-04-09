@@ -143,7 +143,7 @@ class Chat extends Component {
         this.shownMessages.push({
             author: commentNode["node"]["author"],
             id: commentNode["node"]["id"],
-            color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
+            color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
             text: commentNode["node"]["text"],
             depth: commentNode["node"]["depth"],
             timestamp: commentNode["node"]["timestamp"]
@@ -151,7 +151,7 @@ class Chat extends Component {
         if (!this.nodesMap.has(commentNode["node"]["author"])) {
             let node = {
                 id: commentNode["node"]["author"],
-                color: "#" + intToRGB(hashCode(commentNode["node"]["author"])),
+                color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
                 name: commentNode["node"]["author"],
                 timestamp: commentNode["node"]["timestamp"],
                 val: 0.5,
@@ -202,22 +202,7 @@ class Chat extends Component {
                 />
             </div>);
     }
-
 }
-
-function hashCode(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-}
-
-function intToRGB(i) {
-    const c = (i & 0x00FFFFFF).toString(16).toUpperCase();
-    return "00000".substring(0, 6 - c.length) + c;
-}
-
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,

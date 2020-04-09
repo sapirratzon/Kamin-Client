@@ -95,7 +95,6 @@ class Message extends Component {
                                     {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                                         <i className="fas fa-exclamation-circle"
                                            onClick={this.alertHandler.bind(this)}><b>{this.state.alertText}</b></i> : null}
-
                                 </p>
                             </div>
                         </React.Fragment>
