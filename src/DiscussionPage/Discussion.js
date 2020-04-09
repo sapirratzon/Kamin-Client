@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './Discussion.css';
 import Chat from "./Chat/Chat";
 import Simulation from './Simulation/Simulation';
 import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
-
+import UserStats from "./Statistics/UserStats"
+import DiscussionStats from './Statistics/DiscussionStats';
 
 class Discussion extends Component {
     constructor(props) {
@@ -53,26 +54,36 @@ class Discussion extends Component {
                 <div className="text-center text-body">
                     <h1><b>{this.state.title}</b></h1>
                 </div>
-                <hr width="95%"/>
+                <hr width="95%" />
                 <div className="row px-5 content">
                     <div className="chatwindow col-6 py-3">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
-                              messagesHandler={this.updateMessagesHandler.bind(this)}
-                              alertsHandler={this.updateAlertsHandler.bind(this)}
-                              discussionId={this.props.simulationCode}
-                              setTitle={this.setTitle}/>
+                            messagesHandler={this.updateMessagesHandler.bind(this)}
+                            alertsHandler={this.updateAlertsHandler.bind(this)}
+                            discussionId={this.props.simulationCode}
+                            setTitle={this.setTitle} />
                     </div>
                     <div className="col-6">
-                        {this.props.isSimulation === 'true' ?
-                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
-                                        alertsHandler={this.updateAlertsHandler.bind(this)}
-                                        discussionId={this.props.simulationCode}
-                                        setTitle={this.setTitle}
-                                        messagesOrder={'chronological'}
-                            />
-                            : null}
-                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
-                        <AlertList alerts={this.state.shownAlerts}/>
+                        <div className="row">
+                            {this.props.isSimulation === 'true' ?
+                                <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
+                                    alertsHandler={this.updateAlertsHandler.bind(this)}
+                                    discussionId={this.props.simulationCode}
+                                    setTitle={this.setTitle}
+                                    messagesOrder={'chronological'}
+                                />
+                                : null}
+                            <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
+                        </div>
+                        <div className="row">
+                            <div className="col-6 pl-0 pr-0">
+                                    <UserStats userName={this.currentUser} />
+                                    <DiscussionStats className="h-50" discussionId={this.state.discussionId} />
+                            </div>
+                            <div className="col pl-0 pr-0">
+                                <AlertList alerts={this.state.shownAlerts} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
