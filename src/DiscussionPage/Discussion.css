@@ -19,7 +19,7 @@ html, body{
     width:100%;
 }
 
-.chatwindow{
+.chatWindow{
     border: solid 3px #4285f4;
     height: 82%;
 }
@@ -27,3 +27,19 @@ html, body{
 /* .stats{
     border: 3px solid #4285f4;
 } */
+.title {
+    font-weight: bold;
+}
+
+.discussionTitle{
+    font-size: x-large;
+    margin: 3px auto auto;
+}
+
+hr{
+    margin-top: auto;
+}
+
+.btnEndSession {
+
+}

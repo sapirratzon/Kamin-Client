@@ -33,7 +33,7 @@ class Moderators extends Component {
         });
         xhr.open('GET', process.env.REACT_APP_API + '/api/getUsers');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.state.token));
-        xhr.send(JSON.stringify());
+        xhr.send();
     }
 
     handleSaveClick = () => {
@@ -67,12 +67,12 @@ class Moderators extends Component {
                 statusMessage: 'The changes were saved successfully!',
                 messageType: 'text-success',
                 submitted: true
-            })
+            });
             setTimeout(() => window.location.reload(), 1500);
 
         })
 
-    }
+    };
 
     render() {
         return (
