@@ -37,9 +37,15 @@
     color: black;
     display: inline-block;
     background-color:lightblue;
-    font-weight: bold;
 }
 
 .reply{
     color: #006BA6;
 }
+
+.vl {
+    position: relative;
+    border-left:2px solid #edeff1;
+    z-index: -1;
+}
+

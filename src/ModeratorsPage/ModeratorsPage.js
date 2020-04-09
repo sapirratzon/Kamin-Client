@@ -45,7 +45,7 @@ class Moderators extends Component {
             })
         }
         const xhr = new XMLHttpRequest();
-        if (this.state.selectedRegularUser != null) {
+        if (this.state.selectedRegularUser !== null) {
             xhr.open('POST', process.env.REACT_APP_API + '/api/changeUserPermission');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhr.send(JSON.stringify({
@@ -54,7 +54,7 @@ class Moderators extends Component {
             }));
         }
 
-        if (this.state.selectedModeratorUser != null) {
+        if (this.state.selectedModeratorUser !== null) {
             xhr.open('POST', process.env.REACT_APP_API + '/api/changeUserPermission');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhr.send(JSON.stringify({
@@ -80,16 +80,16 @@ class Moderators extends Component {
                 <h2 className="pb-5">Moderators Management</h2>
                 <div className="input-group mb-3 w-50 mx-auto">
                     <label className="text-danger">Revoke moderation powers:</label>
-                    <select className="custom-select w-25 mb-2" id="inputRevoke" name="selectedModeratorUser" onChange={this.handleChange}>
-                        <option value="" selected>Choose...</option>
+                    <select className="custom-select w-25 mb-2" id="inputRevoke" name="selectedModeratorUser" onChange={this.handleChange} defaultValue="">
+                        <option value="">Choose...</option>
                         {this.state.moderatorUsers.map((user) =>
-                            <option value={user}>{user}</option>)}
+                            <option key={user} value={user}>{user}</option>)}
                     </select>
-                    <label className="text-success">Grand moderation powers:</label>
-                    <select className="custom-select w-25" id="inputGrand" name="selectedRegularUser" onChange={this.handleChange}>
-                        <option value="" selected>Choose...</option>
+                    <label className="text-success">Give moderation powers:</label>
+                    <select className="custom-select w-25" id="inputGrand" name="selectedRegularUser" onChange={this.handleChange} defaultValue="">
+                        <option value="">Choose...</option>
                         {this.state.regularUsers.map((user) =>
-                            <option value={user}>{user}</option>)}
+                            <option key={user} value={user}>{user}</option>)}
                     </select>
                 </div>
                 <button type="button mx-auto" className="btn btn-primary" onClick={this.handleSaveClick}>Save</button>

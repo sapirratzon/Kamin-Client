@@ -220,8 +220,8 @@ class Simulation extends Component {
 
     render() {
         return (
-            <div id="simulation pt-2 pb-0">
-                <div className="row justify-content-around py-1" id="simulation-nav">
+            <div id="simulation pb-0">
+                <div className="ml-100 justify-content-around py-1" id="simulation-nav">
                     <button type="button" className="btn btn-primary btn-sm"
                             onClick={this.handleResetClick}>Reset
                     </button>

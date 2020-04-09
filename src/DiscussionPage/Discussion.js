@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './Discussion.css';
 import Chat from "./Chat/Chat";
 import Simulation from './Simulation/Simulation';
 import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
-
+import UserStats from "./Statistics/UserStats"
+import DiscussionStats from './Statistics/DiscussionStats';
 
 class Discussion extends Component {
     constructor(props) {
@@ -53,18 +54,19 @@ class Discussion extends Component {
                 <div className="text-center text-body">
                     <h3><b>{this.state.title}</b></h3>
                 </div>
-                <hr width="95%"/>
+                <hr width="95%" />
                 <div className="row px-5 content">
                     <div className="chatWindow col-6 py-3">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
-                              messagesHandler={this.updateMessagesHandler.bind(this)}
-                              alertsHandler={this.updateAlertsHandler.bind(this)}
-                              discussionId={this.props.simulationCode}
-                              setTitle={this.setTitle}
-                              nodeColor={intToRGB}
-                        />
+                            messagesHandler={this.updateMessagesHandler.bind(this)}
+                            alertsHandler={this.updateAlertsHandler.bind(this)}
+                            discussionId={this.props.simulationCode}
+                            setTitle={this.setTitle}
+                              nodeColor={intToRGB}/>
+
                     </div>
                     <div className="col-6">
+                        <div className="row">
                         {this.props.isSimulation === 'true' ?
                             <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
                                         alertsHandler={this.updateAlertsHandler.bind(this)}
@@ -73,8 +75,9 @@ class Discussion extends Component {
                                         messagesOrder={'chronological'}
                                         nodeColor={intToRGB}
                             />
-                            : null }
+                            : null}
                         <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
+                        </div>
                         <AlertList alerts={this.state.shownAlerts}/>
                     </div>
                 </div>

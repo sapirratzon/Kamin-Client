@@ -1,6 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import Input from "./Input";
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 
 
 class Message extends Component {
@@ -11,7 +11,8 @@ class Message extends Component {
             showReplyInput: false,
             replyText: "Reply",
             showAlertInput: false,
-            alertText: "Alert"
+            alertText: "Alert",
+            inputText: ""
         };
     }
 
@@ -31,7 +32,10 @@ class Message extends Component {
         } else {
             this.setState({
                 showReplyInput: true,
-                replyText: "Hide"
+                showAlertInput: false,
+                replyText: "Hide",
+                alertText: "Alert",
+                inputText: "What do you think?"
             });
         }
     };
@@ -45,7 +49,10 @@ class Message extends Component {
         } else {
             this.setState({
                 showAlertInput: true,
-                alertText: "Hide"
+                showReplyInput: false,
+                alertText: "Hide",
+                replyText: "Reply",
+                inputText: "Alert text..."
             });
         }
     };
@@ -66,46 +73,53 @@ class Message extends Component {
             minute: '2-digit',
             second: '2-digit'
         }).format(date);
-        // return date.format("dd.mm.yyyy hh:MM:ss");
     };
 
     render() {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
+        let verticalLines = [];
+        for (let i = 0; i < this.props.depth + 1; i++) {
+            verticalLines.push(<div className="vl" style={{
+                "left": ((20 * (i + 1) - depthPixels) + 2) + "px",
+            }} />)
+        }
         return (
-            <li className="Messages-message" style={{"marginLeft": depthString}}>
-                <div className="vl"/>
-                <span
-                    className="avatar"
-                    style={{
-                        "backgroundColor": this.props.color,
-                    }}
-                />
-                <div className="Message-content">
-                    <div className="username">
-                        {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
+            <React.Fragment>
+                <li className="Messages-message" style={{ "marginLeft": depthString }}>
+                    {verticalLines}
+                    <span
+                        className="avatar"
+                        style={{
+                            "backgroundColor": this.props.color,
+                        }}
+                    />
+                    <div className="Message-content">
+                        <div className="username">
+                            {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
+                        </div>
+                        <div className="text">{this.props.text}</div>
+                        {!this.props.isSimulation ?
+                            <React.Fragment>
+                                <div className="reply">
+                                    <p>
+                                        <i className="far fa-comment-dots mr-2"
+                                            onClick={this.replyHandler}>{this.state.replyText}</i>
+                                        {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                                            <i className="far fa-bell"
+                                                onClick={this.alertHandler}>{this.state.alertText}</i> : null}
+                                    </p>
+                                </div>
+                            </React.Fragment>
+                            : null
+                        }
+                        {this.state.showReplyInput || this.state.showAlertInput ?
+                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
+                            : null
+                        }
                     </div>
-                    <div className="text">{this.props.text}</div>
-                    {!this.props.isSimulation ?
-                        <React.Fragment>
-                            <div className="reply">
-                                <p>
-                                    <i className="far fa-comment-dots"
-                                       onClick={this.replyHandler.bind(this)}><b>{this.state.replyText}</b></i>
-                                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
-                                        <i className="fas fa-exclamation-circle"
-                                           onClick={this.alertHandler.bind(this)}><b>{this.state.alertText}</b></i> : null}
-                                </p>
-                            </div>
-                        </React.Fragment>
-                        : null
-                    }
-                    {this.state.showReplyInput || this.state.showAlertInput ?
-                        <Input onSendMessage={this.sendMessageHandler.bind(this)}/>
-                        : null
-                    }
-                </div>
-            </li>
+                </li>
+            </React.Fragment>
         );
     }
 }
