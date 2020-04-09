@@ -85,7 +85,7 @@ class Moderators extends Component {
                         {this.state.moderatorUsers.map((user) =>
                             <option key={user} value={user}>{user}</option>)}
                     </select>
-                    <label className="text-success">Grand moderation powers:</label>
+                    <label className="text-success">Give moderation powers:</label>
                     <select className="custom-select w-25" id="inputGrand" name="selectedRegularUser" onChange={this.handleChange} defaultValue="">
                         <option value="">Choose...</option>
                         {this.state.regularUsers.map((user) =>
