@@ -64,8 +64,8 @@ class Discussion extends Component {
                 <div className="row text-center">
                     <span className="col-4" />
                     <span className="col-4">
-                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!"/></h3>
-                        <ReactTooltip event="click" eventOff="mousemove" afterShow={this.handleShareClick} />
+                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!" data-event="click" /></h3>
+                        <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
                     </span>
                     <span className="col-4">
                         {this.props.isSimulation === 'true' ?
@@ -95,10 +95,10 @@ class Discussion extends Component {
                         </div>
                         <div className="row">
                             <div className="col-lg-6 col-md-12 p-0 blue-border mr-1" >
-                                <UserStats className="stats" userName={this.state.statsUser} discussionId={this.state.discussionId}/>
+                                <UserStats className="stats" userName={this.state.statsUser} discussionId={this.state.discussionId} />
                                 <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
                             </div>
-                            <div className="col pl-0 pr-0">
+                            <div className="col p-0 blue-border">
                                 <AlertList alerts={this.state.shownAlerts} />
                             </div>
                         </div>

@@ -248,7 +248,6 @@ class Simulation extends Component {
                                         onColor="#FFA500"
                                 />
                                 <span><b>{this.state.order}</b></span>
-                                <ReactTooltip eventOff="mousemove"/>
                             </div>
                         </React.Fragment> : null}
                 </div>

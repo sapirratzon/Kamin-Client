@@ -40,6 +40,6 @@
     ]
   },
   "devDependencies": {
-    "react-switch": "latest"
+    "react-switch": "^5.0.1"
   }
 }
