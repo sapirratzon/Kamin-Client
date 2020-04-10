@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import "./Simulation.css"
 import { rgb } from "d3";
 import { connect } from 'react-redux'
 import io from 'socket.io-client';

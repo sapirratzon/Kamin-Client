@@ -64,7 +64,7 @@ class Discussion extends Component {
                 <div className="row text-center">
                     <span className="col-4" />
                     <span className="col-4">
-                        <h3><b>{this.state.title}</b><i class="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!"></i></h3>
+                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!"></i></h3>
                         <ReactTooltip event="click" eventOff="mousemove" afterShow={this.handleShareClick} />
                     </span>
                     <span className="col-4">

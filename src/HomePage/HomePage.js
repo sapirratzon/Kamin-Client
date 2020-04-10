@@ -60,7 +60,7 @@ class HomePage extends Component {
                         <span className="font-size-xxl">or</span>
                         <input type="text" className="codeInput form-control" name="unique"
                             placeholder="Enter code" onChange={this.initError} />
-                        <p className="errorMessage">{this.state.error}</p>
+                        <p className="text-danger">{this.state.error}</p>
                         <button className="btn btn-info btn-sm"
                             onClick={() => this.discussionTypeHandler("true")}>Simulation
                         </button>

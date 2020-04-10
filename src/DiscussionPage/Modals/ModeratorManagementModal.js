@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
-import "./ModeratorManagementModal.css"
 
 class ModeratorManagementModal extends Component {
     constructor() {
