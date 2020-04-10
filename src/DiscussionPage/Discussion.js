@@ -56,7 +56,6 @@ class Discussion extends Component {
         dummy.select();
         document.execCommand("copy");
         document.body.removeChild(dummy);
-        setTimeout(() => ReactTooltip.hide(), 150);
     }
 
     render() {
@@ -65,8 +64,8 @@ class Discussion extends Component {
                 <div className="row text-center">
                     <span className="col-4" />
                     <span className="col-4">
-                        <h3><b>{this.state.title}</b><i class="fas fa-share-square text-primary pl-2" data-tip="Copied!" onClick={this.handleShareClick}></i></h3>
-                        <ReactTooltip event="click" eventOff="mousemove"/>
+                        <h3><b>{this.state.title}</b><i class="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!"></i></h3>
+                        <ReactTooltip event="click" eventOff="mousemove" afterShow={this.handleShareClick} />
                     </span>
                     <span className="col-4">
                         {this.props.isSimulation === 'true' ?
