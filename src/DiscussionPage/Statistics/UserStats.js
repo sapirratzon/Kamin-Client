@@ -17,7 +17,7 @@ class UserStats extends Component {
             commentsRecieved: 0,
             repliedUsers: 0,
             wordsWritten: 0,
-
+            username: ""
         }
     }
 
@@ -32,7 +32,7 @@ class UserStats extends Component {
                 // this.alert.show("Create Discussion Failed! No title or description");
                 console.log("Get User stats failed - status 400");
             }
-            let stats = JSON.parse(xhr.responseText);
+            let stats = JSON.parse(xhr.responseText)["user_in_discussion_statistics"];
             this.setState({
                 commentsWritten: stats.num_of_comments,
                 recievingUsers: stats.num_of_commented_users,
@@ -47,14 +47,20 @@ class UserStats extends Component {
         xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStatisticsInDiscussion');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ username: this.props.username, discussionId: this.props.discussionId }));
+        if (this.props.username) {
+            xhr.send(JSON.stringify({ username: this.props.username, discussionId: this.props.discussionId }));
+            this.setState({ username: this.props.username })
+        } else {
+            xhr.send(JSON.stringify({ username: this.props.currentUser, discussionId: this.props.discussionId }));
+            this.setState({ username: this.props.currentUser })
+        }
     }
 
     render() {
         return (
             <Card className="card-stats">
                 <CardHeader className="p-1">
-                    <CardTitle tag="h4">Statistics of {this.props.username} </CardTitle>
+                    <CardTitle tag="h4">Statistics of {this.state.username} </CardTitle>
                 </CardHeader>
                 <CardBody className="p-1">
                     <Container>

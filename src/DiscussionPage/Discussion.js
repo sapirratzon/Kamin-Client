@@ -7,6 +7,7 @@ import AlertList from "./Alert/AlertsList";
 import UserStats from "./Statistics/UserStats";
 import DiscussionStats from "./Statistics/DiscussionStats";
 import ReactTooltip from 'react-tooltip'
+import { connect } from 'react-redux'
 
 class Discussion extends Component {
     constructor(props) {
@@ -94,7 +95,7 @@ class Discussion extends Component {
                         </div>
                         <div className="row">
                             <div className="col-lg-6 col-md-12 p-0 blue-border mr-1" >
-                                <UserStats className="stats" userName={this.currentUser} discussionId={this.state.discussionId}/>
+                                <UserStats className="stats" userName={this.state.statsUser} discussionId={this.state.discussionId}/>
                                 <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
                             </div>
                             <div className="col p-0 blue-border">
@@ -121,4 +122,12 @@ function intToRGB(i) {
     return "00000".substring(0, 6 - c.length) + c;
 }
 
-export default Discussion;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser,
+        token: state.token,
+        userType: state.userType
+    };
+};
+
+export default connect(mapStateToProps)(Discussion);
