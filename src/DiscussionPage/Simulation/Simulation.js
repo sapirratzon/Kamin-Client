@@ -19,7 +19,7 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
-        this.socket = io('http://localhost:5000/');
+        this.socket = io(process.env.REACT_APP_API);
         this.state = {
             isChronological: false,
             order: 'Regular',
