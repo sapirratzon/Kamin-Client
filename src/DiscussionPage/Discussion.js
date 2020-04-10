@@ -6,6 +6,7 @@ import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
 import UserStats from "./Statistics/UserStats";
 import DiscussionStats from "./Statistics/DiscussionStats";
+import ReactTooltip from 'react-tooltip'
 
 class Discussion extends Component {
     constructor(props) {
@@ -48,13 +49,24 @@ class Discussion extends Component {
         );
     };
 
-    render(props) {
+    handleShareClick = () => {
+        let dummy = document.createElement("input");
+        document.body.appendChild(dummy);
+        dummy.setAttribute('value', this.state.discussionId);
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+        setTimeout(() => ReactTooltip.hide(), 150);
+    }
+
+    render() {
         return (
             <div className="App">
                 <div className="row text-center">
                     <span className="col-4" />
                     <span className="col-4">
-                        <h3><b>{this.state.title}</b></h3>
+                        <h3><b>{this.state.title}</b><i class="fas fa-share-square text-primary pl-2" data-tip="Copied!" onClick={this.handleShareClick}></i></h3>
+                        <ReactTooltip event="click" eventOff="mousemove"/>
                     </span>
                     <span className="col-4">
                         {this.props.isSimulation === 'true' ?
