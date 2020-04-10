@@ -92,8 +92,8 @@ class Discussion extends Component {
                         <div className="row blue-border mb-1 mr-1">
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         </div>
-                        <div className="row">
-                            <div className="stats h-50 col-6 pl-0 pr-0" >
+                        <div className="row mr-1">
+                            <div className="col-6 p-0 mr-1 blue-border" >
                                     <UserStats className="stats" username={this.currentUser} discussionId={this.state.discussionId}/>
                                     <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
                             </div>
