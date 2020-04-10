@@ -32,15 +32,12 @@ class CreateDiscussionModal extends Component {
             xhr.addEventListener('load', (res) => {
                 if (res.status === 400) {
                     // this.alert.show("Create Discussion Failed! No title or description");
-                    console.log("Create discussion failed - status 400");
                 }
                 let discussion_id = JSON.parse(xhr.responseText)["discussion_id"];
-                console.log("Created Discussion: " + discussion_id);
                 this.changePath('/Discussion/false/' + discussion_id);
                 this.updateVisibility(false)
             });
             xhr.addEventListener('error', (res) => console.log(res));
-            // xhr.addEventListener('abort', (res)=> console.log(res));
 
             xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));

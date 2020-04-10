@@ -52,10 +52,6 @@ form input .container::-webkit-input-placeholder {
     font-size: medium;
 }
 
-.errorMessage{
-    color: red;
-}
-
 .codeInput {
     padding-top: 0;
 }

@@ -19,7 +19,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket = io( process.env.REACT_APP_API);
+        this.socket = io(process.env.REACT_APP_API);
     }
 
     componentDidMount() {
@@ -31,7 +31,7 @@ class Chat extends Component {
                         root: response["tree"],
                     }
                 );
-                this.props.setTitle(response["discussion"]["title"] + ": " + this.props.discussionId);
+                this.props.setTitle(response["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
@@ -195,7 +195,7 @@ class Chat extends Component {
 
     render() {
         return (
-            <div className="chat">
+            <div className="chat blue-border">
                 <Messages
                     messages={this.props.messages} isSimulation={this.props.isSimulation}
                     newMessageHandler={this.sendComment.bind(this)} newAlertHandler={this.sendAlert.bind(this)}

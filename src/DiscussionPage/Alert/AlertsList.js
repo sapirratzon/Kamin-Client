@@ -8,7 +8,7 @@ import {
 
 const AlertList = (props) => {
     return (
-        <Card className="card-stats" style={{ border: '3px solid #4285f4' }}>
+        <Card className="card-stats alerts-window" style={{ border:'3px solid #4285f4'}}>
             <CardHeader className="p-1">
                 <CardTitle tag="h4">Moderation Alerts</CardTitle>
             </CardHeader>

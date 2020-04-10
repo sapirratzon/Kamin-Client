@@ -1,14 +1,3 @@
-html, body{
-    overflow:hidden;
-    height:100%;
-    width:100%;
-}
-
-#root{
-    height:100%;
-    width: 100%;
-}
-
 .Discussion{
     height:100%;
     width:100%;
@@ -16,17 +5,12 @@ html, body{
 
 .content{
     height:100%;
-    width:100%;
 }
 
 .chatWindow{
-    border: solid 3px #4285f4;
-    height: 82%;
+    height: 84.7%;
 }
 
-/* .stats{
-    border: 3px solid #4285f4;
-} */
 .title {
     font-weight: bold;
 }
@@ -38,8 +22,4 @@ html, body{
 
 hr{
     margin-top: auto;
-}
-
-.btnEndSession {
-
 }
