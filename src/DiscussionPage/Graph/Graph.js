@@ -19,7 +19,7 @@ class Graph extends Component {
                 <div id="graph-container">
                     <ForceGraph2D className="graph"
                         ref={element => { this.myRef = element }}
-                        width={872}
+                        width={935}
                         height={566}
                         d3Force={"center"}
                         graphData={{
