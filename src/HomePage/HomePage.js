@@ -24,7 +24,8 @@ class HomePage extends Component {
                 selectedDiscussion: ''
             });
         });
-        xhr.open('GET', process.env.REACT_APP_API+'/api/getDiscussions');
+        xhr.open('GET', process.env.REACT_APP_API+'/api/getDiscussions/False');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.send();
     }
 
@@ -77,7 +78,6 @@ class HomePage extends Component {
                             onClick={() => this.changePath('/registration')}>Sign up
                         </button>
                     </div>}
-
             </div>
         );
     }
@@ -104,7 +104,6 @@ class HomePage extends Component {
 
     discussionSelectorHandler = (event) => {
         let uniqueCode = this.state.selectedDiscussion;
-        console.log(uniqueCode);
         if (uniqueCode.length === 0){
             this.setState({error: "Please select discussion or enter a code"});
             return;
@@ -130,7 +129,8 @@ class HomePage extends Component {
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        userType: state.userType
+        userType: state.userType,
+        token: state.token
     };
 };
 

@@ -69,9 +69,7 @@ class Moderators extends Component {
                 submitted: true
             });
             setTimeout(() => window.location.reload(), 1500);
-
         })
-
     };
 
     render() {
