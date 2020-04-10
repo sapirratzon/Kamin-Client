@@ -2,7 +2,7 @@ import React from 'react';
 import Alert from "./Alert";
 import "./Alerts.css";
 import {
-    Card, CardBody, CardTitle, CardFooter, CardHeader,
+    Card, CardBody, CardTitle, CardHeader,
     Container
 } from 'reactstrap';
 

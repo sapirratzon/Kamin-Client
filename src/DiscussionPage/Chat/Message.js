@@ -80,7 +80,7 @@ class Message extends Component {
         let depthString = depthPixels.toString() + "px";
         let verticalLines = [];
         for (let i = 0; i < this.props.depth + 1; i++) {
-            verticalLines.push(<div className="vl" style={{
+            verticalLines.push(<div className="vl" key={i} style={{
                 "left": ((20 * (i + 1) - depthPixels) + 2) + "px",
             }} />)
         }
