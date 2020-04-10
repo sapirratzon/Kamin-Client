@@ -7,6 +7,7 @@ import AlertList from "./Alert/AlertsList";
 import UserStats from "./Statistics/UserStats";
 import DiscussionStats from "./Statistics/DiscussionStats";
 import ReactTooltip from 'react-tooltip'
+import { connect } from 'react-redux'
 
 class Discussion extends Component {
     constructor(props) {
@@ -78,8 +79,8 @@ class Discussion extends Component {
                     </span>
                 </div>
                 <hr />
-                <div className="row content ml-1">
-                    <div className="col-6 chatWindow px-1">
+                <div className="row content mr-3 ml-1">
+                    <div className="chatWindow col-lg-6 col-md-12 px-1">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
                             messagesHandler={this.updateMessagesHandler.bind(this)}
                             alertsHandler={this.updateAlertsHandler.bind(this)}
@@ -88,13 +89,13 @@ class Discussion extends Component {
                               nodeColor={intToRGB}/>
 
                     </div>
-                    <div className="col-6">
-                        <div className="row blue-border mb-1 mr-1">
+                    <div className="col-lg-6 col-md-12">
+                        <div className="row blue-border mb-1">
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
                         </div>
-                        <div className="row mr-1">
-                            <div className="col-6 p-0 mr-1 blue-border" >
-                                <UserStats className="stats" userName={this.currentUser} />
+                        <div className="row">
+                            <div className="col-lg-6 col-md-12 p-0 blue-border mr-1" >
+                                <UserStats className="stats" userName={this.state.statsUser} discussionId={this.state.discussionId}/>
                                 <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
                             </div>
                             <div className="col pl-0 pr-0">
@@ -121,4 +122,12 @@ function intToRGB(i) {
     return "00000".substring(0, 6 - c.length) + c;
 }
 
-export default Discussion;
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser,
+        token: state.token,
+        userType: state.userType
+    };
+};
+
+export default connect(mapStateToProps)(Discussion);

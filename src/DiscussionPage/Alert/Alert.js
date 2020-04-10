@@ -1,5 +1,4 @@
 import React from "react";
-import { Card, CardHeader, CardBody, CardTitle } from "reactstrap";
 const Alert = (props) => {
     return (
         <li id="alert">

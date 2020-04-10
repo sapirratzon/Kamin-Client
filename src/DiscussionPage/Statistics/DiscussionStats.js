@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-    Card, CardBody, CardTitle, CardFooter, CardHeader,
+    Card, CardBody, CardTitle, CardHeader,
     Container, Row, Col
 } from 'reactstrap';
 
@@ -13,13 +13,13 @@ class DiscussionStats extends Component {
         this.state = {
             participants: 0,
             comments: 0,
-            repliedMost: 0,
-            recievedMost: 0
+            repliedMost: "",
+            recievedMost: ""
         }
     }
 
-    componenColidMount() {
-        // this.getDiscussionStats()
+    componentDidMount() {
+        this.getDiscussionStats()
     }
 
     getDiscussionStats() {
@@ -28,20 +28,20 @@ class DiscussionStats extends Component {
             if (res.status === 400) {
                 // this.alert.show("Create Discussion Failed! No title or description");
             }
-            let stats = JSON.parse(xhr.responseText);
+            let stats = JSON.parse(xhr.responseText)["discussion_statistics"];
             this.setState({
-                participants: stats.participants,
-                comments: stats.comments,
-                repliedMost: stats.repliedMost,
-                recievedMost: stats.recievedMost
+                participants: stats.num_of_participants,
+                comments: stats.total_comments_num,
+                repliedMost: stats.max_commented_user,
+                recievedMost: stats.max_responded_user
             })
         });
         xhr.addEventListener('error', (res) => console.log(res));
 
-        xhr.open('POST', process.env.REACT_APP_API + '/api/geColiscussionStats');
-        xhr.seRowequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.seRowequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.sRowingify({ discussion_id: this.props.discussionId }));
+        xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({discussionId:this.props.discussionId }));
     }
 
     render() {
@@ -60,7 +60,7 @@ class DiscussionStats extends Component {
                             <Col >Comments:</Col>
                             <Col xs="3">{this.state.comments}</Col>
                         </Row>
-                        <Row >
+                        <Row xs="2">
                             <Col >Replied Most Comments:</Col>
                             <Col xs="3">{this.state.repliedMost}</Col>
                         </Row>

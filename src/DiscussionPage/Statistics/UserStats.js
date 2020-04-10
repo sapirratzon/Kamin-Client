@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {
-    Card, CardBody, CardTitle, CardFooter, CardHeader,
+    Card, CardBody, CardTitle, CardHeader,
     Container, Row, Col
 } from 'reactstrap';
 import { connect } from 'react-redux'
@@ -17,13 +17,12 @@ class UserStats extends Component {
             commentsRecieved: 0,
             repliedUsers: 0,
             wordsWritten: 0,
-
+            username: ""
         }
     }
 
-    componenColidMount() {
-        //     this.getUserStats();
-
+    componentDidMount() {
+        this.getUserStats();
     }
 
     getUserStats() {
@@ -33,29 +32,35 @@ class UserStats extends Component {
                 // this.alert.show("Create Discussion Failed! No title or description");
                 console.log("Get User stats failed - status 400");
             }
-            let stats = JSON.parse(xhr.responseText);
+            let stats = JSON.parse(xhr.responseText)["user_in_discussion_statistics"];
             this.setState({
-                commentsWritten: stats.commentsWritten,
-                recievingUsers: stats.recievingUsers,
-                commentsRecieved: stats.commentsRecieved,
-                repliedUsers: stats.repliedUsers,
-                wordsWritten: stats.wordsWritten,
+                commentsWritten: stats.num_of_comments,
+                recievingUsers: stats.num_of_commented_users,
+                commentsRecieved: stats.num_of_responses,
+                repliedUsers: stats.responded_users,
+                wordsWritten: stats.total_words,
             })
         });
         xhr.addEventListener('error', (res) => console.log(res));
         // xhr.addEventListener('abort', (res)=> console.log(res));
 
-        xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStats');
-        xhr.seRowequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.seRowequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.sRowingify({ userName: this.props.currentUser }));
+        xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStatisticsInDiscussion');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        if (this.props.username) {
+            xhr.send(JSON.stringify({ username: this.props.username, discussionId: this.props.discussionId }));
+            this.setState({ username: this.props.username })
+        } else {
+            xhr.send(JSON.stringify({ username: this.props.currentUser, discussionId: this.props.discussionId }));
+            this.setState({ username: this.props.currentUser })
+        }
     }
 
     render() {
         return (
             <Card className="card-stats">
                 <CardHeader className="p-1">
-                    <CardTitle tag="h4">Statistics of {this.props.currentUser} </CardTitle>
+                    <CardTitle tag="h4">Statistics of {this.state.username} </CardTitle>
                 </CardHeader>
                 <CardBody className="p-1">
                     <Container>
