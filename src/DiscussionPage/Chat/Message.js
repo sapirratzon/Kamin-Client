@@ -12,7 +12,7 @@ class Message extends Component {
             replyText: "Reply",
             showAlertInput: false,
             alertText: "Alert",
-            inputText: ""
+            inputText: "",
         };
     }
 

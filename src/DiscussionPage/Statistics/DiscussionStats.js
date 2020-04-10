@@ -27,7 +27,6 @@ class DiscussionStats extends Component {
         xhr.addEventListener('load', (res) => {
             if (res.status === 400) {
                 // this.alert.show("Create Discussion Failed! No title or description");
-                console.log("Get discussion stats failed - status 400");
             }
             let stats = JSON.parse(xhr.responseText);
             this.setState({
@@ -38,7 +37,6 @@ class DiscussionStats extends Component {
             })
         });
         xhr.addEventListener('error', (res) => console.log(res));
-        // xhr.addEventListener('abort', (res)=> console.log(res));
 
         xhr.open('POST', process.env.REACT_APP_API + '/api/geColiscussionStats');
         xhr.seRowequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));

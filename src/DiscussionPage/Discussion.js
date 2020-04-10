@@ -42,8 +42,7 @@ class Discussion extends Component {
     };
 
     setTitle = (title) => {
-        this.setState(
-            {
+        this.setState({
                 title: title
             }
         );
@@ -64,7 +63,7 @@ class Discussion extends Component {
                 <div className="row text-center">
                     <span className="col-4" />
                     <span className="col-4">
-                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!"></i></h3>
+                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!"/></h3>
                         <ReactTooltip event="click" eventOff="mousemove" afterShow={this.handleShareClick} />
                     </span>
                     <span className="col-4">
@@ -86,7 +85,8 @@ class Discussion extends Component {
                             alertsHandler={this.updateAlertsHandler.bind(this)}
                             discussionId={this.props.simulationCode}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} />
+                              nodeColor={intToRGB}/>
+
                     </div>
                     <div className="col-6">
                         <div className="row blue-border mb-1 mr-1">
@@ -97,7 +97,7 @@ class Discussion extends Component {
                                 <UserStats className="stats" userName={this.currentUser} />
                                 <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
                             </div>
-                            <div className="col p-0 blue-border">
+                            <div className="col pl-0 pr-0">
                                 <AlertList alerts={this.state.shownAlerts} />
                             </div>
                         </div>

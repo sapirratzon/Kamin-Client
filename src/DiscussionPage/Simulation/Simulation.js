@@ -1,7 +1,10 @@
-import React, { Component } from 'react';
-import { rgb } from "d3";
-import { connect } from 'react-redux'
+import React, {Component} from 'react';
+import {rgb} from "d3";
+import {connect} from 'react-redux'
 import io from 'socket.io-client';
+import Switch from 'react-switch'
+import './Simulation.css';
+import ReactTooltip from "react-tooltip";
 
 
 class Simulation extends Component {
@@ -17,15 +20,19 @@ class Simulation extends Component {
         this.shownLinks = [];
         this.messagesCounter = 0;
         this.socket = io('http://localhost:5000/');
+        this.state = {
+            isChronological: false,
+            order: 'Regular',
+            switchOrder: 'Chronological'
+        }
     }
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            console.log(response);
             this.getMessagesNodesLinks(response["tree"]);
             this.props.setTitle(response["discussion"]["title"]);
             this.shownMessages = this.allMessages.slice(0, 1);
-            if (this.props.messagesOrder === 'chronological') {
+            if (this.state.isChronological) {
                 this.nodesChildren.set(this.shownMessages[0].id, []);
                 this.allMessages.sort(function (a, b) {
                     return a.timestamp - b.timestamp;
@@ -50,9 +57,9 @@ class Simulation extends Component {
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
         if (node["node"]["isAlerted"])
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] });
+            this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]});
         this.messagesCounter++;
-        Object.assign(node["node"], { color: "#" + this.props.nodeColor(node["node"]["author"]) });
+        Object.assign(node["node"], {color: "#" + this.props.nodeColor(node["node"]["author"])});
         this.allMessages.push(node["node"]);
         node["children"].forEach(child => {
             this.getMessagesNodesLinks(child);
@@ -65,7 +72,7 @@ class Simulation extends Component {
         const userName = nextMessage.author;
         const parentId = nextMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
-        this.props.messagesOrder === 'chronological' ?
+        this.state.isChronological ?
             this.nextByTimestamp(nextMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
 
@@ -82,23 +89,18 @@ class Simulation extends Component {
         const parentId = deletedMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
 
-        this.props.messagesOrder === 'chronological' ?
+        this.state.isChronological ?
             this.backByTimestamp(messageIndex)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
 
         // Links - update
         const linkIndex = this.shownLinks.findIndex(
             currentLink => currentLink.source.id === userName && currentLink.target.id === parentUserName);
-        // console.log(this.shownLinks);
-        // console.log(linkIndex);
         let newMessagesNumber = this.shownLinks[linkIndex].messagesNumber - 1;
         if (newMessagesNumber === 0)
             this.shownLinks.splice(linkIndex, 1);
-        else {
-            // console.log(this.shownLinks[linkIndex]);
-            Object.assign(this.shownLinks[linkIndex], { messagesNumber: newMessagesNumber });
-            // console.log(this.shownLinks[linkIndex]);
-        }
+        else
+            Object.assign(this.shownLinks[linkIndex], {messagesNumber: newMessagesNumber});
         this.updateWidthAll();
         this.updateOpacityAll();
 
@@ -108,7 +110,7 @@ class Simulation extends Component {
         else {
             let parentNode = this.shownNodes.find(node => node.id === parentUserName);
             let newVal = parentNode.val - 0.02;
-            Object.assign(parentNode, { val: newVal });
+            Object.assign(parentNode, {val: newVal});
         }
         this.update(-1);
     };
@@ -131,7 +133,7 @@ class Simulation extends Component {
             const lastChildId = children[children.length - 1];
             let prevMessageIndex = this.shownMessages.findIndex(message => message.id === lastChildId);
             while (prevMessageIndex + 1 < this.shownMessages.length &&
-                this.shownMessages[prevMessageIndex + 1].depth > nextMessage.depth) {
+            this.shownMessages[prevMessageIndex + 1].depth > nextMessage.depth) {
                 prevMessageIndex++;
             }
             this.shownMessages.splice(prevMessageIndex + 1, 0, nextMessage);
@@ -154,7 +156,7 @@ class Simulation extends Component {
             })
         } else {
             let newMessagesNumber = this.shownLinks[idx].messagesNumber + 1;
-            Object.assign(this.shownLinks[idx], { messagesNumber: newMessagesNumber });
+            Object.assign(this.shownLinks[idx], {messagesNumber: newMessagesNumber});
             let updatedLink = this.shownLinks.splice(this.shownLinks[idx], 1);
             this.shownLinks.unshift(updatedLink[0]);
         }
@@ -176,7 +178,7 @@ class Simulation extends Component {
         }
         let parentNode = this.shownNodes.find(node => node.id === parentUserName);
         let newVal = parentNode.val + 0.02;
-        Object.assign(parentNode, { val: newVal });
+        Object.assign(parentNode, {val: newVal});
     };
 
     backByTimestamp = (messageIndex) => {
@@ -220,24 +222,51 @@ class Simulation extends Component {
     render() {
         return (
             <React.Fragment>
-                <button type="button" className="btn btn-primary btn-sm"
-                    onClick={this.handleResetClick}>Reset
+                <div className={"row"}>
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleResetClick}>Reset
                     </button>
-                <button type="button" className="btn btn-primary btn-sm"
-                    onClick={this.handleBackClick}>Back
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleBackClick}>Back
                     </button>
-                <button type="button" className="btn btn-primary btn-sm"
-                    onClick={this.handleNextClick}>Next
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleNextClick}>Next
                     </button>
-                <button type="button" className="btn btn-primary btn-sm"
-                    onClick={this.handleShowAllClick}>All
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleShowAllClick}>All
                     </button>
-                <button type="button" className="btn btn-primary btn-sm"
-                    onClick={this.handleSimulateClick}>Simulate
+                    <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleSimulateClick}>Simulate
                     </button>
+                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                        <React.Fragment>
+                            <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
+                                <Switch className="commentsOrderToggle"
+                                        onChange={this.handleOrderSettings}
+                                        checked={this.state.isChronological}
+                                        offColor="#FFA500"
+                                        onColor="#FFA500"
+                                />
+                                <span><b>{this.state.order}</b></span>
+                                <ReactTooltip eventOff="mousemove"/>
+                            </div>
+                        </React.Fragment> : null}
+                </div>
             </React.Fragment>
         );
     }
+
+    handleOrderSettings = () => {
+        let temp = this.state.order;
+        if (window.confirm('This action will initialize the discussion. Are you sure?')) {
+            this.handleResetClick();
+            this.setState({
+                isChronological: !this.state.isChronological,
+                order: this.state.switchOrder,
+                switchOrder: temp
+            });
+        }
+    };
 
     update(dif) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
@@ -247,7 +276,7 @@ class Simulation extends Component {
     updateOpacityAll() {
         for (let index = 0; index < this.shownLinks.length; index++) {
             let newOpacity = (this.shownLinks.length - index) / this.shownLinks.length;
-            this.shownLinks[index] = Object.assign(this.shownLinks[index], { color: rgb(32, 32, 32, newOpacity) });
+            this.shownLinks[index] = Object.assign(this.shownLinks[index], {color: rgb(32, 32, 32, newOpacity)});
         }
     }
 
@@ -256,7 +285,7 @@ class Simulation extends Component {
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
             const value = this.shownLinks[index].messagesNumber;
-            this.shownLinks[index] = Object.assign(this.shownLinks[index], { width: (2 * (value - 1) / max) + 1 });
+            this.shownLinks[index] = Object.assign(this.shownLinks[index], {width: (2 * (value - 1) / max) + 1});
         }
     }
 }
@@ -266,7 +295,8 @@ const sleep = m => new Promise(r => setTimeout(r, m));
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        token: state.token
+        token: state.token,
+        userType: state.userType
     };
 };
 

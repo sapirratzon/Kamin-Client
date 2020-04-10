@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import Messages from "./MessagesList"
 import "./Chat.css"
 import { rgb } from "d3";
-import io from 'socket.io-client';
-
+import io from 'socket.io-client'
 
 class Chat extends Component {
 
