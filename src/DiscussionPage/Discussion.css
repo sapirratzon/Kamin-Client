@@ -16,17 +16,12 @@ html, body{
 
 .content{
     height:100%;
-    width:100%;
 }
 
 .chatWindow{
-    border: solid 3px #4285f4;
-    height: 82%;
+    height: 84.7%;
 }
 
-/* .stats{
-    border: 3px solid #4285f4;
-} */
 .title {
     font-weight: bold;
 }
@@ -36,10 +31,10 @@ html, body{
     margin: 3px auto auto;
 }
 
-hr{
-    margin-top: auto;
+.right-column{
+    margin-right: 1px!important;
 }
 
-.btnEndSession {
-
+hr{
+    margin-top: auto;
 }

@@ -9,8 +9,6 @@
 }
 
 #graph-container{
-    height: 70%;
     width:100%;
-    border: 3px solid #4285f4;
     overflow: hidden;
 }
