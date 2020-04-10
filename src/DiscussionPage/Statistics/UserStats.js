@@ -21,9 +21,8 @@ class UserStats extends Component {
         }
     }
 
-    componenColidMount() {
-        //     this.getUserStats();
-
+    componentDidMount() {
+        this.getUserStats();
     }
 
     getUserStats() {
@@ -35,27 +34,27 @@ class UserStats extends Component {
             }
             let stats = JSON.parse(xhr.responseText);
             this.setState({
-                commentsWritten: stats.commentsWritten,
-                recievingUsers: stats.recievingUsers,
-                commentsRecieved: stats.commentsRecieved,
-                repliedUsers: stats.repliedUsers,
-                wordsWritten: stats.wordsWritten,
+                commentsWritten: stats.num_of_comments,
+                recievingUsers: stats.num_of_commented_users,
+                commentsRecieved: stats.num_of_responses,
+                repliedUsers: stats.responded_users,
+                wordsWritten: stats.total_words,
             })
         });
         xhr.addEventListener('error', (res) => console.log(res));
         // xhr.addEventListener('abort', (res)=> console.log(res));
 
-        xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStats');
-        xhr.seRowequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.seRowequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.sRowingify({ userName: this.props.currentUser }));
+        xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStatisticsInDiscussion');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify({ username: this.props.username, discussionId: this.props.discussionId }));
     }
 
     render() {
         return (
-            <Card className="card-stats" style={{ border:'3px solid #4285f4'}}>
+            <Card className="card-stats" style={{ border: '3px solid #4285f4' }}>
                 <CardHeader className="p-1">
-                    <CardTitle tag="h4">Statistics of {this.props.currentUser} </CardTitle>
+                    <CardTitle tag="h4">Statistics of {this.props.username} </CardTitle>
                 </CardHeader>
                 <CardBody className="p-1">
                     <Container>

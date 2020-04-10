@@ -18,8 +18,8 @@ class DiscussionStats extends Component {
         }
     }
 
-    componenColidMount() {
-        // this.getDiscussionStats()
+    componentDidMount() {
+        this.getDiscussionStats()
     }
 
     getDiscussionStats() {
@@ -31,19 +31,18 @@ class DiscussionStats extends Component {
             }
             let stats = JSON.parse(xhr.responseText);
             this.setState({
-                participants: stats.participants,
-                comments: stats.comments,
-                repliedMost: stats.repliedMost,
-                recievedMost: stats.recievedMost
+                participants: stats.num_of_participants,
+                comments: stats.total_comments_num,
+                repliedMost: stats.max_commented_user,
+                recievedMost: stats.max_responded_user
             })
         });
         xhr.addEventListener('error', (res) => console.log(res));
         // xhr.addEventListener('abort', (res)=> console.log(res));
 
-        xhr.open('POST', process.env.REACT_APP_API + '/api/geColiscussionStats');
-        xhr.seRowequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.seRowequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.sRowingify({ discussion_id: this.props.discussionId }));
+        xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussions/'+this.props.discussionId);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.send();
     }
 
     render() {
