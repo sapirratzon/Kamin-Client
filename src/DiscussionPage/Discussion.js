@@ -5,7 +5,7 @@ import Simulation from './Simulation/Simulation';
 import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
 import UserStats from "./Statistics/UserStats";
-import DiscussionStats from "./Statistics/UserStats";
+import DiscussionStats from "./Statistics/DiscussionStats";
 
 class Discussion extends Component {
     constructor(props) {
