@@ -1,14 +1,3 @@
-html, body{
-    overflow:hidden;
-    height:100%;
-    width:100%;
-}
-
-#root{
-    height:100%;
-    width: 100%;
-}
-
 .Discussion{
     height:100%;
     width:100%;
@@ -16,10 +5,21 @@ html, body{
 
 .content{
     height:100%;
-    width:100%;
 }
 
-.chatwindow{
-    border: solid 3px #4285f4;
-    height: 82%;
+.chatWindow{
+    height: 84.7%;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.discussionTitle{
+    font-size: x-large;
+    margin: 3px auto auto;
+}
+
+hr{
+    margin-top: auto;
 }

@@ -16,7 +16,7 @@ class Login extends Component {
     handleChange = (e) => {
         const { name, value } = e.target;
         this.setState({ [name]: value });
-    }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -55,7 +55,7 @@ class Login extends Component {
             });
             xhr.open('GET', process.env.REACT_APP_API+'/api/login');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
-            xhr.send(JSON.stringify());
+            xhr.send();
         }
     };
 

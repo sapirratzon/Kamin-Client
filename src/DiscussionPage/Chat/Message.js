@@ -1,5 +1,6 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import Input from "./Input";
+import { connect } from 'react-redux'
 
 
 class Message extends Component {
@@ -7,8 +8,11 @@ class Message extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            showInput: false,
-            replyText: "Reply"
+            showReplyInput: false,
+            replyText: "Reply",
+            showAlertInput: false,
+            alertText: "Alert",
+            inputText: "",
         };
     }
 
@@ -20,63 +24,112 @@ class Message extends Component {
     };
 
     replyHandler = () => {
-        if (this.state.showInput) {
+        if (this.state.showReplyInput) {
             this.setState({
-                showInput: false,
+                showReplyInput: false,
                 replyText: "Reply"
             });
         } else {
             this.setState({
-                showInput: true,
-                replyText: "Hide"
+                showReplyInput: true,
+                showAlertInput: false,
+                replyText: "Hide",
+                alertText: "Alert",
+                inputText: "What do you think?"
+            });
+        }
+    };
+
+    alertHandler = () => {
+        if (this.state.showAlertInput) {
+            this.setState({
+                showAlertInput: false,
+                alertText: "Alert"
+            });
+        } else {
+            this.setState({
+                showAlertInput: true,
+                showReplyInput: false,
+                alertText: "Hide",
+                replyText: "Reply",
+                inputText: "Alert text..."
             });
         }
     };
 
     sendMessageHandler = (message) => {
-        this.props.newMessageHandler(this.props.id, "Guy", message, this.props.depth + 1);
+        this.state.showReplyInput ? this.props.newMessageHandler(this.props.id, "Guy", message, this.props.depth + 1) :
+            this.props.newAlertHandler(this.props.id, message);
         this.replyHandler();
     };
 
     getDate = (timestamp) => {
         const date = new Date(timestamp * 1000);
-        console.log(timestamp);
-        return new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(date);
-        // return date.format("dd.mm.yyyy hh:MM:ss");
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        }).format(date);
     };
 
     render() {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
+        let verticalLines = [];
+        for (let i = 0; i < this.props.depth + 1; i++) {
+            verticalLines.push(<div className="vl" key={i} style={{
+                "left": ((20 * (i + 1) - depthPixels) + 2) + "px",
+            }} />)
+        }
         return (
-            <li className="Messages-message" style={{"marginLeft": depthString}}>
-                <div className="vl"/>
-                <span
-                    className="avatar"
-                    style={{
-                        "backgroundColor": this.props.color,
-                    }}
-                />
-                <div className="Message-content">
-                    <div className="username">
-                        {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
-                    </div>
-                    <div className="text">{this.props.text}</div>
-                    {!this.props.isSimulation ?
-                        <div className="reply">
-                            <p><i className="far fa-comment-dots"
-                                  onClick={this.replyHandler.bind(this)}>{this.state.replyText}</i></p>
+            <React.Fragment>
+                <li className="Messages-message" style={{ "marginLeft": depthString }}>
+                    {verticalLines}
+                    <span
+                        className="avatar"
+                        style={{
+                            "backgroundColor": this.props.color,
+                        }}
+                    />
+                    <div className="Message-content">
+                        <div className="username">
+                            {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div>
-                        : null
-                    }
-                    {this.state.showInput ?
-                        <Input onSendMessage={this.sendMessageHandler.bind(this)}/>
-                        : null
-                    }
-                </div>
-            </li>
+                        <div className="text">{this.props.text}</div>
+                        {!this.props.isSimulation ?
+                            <React.Fragment>
+                                <div className="reply">
+                                    <p>
+                                        <i className="far fa-comment-dots mr-2"
+                                            onClick={this.replyHandler}>{this.state.replyText}</i>
+                                        {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                                            <i className="far fa-bell"
+                                                onClick={this.alertHandler}>{this.state.alertText}</i> : null}
+                                    </p>
+                                </div>
+                            </React.Fragment>
+                            : null
+                        }
+                        {this.state.showReplyInput || this.state.showAlertInput ?
+                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
+                            : null
+                        }
+                    </div>
+                </li>
+            </React.Fragment>
         );
     }
 }
 
-export default Message;
+
+const mapStateToProps = state => {
+    return {
+        userType: state.userType,
+    };
+};
+
+
+export default connect(mapStateToProps)(Message);

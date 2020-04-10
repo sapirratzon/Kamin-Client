@@ -9,8 +9,24 @@ class HomePage extends Component {
         this.state = {
             isSimulation: "false",
             discussionModal: false,
-            simulationCodeModal: false
+            simulationCodeModal: false,
+            allDiscussions: {},
+            error: ''
         }
+    }
+
+    componentDidMount() {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', () => {
+            const response = JSON.parse(xhr.responseText)["discussions"];
+            this.setState({
+                allDiscussions: response,
+                selectedDiscussion: ''
+            });
+        });
+        xhr.open('GET', process.env.REACT_APP_API+'/api/getDiscussions/False');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.send();
     }
 
     render() {
@@ -30,9 +46,21 @@ class HomePage extends Component {
                                 path={this.props.history} />
                         </React.Fragment> : null}
                     <form onSubmit={this.discussionHandler}>
-                        <p>Join existing discussions:</p>
-                        <input type="text" className="form-control" name="unique"
-                            placeholder="Enter code" />
+                        <h3>Join existing discussions:</h3>
+                        <span>Search Code</span>
+                        <div>
+                            <select className="discussions" onChange={(e) =>
+                                this.setState({selectedDiscussion: e.target.value,
+                                error: ''})}>
+                                <option key="-1" value=''>Select Discussion</option>)}
+                                {Object.keys(this.state.allDiscussions).map((id) =>
+                                    <option key={id} value={id}>{this.state.allDiscussions[id]}, {id}</option>)}
+                            </select>
+                        </div>
+                        <span className="font-size-xxl">or</span>
+                        <input type="text" className="codeInput form-control" name="unique"
+                            placeholder="Enter code" onChange={this.initError} />
+                        <p className="text-danger">{this.state.error}</p>
                         <button className="btn btn-info btn-sm"
                             onClick={() => this.discussionTypeHandler("true")}>Simulation
                         </button>
@@ -50,10 +78,13 @@ class HomePage extends Component {
                             onClick={() => this.changePath('/registration')}>Sign up
                         </button>
                     </div>}
-
             </div>
         );
     }
+
+    initError = () => {
+        this.setState({error: ''});
+    };
 
     changePath = (path) => {
         this.props.history.push(path);
@@ -62,6 +93,21 @@ class HomePage extends Component {
     discussionHandler = (event) => {
         event.preventDefault();
         let uniqueCode = event.target.unique.value;
+        if (uniqueCode.length > 0) {
+            let path = `Discussion/` + this.state.isSimulation + "/" + uniqueCode;
+            this.props.history.push(path);
+        }
+        else {
+            this.discussionSelectorHandler(event);
+        }
+    };
+
+    discussionSelectorHandler = (event) => {
+        let uniqueCode = this.state.selectedDiscussion;
+        if (uniqueCode.length === 0){
+            this.setState({error: "Please select discussion or enter a code"});
+            return;
+        }
         let path = `Discussion/` + this.state.isSimulation + "/" + uniqueCode;
         this.props.history.push(path);
     };
@@ -78,23 +124,13 @@ class HomePage extends Component {
         });
     };
 
-    createDiscussion(title, categories, description) {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            let discussion_id = JSON.parse(xhr.responseText);
-            this.addComment(discussion_id, description);
-        });
-        xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({ title: title, categories: categories }));
-    };
-
 }
 
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        userType: state.userType
+        userType: state.userType,
+        token: state.token
     };
 };
 

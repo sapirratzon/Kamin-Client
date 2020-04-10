@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
-import "./SettingsModal.css"
 import io from "socket.io-client";
 
 class SettingsModal extends Component {

@@ -1,15 +1,9 @@
-/* canvas{
-    height: 100% !important;
-    width: 100% !important;
-} */
-
 #graph-container > div{
     height: 100%;
     width: 100%;
 }
 
 #graph-container{
-    height: 70%;
-    border: 3px solid #4285f4;
+    width:100%;
     overflow: hidden;
 }

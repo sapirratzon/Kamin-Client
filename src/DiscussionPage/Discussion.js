@@ -4,7 +4,10 @@ import Chat from "./Chat/Chat";
 import Simulation from './Simulation/Simulation';
 import Graph from "./Graph/Graph";
 import AlertList from "./Alert/AlertsList";
-
+import UserStats from "./Statistics/UserStats";
+import DiscussionStats from "./Statistics/DiscussionStats";
+import ReactTooltip from 'react-tooltip'
+import { connect } from 'react-redux'
 
 class Discussion extends Component {
     constructor(props) {
@@ -18,23 +21,13 @@ class Discussion extends Component {
             discussionId: this.props.simulationCode,
             title: ""
         };
-        this.messages = [];
-        this.nodes = [];
-        this.links = [];
     }
-
-    // componentDidMount() {
-    //     this.setState({
-    //         discussionId: this.props.simulationCode
-    //     });
-    // }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
         const newAlerts = [];
         this.state.allAlerts.forEach((a) => {
             if (a.position <= newMessages.length - 1) {
                 newAlerts.push(a);
-                console.log("pos :" + a.position + " , length :" + newMessages.length)
             }
         });
         this.setState({
@@ -50,39 +43,65 @@ class Discussion extends Component {
     };
 
     setTitle = (title) => {
-        console.log('set title');
-        this.setState(
-            {
+        this.setState({
                 title: title
             }
         );
     };
 
-    render(props) {
+    handleShareClick = () => {
+        let dummy = document.createElement("input");
+        document.body.appendChild(dummy);
+        dummy.setAttribute('value', this.state.discussionId);
+        dummy.select();
+        document.execCommand("copy");
+        document.body.removeChild(dummy);
+    }
+
+    render() {
         return (
             <div className="App">
-                <div className="text-center text-body">
-                    <h1><b>{this.state.title}</b></h1>
+                <div className="row text-center">
+                    <span className="col-4" />
+                    <span className="col-4">
+                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!" data-event="click" /></h3>
+                        <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
+                    </span>
+                    <span className="col-4">
+                        {this.props.isSimulation === 'true' ?
+                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
+                                alertsHandler={this.updateAlertsHandler.bind(this)}
+                                discussionId={this.props.simulationCode}
+                                setTitle={this.setTitle}
+                                messagesOrder={'chronological'}
+                                nodeColor={intToRGB}
+                            /> : null}
+                    </span>
                 </div>
-                <hr width="95%"/>
-                <div className="row px-5 content">
-                    <div className="chatwindow col-6 py-3">
+                <hr />
+                <div className="row content mr-3 ml-1">
+                    <div className="chatWindow col-lg-6 col-md-12 px-1">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
                             messagesHandler={this.updateMessagesHandler.bind(this)}
                             alertsHandler={this.updateAlertsHandler.bind(this)}
                             discussionId={this.props.simulationCode}
-                            setTitle={this.setTitle} />
+                            setTitle={this.setTitle}
+                              nodeColor={intToRGB}/>
+
                     </div>
-                    <div className="col-6">
-                        {this.props.isSimulation === 'true' ?
-                            <Simulation messagesHandler={this.updateMessagesHandler.bind(this)}
-                                alertsHandler={this.updateAlertsHandler.bind(this)}
-                                discussionId={this.props.simulationCode} 
-                                setTitle={this.setTitle}
-                                />
-                            : null}
-                        <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
-                        <AlertList alerts={this.state.shownAlerts} />
+                    <div className="col-lg-6 col-md-12">
+                        <div className="row blue-border mb-1">
+                            <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} />
+                        </div>
+                        <div className="row">
+                            <div className="col-lg-6 col-md-12 p-0 blue-border mr-1" >
+                                <UserStats className="stats" userName={this.state.statsUser} discussionId={this.state.discussionId} />
+                                <DiscussionStats className="stats h-50" discussionId={this.state.discussionId} />
+                            </div>
+                            <div className="col p-0 blue-border">
+                                <AlertList alerts={this.state.shownAlerts} />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,5 +109,25 @@ class Discussion extends Component {
     }
 }
 
+function hashCode(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+}
 
-export default Discussion;
+function intToRGB(i) {
+    const c = (hashCode(i) & 0x00FFFFFF).toString(16).toUpperCase();
+    return "00000".substring(0, 6 - c.length) + c;
+}
+
+const mapStateToProps = state => {
+    return {
+        currentUser: state.currentUser,
+        token: state.token,
+        userType: state.userType
+    };
+};
+
+export default connect(mapStateToProps)(Discussion);

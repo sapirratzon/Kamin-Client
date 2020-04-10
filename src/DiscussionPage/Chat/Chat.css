@@ -15,10 +15,10 @@
 }
 
 .Messages-message > .avatar {
-    height: 35px;
-    width: 35px;
-    min-height: 35px;
-    min-width: 35px;
+    height: 25px;
+    width: 25px;
+    min-height: 25px;
+    min-width: 25px;
     border-radius: 50%;
     display: inline-block;
     margin: 0 10px;
@@ -42,3 +42,10 @@
 .reply{
     color: #006BA6;
 }
+
+.vl {
+    position: relative;
+    border-left:2px solid #edeff1;
+    z-index: -1;
+}
+

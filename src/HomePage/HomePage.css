@@ -19,7 +19,8 @@ form input[name="unique"] {
     border: 0;
     border-bottom: 2px solid whitesmoke;
     border-radius: 0;
-    width: 30%;
+    width: 40%;
+    margin-bottom: 20px;
 }
 
 .create-discussion{
@@ -41,4 +42,16 @@ form input{
 
 form input .container::-webkit-input-placeholder {
     color: white !important;
+}
+
+.discussions {
+    margin-top: 5px;
+    width: 50%;
+    margin-bottom: 10px;
+    height: 35px;
+    font-size: medium;
+}
+
+.codeInput {
+    padding-top: 0;
 }
