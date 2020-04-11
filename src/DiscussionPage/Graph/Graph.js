@@ -26,7 +26,8 @@ class Graph extends Component {
                             "nodes": this.props.nodes,
                             "links": this.props.links
                         }}
-                        linkWidth={link => link.width}
+                        linkWidth="width"
+                        linkCurvature="curvature"
                         linkDirectionalArrowRelPos={1}
                         linkDirectionalArrowLength={2.5}
                         cooldownTicks={1}
