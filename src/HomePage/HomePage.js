@@ -24,7 +24,7 @@ class HomePage extends Component {
                 selectedDiscussion: ''
             });
         });
-        xhr.open('GET', process.env.REACT_APP_API+'/api/getDiscussions/False');
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussions/False');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.send();
     }
@@ -32,52 +32,58 @@ class HomePage extends Component {
     render() {
         return (
             <div className="HomePage">
-                <div className="headline" />
+                <div className="headline"/>
                 {this.props.currentUser ? <div className="container">
                     {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                         <React.Fragment>
                             <p>Moderation tools:</p>
                             <button type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.updateModalHandler(true)}>Create New Discussion</button>
+                                    onClick={() => this.updateModalHandler(true)}>Create New Discussion
+                            </button>
                             {this.props.userType === 'ROOT' ? <button type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.changePath('/moderatorsManagement')}>Manage moderators</button> : null}
+                                                                      onClick={() => this.changePath('/moderatorsManagement')}>Manage
+                                moderators</button> : null}
                             <CreateDiscussionModal isOpen={this.state.discussionModal}
-                                updateVisibility={this.updateModalHandler.bind(this)}
-                                path={this.props.history} />
+                                                   updateVisibility={this.updateModalHandler.bind(this)}
+                                                   path={this.props.history}/>
                         </React.Fragment> : null}
                     <form onSubmit={this.discussionHandler}>
                         <h3>Join existing discussions:</h3>
                         <span>Search Code</span>
                         <div>
                             <select className="discussions" onChange={(e) =>
-                                this.setState({selectedDiscussion: e.target.value,
-                                error: ''})}>
-                                <option key="-1" value=''>Select Discussion</option>)}
+                                this.setState({
+                                    selectedDiscussion: e.target.value,
+                                    error: ''
+                                })}>
+                                <option key="-1" value=''>Select Discussion</option>
+                                )}
                                 {Object.keys(this.state.allDiscussions).map((id) =>
                                     <option key={id} value={id}>{this.state.allDiscussions[id]}, {id}</option>)}
                             </select>
                         </div>
                         <span className="font-size-xxl">or</span>
                         <input type="text" className="codeInput form-control" name="unique"
-                            placeholder="Enter code" onChange={this.initError} />
+                               placeholder="Enter code" onChange={this.initError}/>
                         <p className="text-danger">{this.state.error}</p>
                         <button className="btn btn-info btn-sm"
-                            onClick={() => this.discussionTypeHandler("true")}>Simulation
+                                onClick={() => this.discussionTypeHandler("true")}>Simulation
                         </button>
                         <button className="btn btn-info btn-sm"
-                            onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
+                                onClick={() => this.discussionTypeHandler("false")}>Real-Time Discussion
                         </button>
                     </form>
                 </div> : <div>
-                        <h1>Hi and welcome to Kamin!</h1>
-                        <h3>In order to use the application you need to create an account or sign in if you already have one.</h3>
-                        <button type="button" className="btn btn-info btn-sm"
+                    <h1>Hi and welcome to Kamin!</h1>
+                    <h3>In order to use the application you need to create an account or sign in if you already have
+                        one.</h3>
+                    <button type="button" className="btn btn-info btn-sm"
                             onClick={() => this.changePath('/login')}>Sign in
-                        </button>
-                        <button type="button" className="btn btn-info btn-sm"
+                    </button>
+                    <button type="button" className="btn btn-info btn-sm"
                             onClick={() => this.changePath('/registration')}>Sign up
-                        </button>
-                    </div>}
+                    </button>
+                </div>}
             </div>
         );
     }
@@ -96,15 +102,14 @@ class HomePage extends Component {
         if (uniqueCode.length > 0) {
             let path = `Discussion/` + this.state.isSimulation + "/" + uniqueCode;
             this.props.history.push(path);
-        }
-        else {
+        } else {
             this.discussionSelectorHandler(event);
         }
     };
 
     discussionSelectorHandler = (event) => {
         let uniqueCode = this.state.selectedDiscussion;
-        if (uniqueCode.length === 0){
+        if (uniqueCode.length === 0) {
             this.setState({error: "Please select discussion or enter a code"});
             return;
         }

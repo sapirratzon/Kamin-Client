@@ -1,4 +1,4 @@
-.HomePage{
+.HomePage {
     text-align: center;
 }
 
@@ -23,7 +23,7 @@ form input[name="unique"] {
     margin-bottom: 20px;
 }
 
-.create-discussion{
+.create-discussion {
     margin-top: 10px;
 }
 
@@ -32,11 +32,11 @@ form input:focus {
     box-shadow: none !important;
 }
 
-.container{
+.container {
     font-weight: bold;
 }
 
-form input{
+form input {
     margin: auto;
 }
 

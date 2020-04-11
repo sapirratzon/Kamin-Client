@@ -1,23 +1,23 @@
-html, body{
-    height:100%;
-    width:100%;
+html, body {
+    height: 100%;
+    width: 100%;
     overflow: hidden;
 }
 
-#root{
-    height:100%;
+#root {
+    height: 100%;
     width: 100%;
 }
 
-.App{
-    height:100%;
-    width:100%;
+.App {
+    height: 100%;
+    width: 100%;
 }
 
-.blue-border{
+.blue-border {
     border: 2px solid #4285f4;
 }
 
-.cursor-pointer{
+.cursor-pointer {
     cursor: pointer;
 }

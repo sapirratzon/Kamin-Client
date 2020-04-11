@@ -1,13 +1,13 @@
-.Discussion{
-    height:100%;
-    width:100%;
+.Discussion {
+    height: 100%;
+    width: 100%;
 }
 
-.content{
-    height:100%;
+.content {
+    height: 100%;
 }
 
-.chatWindow{
+.chatWindow {
     height: 84.7%;
 }
 
@@ -15,11 +15,11 @@
     font-weight: bold;
 }
 
-.discussionTitle{
+.discussionTitle {
     font-size: x-large;
     margin: 3px auto auto;
 }
 
-hr{
+hr {
     margin-top: auto;
 }

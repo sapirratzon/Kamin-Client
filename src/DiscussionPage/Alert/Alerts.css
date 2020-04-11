@@ -1,8 +1,8 @@
-#alerts-list{
+#alerts-list {
     overflow: auto;
-    list-style-type:none
+    list-style-type: none
 }
 
-.alerts-window{
+.alerts-window {
     height: 100%;
 }

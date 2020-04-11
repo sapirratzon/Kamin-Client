@@ -15,8 +15,8 @@ class CreateDiscussionModal extends Component {
     }
 
     handleChange = (e) => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
+        const {name, value} = e.target;
+        this.setState({[name]: value});
     };
 
 
@@ -25,8 +25,8 @@ class CreateDiscussionModal extends Component {
     };
 
     createDiscussion = () => {
-        this.setState({ submitted: true });
-        const { description, title } = this.state;
+        this.setState({submitted: true});
+        const {description, title} = this.state;
         if (description && title) {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', (res) => {
@@ -51,11 +51,9 @@ class CreateDiscussionModal extends Component {
                 "timestamp": null,
                 "depth": 0
             });
-            xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment }));
+            xhr.send(JSON.stringify({title: title, categories: [], root_comment_dict: comment}));
         }
     };
-
-
 
 
     updateVisibility = (isOpen) => {
@@ -63,7 +61,7 @@ class CreateDiscussionModal extends Component {
     };
 
     render() {
-        const { description, title, submitted } = this.state;
+        const {description, title, submitted} = this.state;
         return (
             <Modal visible={this.props.isOpen}>
 
@@ -75,24 +73,26 @@ class CreateDiscussionModal extends Component {
                     <div>
                         <p className="title">Title:</p>
                         <input type="text" className="title-input" value={this.state.title} name="title"
-                            placeholder="Enter Title" onChange={this.handleChange.bind(this)} />
+                               placeholder="Enter Title" onChange={this.handleChange.bind(this)}/>
                         {submitted && !title &&
-                            <div className="help-block text-danger">Title is required</div>
+                        <div className="help-block text-danger">Title is required</div>
                         }
                     </div>
                     <div>
                         <p className="description">Description:</p>
-                        <textarea className="description-input" name="description" value={this.state.description} placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
+                        <textarea className="description-input" name="description" value={this.state.description}
+                                  placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
                         />
                         {submitted && !description &&
-                            <div className="help-block text-danger">Description is required</div>
+                        <div className="help-block text-danger">Description is required</div>
                         }
                     </div>
                 </div>
                 <div className="modal-footer">
                     <button type="button" onClick={() => this.updateVisibility(false)} className="btn btn-grey">Cancel
-                        </button>
-                    <button className="btn btn-info" onClick={() => this.createDiscussion(description, title)}>Create</button>
+                    </button>
+                    <button className="btn btn-info" onClick={() => this.createDiscussion(description, title)}>Create
+                    </button>
                 </div>
             </Modal>
         );

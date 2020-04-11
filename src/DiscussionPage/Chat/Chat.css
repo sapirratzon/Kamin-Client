@@ -1,12 +1,12 @@
-.chat{
-    height:100%;
+.chat {
+    height: 100%;
 }
 
 .Messages-list {
     height: 100%;
     width: 100%;
     overflow: auto;
-    padding-inline-start:0;
+    padding-inline-start: 0;
 }
 
 .Messages-message {
@@ -36,15 +36,15 @@
     border-radius: 12px;
     color: black;
     display: inline-block;
-    background-color:lightblue;
+    background-color: lightblue;
 }
 
-.reply{
+.reply {
     color: #006BA6;
 }
 
 .vl {
     position: relative;
-    border-left:2px solid #edeff1;
+    border-left: 2px solid #edeff1;
     z-index: -1;
 }

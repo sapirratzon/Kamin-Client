@@ -21,13 +21,13 @@ class ModeratorManagementModal extends Component {
                     <div className="modal-body">
                         <p className="title">Title:</p>
                         <input type="text" className="title-input" name="title"
-                            placeholder="Enter Title" />
+                               placeholder="Enter Title"/>
                         <p className="description">Description:</p>
-                        <textarea className="description-input" name="description" placeholder={"Write Something"} />
+                        <textarea className="description-input" name="description" placeholder={"Write Something"}/>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-grey"
-                            onClick={() => this.updateVisibility(false)}>Cancel
+                                onClick={() => this.updateVisibility(false)}>Cancel
                         </button>
                         <button className="btn btn-info">Create</button>
                     </div>

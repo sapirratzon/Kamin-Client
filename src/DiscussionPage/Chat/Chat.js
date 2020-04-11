@@ -136,7 +136,7 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["isAlerted"]) {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
+            this.props.alertsHandler({"position": this.messagesCounter, "text": commentNode["node"]["actions"][0]})
         }
         this.messagesCounter++;
         this.shownMessages.push({
@@ -199,6 +199,7 @@ class Chat extends Component {
             </div>);
     }
 }
+
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,

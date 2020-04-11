@@ -7,7 +7,6 @@ import {
 import { connect } from 'react-redux'
 
 
-
 class UserStats extends Component {
     constructor(props) {
         super(props);
@@ -48,11 +47,11 @@ class UserStats extends Component {
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
         if (this.props.username) {
-            xhr.send(JSON.stringify({ username: this.props.username, discussionId: this.props.discussionId }));
-            this.setState({ username: this.props.username })
+            xhr.send(JSON.stringify({username: this.props.username, discussionId: this.props.discussionId}));
+            this.setState({username: this.props.username})
         } else {
-            xhr.send(JSON.stringify({ username: this.props.currentUser, discussionId: this.props.discussionId }));
-            this.setState({ username: this.props.currentUser })
+            xhr.send(JSON.stringify({username: this.props.currentUser, discussionId: this.props.discussionId}));
+            this.setState({username: this.props.currentUser})
         }
     }
 
@@ -65,24 +64,24 @@ class UserStats extends Component {
                 <CardBody className="p-1">
                     <Container>
                         <Row xs="2">
-                            <Col >Comments Written:</Col>
-                            <Col >{this.state.commentsWritten}</Col>
+                            <Col>Comments Written:</Col>
+                            <Col>{this.state.commentsWritten}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Recieving Users:</Col>
-                            <Col >{this.state.recievingUsers}</Col>
+                            <Col>Recieving Users:</Col>
+                            <Col>{this.state.recievingUsers}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Comments Recieved:</Col>
-                            <Col >{this.state.commentsRecieved}</Col>
+                            <Col>Comments Recieved:</Col>
+                            <Col>{this.state.commentsRecieved}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Users Replied:</Col>
-                            <Col >{this.state.repliedUsers}</Col>
+                            <Col>Users Replied:</Col>
+                            <Col>{this.state.repliedUsers}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Words Written:</Col>
-                            <Col >{this.state.wordsWritten}</Col>
+                            <Col>Words Written:</Col>
+                            <Col>{this.state.wordsWritten}</Col>
                         </Row>
                     </Container>
                 </CardBody>

@@ -1,10 +1,9 @@
-import React, {Component} from 'react';
-import {rgb} from "d3";
-import {connect} from 'react-redux'
+import React, { Component } from 'react';
+import { rgb } from "d3";
+import { connect } from 'react-redux'
 import io from 'socket.io-client';
 import Switch from 'react-switch'
 import './Simulation.css';
-import ReactTooltip from "react-tooltip";
 
 
 class Simulation extends Component {
@@ -77,7 +76,7 @@ class Simulation extends Component {
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
 
         this.updateLinksNext(userName, parentUserName);
-        this.updateNodesNext(userName, parentUserName);
+        this.updateNodesNext(userName);
         this.update(1);
     };
 
@@ -92,7 +91,7 @@ class Simulation extends Component {
             this.backByTimestamp(messageIndex)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
         this.updateLinksBack(userName, parentUserName);
-        this.updateNodesBack(userName, parentUserName);
+        this.updateNodesBack(userName);
         this.update(-1);
     };
 
@@ -126,8 +125,8 @@ class Simulation extends Component {
 
     /*
     properties:
-    name - represents the number of messages (used for the tooltip)
-    width - represent the number of messages
+    name - represents the messages number (also the tooltip)
+    width - represent the
     color - represents the updating of the last message
      */
 
@@ -141,7 +140,7 @@ class Simulation extends Component {
                 name: 1,
                 width: 1,
                 color: rgb(32, 32, 32, 1),
-                curvature : 0.2,
+                curvature: 0.2,
             })
         } else {
             let newMessagesNumber = this.shownLinks[idx].name + 1;
@@ -156,16 +155,14 @@ class Simulation extends Component {
     updateLinksBack = (userName, parentUserName) => {
         const linkIndex = this.shownLinks.findIndex(
             currentLink => currentLink.source.id === userName && currentLink.target.id === parentUserName);
-        let newMessagesNumber = this.shownLinks[linkIndex].name - 1;
-        if (newMessagesNumber === 0)
+        this.shownLinks[linkIndex].name -= 1;
+        if (this.shownLinks[linkIndex].name === 0)
             this.shownLinks.splice(linkIndex, 1);
-        else
-            Object.assign(this.shownLinks[linkIndex], {name: newMessagesNumber});
         this.updateWidthAll();
         this.updateOpacityAll();
     };
 
-    updateNodesNext = (userName, parentUserName) => {
+    updateNodesNext = (userName) => {
         const idx = this.shownNodes.findIndex(currentNode =>
             currentNode.id === userName);
         if (idx === -1) {
@@ -176,20 +173,18 @@ class Simulation extends Component {
                 val: 0.5,
                 children: []
             })
+        } else {
+            this.shownNodes[idx].val += 0.05;
         }
-        let parentNode = this.shownNodes.find(node => node.id === parentUserName);
-        let newVal = parentNode.val + 0.05;
-        Object.assign(parentNode, {val: newVal});
     };
 
-    updateNodesBack = (userName, parentUserName) => {
-        const nodeIndex = this.shownLinks.findIndex(link => link.source.id === userName || link.target.id === userName);
-        if (nodeIndex === -1)
+    updateNodesBack = (userName) => {
+        const linkIndex = this.shownLinks.findIndex(link => link.source.id === userName || link.target.id === userName);
+        if (linkIndex === -1)
             this.shownNodes.splice(this.shownNodes.findIndex(node => node.id === userName), 1);
         else {
-            let parentNode = this.shownNodes.find(node => node.id === parentUserName);
-            let newVal = parentNode.val - 0.05;
-            Object.assign(parentNode, {val: newVal});
+            const nodeIndex = this.shownNodes.findIndex(node => node.id === userName);
+            this.shownNodes[nodeIndex].val -= 0.05;
         }
     };
 
@@ -219,7 +214,6 @@ class Simulation extends Component {
             await sleep(1);
         }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
-        console.log(this.shownLinks);
     };
 
     handleResetClick = () => {
