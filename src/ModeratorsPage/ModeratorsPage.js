@@ -16,7 +16,7 @@ class Moderators extends Component {
     }
 
     handleChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         if (value !== "")
             this.setState({
                 [name]: value
@@ -78,13 +78,15 @@ class Moderators extends Component {
                 <h2 className="pb-5">Moderators Management</h2>
                 <div className="input-group mb-3 w-50 mx-auto">
                     <label className="text-danger">Revoke moderation powers:</label>
-                    <select className="custom-select w-25 mb-2" id="inputRevoke" name="selectedModeratorUser" onChange={this.handleChange} defaultValue="">
+                    <select className="custom-select w-25 mb-2" id="inputRevoke" name="selectedModeratorUser"
+                            onChange={this.handleChange} defaultValue="">
                         <option value="">Choose...</option>
                         {this.state.moderatorUsers.map((user) =>
                             <option key={user} value={user}>{user}</option>)}
                     </select>
                     <label className="text-success">Give moderation powers:</label>
-                    <select className="custom-select w-25" id="inputGrand" name="selectedRegularUser" onChange={this.handleChange} defaultValue="">
+                    <select className="custom-select w-25" id="inputGrand" name="selectedRegularUser"
+                            onChange={this.handleChange} defaultValue="">
                         <option value="">Choose...</option>
                         {this.state.regularUsers.map((user) =>
                             <option key={user} value={user}>{user}</option>)}
@@ -93,7 +95,7 @@ class Moderators extends Component {
                 <button type="button mx-auto" className="btn btn-primary" onClick={this.handleSaveClick}>Save</button>
                 {this.state.submitted ? <h3 className={"confirmMessage text-center " + this.state.messageType}>
                     <b>{this.state.statusMessage}</b></h3> : null}
-            </div >
+            </div>
         );
     }
 }

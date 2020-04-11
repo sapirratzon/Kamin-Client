@@ -104,10 +104,10 @@ class Chat extends Component {
     }
 
     updateLinksWidth() {
-        const allMessagesNumber = this.shownLinks.map(link => link.messagesNumber);
+        const allMessagesNumber = this.shownLinks.map(link => link.name);
         const max = Math.max(...allMessagesNumber);
         this.shownLinks.forEach(link => {
-            const value = link.messagesNumber;
+            const value = link.name;
             link.updateWidth((2 * (value - 1) / max) + 1);
         });
     }
@@ -136,7 +136,7 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["isAlerted"]) {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
+            this.props.alertsHandler({"position": this.messagesCounter, "text": commentNode["node"]["actions"][0]})
         }
         this.messagesCounter++;
         this.shownMessages.push({
@@ -167,14 +167,11 @@ class Chat extends Component {
                     source: childComment["node"]["author"],
                     target: commentNode["node"]["author"],
                     timestamp: childComment["node"]["timestamp"],
-                    messagesNumber: 1,
+                    name: 1,
                     width: 1,
                     color: rgb(32, 32, 32, 1),
                     updateWidth: function (value) {
                         this.width = value;
-                    },
-                    updateMessagesNumber: function (value) {
-                        this.messagesNumber += value;
                     },
                     updateOpacity: function (value) {
                         this.color = rgb(value[0], value[1], value[2], value[3]);
@@ -184,8 +181,8 @@ class Chat extends Component {
             } else {
                 const link = this.linksMap.get(key);
                 link.timestamp = childComment["node"]["timestamp"];
-                link.messagesNumber += 1;
-                this.nodesMap.get(link.source).updateVal(0.02);
+                link.name += 1;
+                this.nodesMap.get(link.source).updateVal(0.05);
             }
             this.loadDiscussion(childComment);
         });
@@ -202,6 +199,7 @@ class Chat extends Component {
             </div>);
     }
 }
+
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,

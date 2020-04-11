@@ -1,10 +1,9 @@
-import React, {Component} from 'react';
-import {rgb} from "d3";
-import {connect} from 'react-redux'
+import React, { Component } from 'react';
+import { rgb } from "d3";
+import { connect } from 'react-redux'
 import io from 'socket.io-client';
 import Switch from 'react-switch'
 import './Simulation.css';
-import ReactTooltip from "react-tooltip";
 
 
 class Simulation extends Component {
@@ -76,8 +75,8 @@ class Simulation extends Component {
             this.nextByTimestamp(nextMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
 
-        this.updateLinks(userName, parentUserName);
-        this.updateNodes(userName, parentUserName);
+        this.updateLinksNext(userName, parentUserName);
+        this.updateNodesNext(userName);
         this.update(1);
     };
 
@@ -88,30 +87,11 @@ class Simulation extends Component {
         const userName = deletedMessage.author;
         const parentId = deletedMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
-
         this.state.isChronological ?
             this.backByTimestamp(messageIndex)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
-
-        // Links - update
-        const linkIndex = this.shownLinks.findIndex(
-            currentLink => currentLink.source.id === userName && currentLink.target.id === parentUserName);
-        let newMessagesNumber = this.shownLinks[linkIndex].messagesNumber - 1;
-        if (newMessagesNumber === 0)
-            this.shownLinks.splice(linkIndex, 1);
-        else
-            Object.assign(this.shownLinks[linkIndex], {messagesNumber: newMessagesNumber});
-        this.updateWidthAll();
-        this.updateOpacityAll();
-
-        const nodeIndex = this.shownLinks.findIndex(link => link.source.id === userName || link.target.id === userName);
-        if (nodeIndex === -1)
-            this.shownNodes.splice(this.shownNodes.findIndex(node => node.id === userName), 1);
-        else {
-            let parentNode = this.shownNodes.find(node => node.id === parentUserName);
-            let newVal = parentNode.val - 0.02;
-            Object.assign(parentNode, {val: newVal});
-        }
+        this.updateLinksBack(userName, parentUserName);
+        this.updateNodesBack(userName);
         this.update(-1);
     };
 
@@ -143,20 +123,28 @@ class Simulation extends Component {
         this.nodesChildren.set(nextMessage.id, []);
     };
 
-    updateLinks = (userName, parentUserName) => {
+    /*
+    properties:
+    name - represents the messages number (also the tooltip)
+    width - represent the
+    color - represents the updating of the last message
+     */
+
+    updateLinksNext = (userName, parentUserName) => {
         const idx = this.shownLinks.findIndex(currentLink =>
             currentLink.source.id === userName && currentLink.target.id === parentUserName);
         if (idx === -1) {
             this.shownLinks.push({
                 source: userName,
                 target: parentUserName,
-                messagesNumber: 1,
+                name: 1,
                 width: 1,
-                color: rgb(32, 32, 32, 1)
+                color: rgb(32, 32, 32, 1),
+                curvature: 0.2,
             })
         } else {
-            let newMessagesNumber = this.shownLinks[idx].messagesNumber + 1;
-            Object.assign(this.shownLinks[idx], {messagesNumber: newMessagesNumber});
+            let newMessagesNumber = this.shownLinks[idx].name + 1;
+            Object.assign(this.shownLinks[idx], {name: newMessagesNumber});
             let updatedLink = this.shownLinks.splice(this.shownLinks[idx], 1);
             this.shownLinks.unshift(updatedLink[0]);
         }
@@ -164,7 +152,17 @@ class Simulation extends Component {
         this.updateWidthAll();
     };
 
-    updateNodes = (userName, parentUserName) => {
+    updateLinksBack = (userName, parentUserName) => {
+        const linkIndex = this.shownLinks.findIndex(
+            currentLink => currentLink.source.id === userName && currentLink.target.id === parentUserName);
+        this.shownLinks[linkIndex].name -= 1;
+        if (this.shownLinks[linkIndex].name === 0)
+            this.shownLinks.splice(linkIndex, 1);
+        this.updateWidthAll();
+        this.updateOpacityAll();
+    };
+
+    updateNodesNext = (userName) => {
         const idx = this.shownNodes.findIndex(currentNode =>
             currentNode.id === userName);
         if (idx === -1) {
@@ -175,16 +173,23 @@ class Simulation extends Component {
                 val: 0.5,
                 children: []
             })
+        } else {
+            this.shownNodes[idx].val += 0.05;
         }
-        let parentNode = this.shownNodes.find(node => node.id === parentUserName);
-        let newVal = parentNode.val + 0.02;
-        Object.assign(parentNode, {val: newVal});
+    };
+
+    updateNodesBack = (userName) => {
+        const linkIndex = this.shownLinks.findIndex(link => link.source.id === userName || link.target.id === userName);
+        if (linkIndex === -1)
+            this.shownNodes.splice(this.shownNodes.findIndex(node => node.id === userName), 1);
+        else {
+            const nodeIndex = this.shownNodes.findIndex(node => node.id === userName);
+            this.shownNodes[nodeIndex].val -= 0.05;
+        }
     };
 
     backByTimestamp = (messageIndex) => {
-        // remove the node from the nodesChildren array
         this.nodesChildren.delete(this.allMessages[messageIndex].id);
-        // remove the child from the parent's children array
         const parentId = this.allMessages[messageIndex].parentId;
         let children = this.nodesChildren.get(parentId);
         children.splice(children.length - 1, 1);
@@ -280,10 +285,10 @@ class Simulation extends Component {
     }
 
     updateWidthAll() {
-        const allMessagesNumber = this.shownLinks.map(link => link.messagesNumber);
+        const allMessagesNumber = this.shownLinks.map(link => link.name);
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
-            const value = this.shownLinks[index].messagesNumber;
+            const value = this.shownLinks[index].name;
             this.shownLinks[index] = Object.assign(this.shownLinks[index], {width: (2 * (value - 1) / max) + 1});
         }
     }

@@ -82,11 +82,11 @@ class Message extends Component {
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div className="vl" key={i} style={{
                 "left": ((20 * (i + 1) - depthPixels) + 2) + "px",
-            }} />)
+            }}/>)
         }
         return (
             <React.Fragment>
-                <li className="Messages-message" style={{ "marginLeft": depthString }}>
+                <li className="Messages-message" style={{"marginLeft": depthString}}>
                     {verticalLines}
                     <span
                         className="avatar"
@@ -104,17 +104,17 @@ class Message extends Component {
                                 <div className="reply">
                                     <p>
                                         <i className="far fa-comment-dots mr-2"
-                                            onClick={this.replyHandler}>{this.state.replyText}</i>
+                                           onClick={this.replyHandler}>{this.state.replyText}</i>
                                         {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                                             <i className="far fa-bell"
-                                                onClick={this.alertHandler}>{this.state.alertText}</i> : null}
+                                               onClick={this.alertHandler}>{this.state.alertText}</i> : null}
                                     </p>
                                 </div>
                             </React.Fragment>
                             : null
                         }
                         {this.state.showReplyInput || this.state.showAlertInput ?
-                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
+                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText}/>
                             : null
                         }
                     </div>

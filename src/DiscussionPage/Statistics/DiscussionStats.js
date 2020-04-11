@@ -6,7 +6,6 @@ import {
 } from 'reactstrap';
 
 
-
 class DiscussionStats extends Component {
     constructor(props) {
         super(props);
@@ -41,7 +40,7 @@ class DiscussionStats extends Component {
         xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({discussionId:this.props.discussionId }));
+        xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
     }
 
     render() {
@@ -53,19 +52,19 @@ class DiscussionStats extends Component {
                 <CardBody className="p-1">
                     <Container>
                         <Row xs="2">
-                            <Col >Participants:</Col>
+                            <Col>Participants:</Col>
                             <Col xs="3">{this.state.participants}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Comments:</Col>
+                            <Col>Comments:</Col>
                             <Col xs="3">{this.state.comments}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Replied Most Comments:</Col>
+                            <Col>Replied Most Comments:</Col>
                             <Col xs="3">{this.state.repliedMost}</Col>
                         </Row>
                         <Row xs="2">
-                            <Col >Recieved Most Comments:</Col>
+                            <Col>Recieved Most Comments:</Col>
                             <Col xs="3">{this.state.recievedMost}</Col>
                         </Row>
                     </Container>
