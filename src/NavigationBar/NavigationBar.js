@@ -16,7 +16,7 @@ class NavigationBar extends Component {
 
     render(props) {
         return (
-            <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1 sticky-top">
                 <div className="container-fluid px-5">
                     <a className="navbar-brand" href="/"><i className="fas fa-dungeon pr-2"/>Kamin</a>
                     <button className="navbar-toggler" type="button" data-toggle="collapse"
