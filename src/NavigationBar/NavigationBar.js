@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import './NavigationBar.css';
 
 class NavigationBar extends Component {
 
@@ -14,7 +15,7 @@ class NavigationBar extends Component {
 
     };
 
-    render(props) {
+    render() {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1 sticky-top">
                 <div className="container-fluid px-5">
@@ -67,7 +68,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogOut: () => dispatch({type: 'LOGOUT'})
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
     };
 };
 
