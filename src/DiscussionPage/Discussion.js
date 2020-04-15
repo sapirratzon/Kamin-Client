@@ -19,7 +19,7 @@ class Discussion extends Component {
             shownAlerts: [],
             allAlerts: [],
             discussionId: this.props.simulationCode,
-            title: ""
+            title: '',
         };
     }
 
@@ -103,11 +103,15 @@ class Discussion extends Component {
 
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
-                        <div className="graph row blue-border mb-1">
+                        <a href="#presentGraph" data-toggle="collapse">
+                            <i className="fa fa-angle-down" /></a>
+                        <div id="presentGraph" className="show collapse graph row blue-border mb-1">
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
                         </div>
                         <div className="row insights">
-                            <div className="col-lg-4 col-md-12 p-0 blue-border mr-1">
+                            <a href="#presentStat" data-toggle="collapse">
+                                <i className="fa fa-angle-down" /></a>
+                            <div id="presentStat" className="show collapse col-lg-4 col-md-12 p-0 blue-border mr-1">
                                 <UserStats className="stats"
                                            discussionId={this.state.discussionId}
                                            getShownMessages={this.getShownMessages.bind(this)}
@@ -118,7 +122,9 @@ class Discussion extends Component {
                                                  getShownLinks={this.getShownLinks.bind(this)}
                                                  getShownNodes={this.getShownNodes.bind(this)}/>
                             </div>
-                            <div className="col p-0 blue-border">
+                            <a href="#presentAlerts" data-toggle="collapse">
+                                <i className="fa fa-angle-down" /></a>
+                            <div id="presentAlerts" className="show collapse col p-0 blue-border">
                                 <AlertList alerts={this.state.shownAlerts}/>
                             </div>
                         </div>

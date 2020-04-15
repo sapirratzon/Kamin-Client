@@ -31,6 +31,8 @@ class Graph extends Component {
                                   linkDirectionalArrowRelPos={1}
                                   linkDirectionalArrowLength={2.5}
                                   cooldownTicks={1}
+                                  // nodeCanvasObjectMode={node => this.props.nodes.indexOf(node) === 0 ? 'before' : undefined}
+                                  // nodeCanvasObject={paintRing}
                     />
                 </div>
             );
