@@ -7,8 +7,8 @@
     height: 100%;
 }
 
-.chatWindow {
-    height: 84.7%;
+.discussion-col {
+    height: 86%;
 }
 
 .title {
@@ -18,6 +18,18 @@
 .discussionTitle {
     font-size: x-large;
     margin: 3px auto auto;
+}
+
+.graph{
+    height: 60%;
+}
+
+.insights{
+    height: 39.6%;
+}
+
+.card-stats{
+    height: 50%;
 }
 
 hr {

@@ -93,7 +93,7 @@ class Discussion extends Component {
                 </div>
                 <hr/>
                 <div className="row content mr-3 ml-1">
-                    <div className="chatWindow col-lg-6 col-md-12 px-1">
+                    <div className="discussion-col col-lg-6 col-md-12 px-1">
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
                               messagesHandler={this.updateMessagesHandler.bind(this)}
                               alertsHandler={this.updateAlertsHandler.bind(this)}
@@ -102,11 +102,11 @@ class Discussion extends Component {
                               nodeColor={intToRGB}/>
 
                     </div>
-                    <div className="col-lg-6 col-md-12">
-                        <div className="row blue-border mb-1">
+                    <div className="discussion-col col-lg-6 col-md-12">
+                        <div className="graph row blue-border mb-1">
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
                         </div>
-                        <div className="row">
+                        <div className="row insights">
                             <div className="col-lg-4 col-md-12 p-0 blue-border mr-1">
                                 <UserStats className="stats"
                                            discussionId={this.state.discussionId}
