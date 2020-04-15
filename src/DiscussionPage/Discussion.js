@@ -56,7 +56,19 @@ class Discussion extends Component {
         dummy.select();
         document.execCommand("copy");
         document.body.removeChild(dummy);
-    }
+    };
+
+    getShownMessages () {
+        return this.state.shownMessages;
+    };
+
+    getShownLinks () {
+        return this.state.shownLinks;
+    };
+
+    getShownNodes () {
+        return this.state.shownNodes;
+    };
 
     render() {
         return (
@@ -95,10 +107,16 @@ class Discussion extends Component {
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}/>
                         </div>
                         <div className="row">
-                            <div className="col-lg-6 col-md-12 p-0 blue-border mr-1">
-                                <UserStats className="stats" userName={this.state.statsUser}
-                                           discussionId={this.state.discussionId}/>
-                                <DiscussionStats className="stats h-50" discussionId={this.state.discussionId}/>
+                            <div className="col-lg-4 col-md-12 p-0 blue-border mr-1">
+                                <UserStats className="stats"
+                                           discussionId={this.state.discussionId}
+                                           getShownMessages={this.getShownMessages.bind(this)}
+                                           getShownLinks={this.getShownLinks.bind(this)}/>
+                                <DiscussionStats className="stats h-50"
+                                                 discussionId={this.state.discussionId}
+                                                 getShownMessages={this.getShownMessages.bind(this)}
+                                                 getShownLinks={this.getShownLinks.bind(this)}
+                                                 getShownNodes={this.getShownNodes.bind(this)}/>
                             </div>
                             <div className="col p-0 blue-border">
                                 <AlertList alerts={this.state.shownAlerts}/>

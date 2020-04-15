@@ -41,7 +41,9 @@ class Simulation extends Component {
                 id: this.shownMessages[0].author,
                 color: "#" + this.props.nodeColor(this.shownMessages[0].author),
                 name: this.shownMessages[0].author,
-                val: 0.5
+                val: 0.5,
+                comments: 1,
+                commentsReceived: 0
             });
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
@@ -50,7 +52,7 @@ class Simulation extends Component {
             token: this.props.token
         };
         this.socket.emit('join', data);
-        this.socket.on('user joined', (response) => console.log(response));
+        // this.socket.on('user joined', (response) => console.log(response));
     }
 
     getMessagesNodesLinks = (node) => {
@@ -75,8 +77,8 @@ class Simulation extends Component {
             this.nextByTimestamp(nextMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
 
+        this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
-        this.updateNodesNext(userName);
         this.update(1);
     };
 
@@ -91,7 +93,7 @@ class Simulation extends Component {
             this.backByTimestamp(messageIndex)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
         this.updateLinksBack(userName, parentUserName);
-        this.updateNodesBack(userName);
+        this.updateNodesBack(userName, parentUserName);
         this.update(-1);
     };
 
@@ -135,8 +137,8 @@ class Simulation extends Component {
             currentLink.source.id === userName && currentLink.target.id === parentUserName);
         if (idx === -1) {
             this.shownLinks.push({
-                source: userName,
-                target: parentUserName,
+                source: this.shownNodes.filter(node => node.id === userName)[0],
+                target: this.shownNodes.filter(node => node.id === parentUserName)[0],
                 name: 1,
                 width: 1,
                 color: rgb(32, 32, 32, 1),
@@ -144,7 +146,7 @@ class Simulation extends Component {
             })
         } else {
             let newMessagesNumber = this.shownLinks[idx].name + 1;
-            Object.assign(this.shownLinks[idx], {name: newMessagesNumber});
+            this.shownLinks[idx].name = newMessagesNumber;
             let updatedLink = this.shownLinks.splice(this.shownLinks[idx], 1);
             this.shownLinks.unshift(updatedLink[0]);
         }
@@ -162,7 +164,7 @@ class Simulation extends Component {
         this.updateOpacityAll();
     };
 
-    updateNodesNext = (userName) => {
+    updateNodesNext = (userName, parentUserName) => {
         const idx = this.shownNodes.findIndex(currentNode =>
             currentNode.id === userName);
         if (idx === -1) {
@@ -171,21 +173,33 @@ class Simulation extends Component {
                 color: "#" + this.props.nodeColor(userName),
                 name: userName,
                 val: 0.5,
-                children: []
+                children: [],
+                comments: 1,
+                commentsReceived: 0
+
             })
         } else {
             this.shownNodes[idx].val += 0.05;
+            this.shownNodes[idx].comments++;
         }
+        const parentIdx = this.shownNodes.findIndex(currentNode =>
+            currentNode.id === parentUserName);
+        this.shownNodes[parentIdx].commentsReceived++;
     };
 
-    updateNodesBack = (userName) => {
+    updateNodesBack = (userName, parentUserName) => {
         const linkIndex = this.shownLinks.findIndex(link => link.source.id === userName || link.target.id === userName);
         if (linkIndex === -1)
             this.shownNodes.splice(this.shownNodes.findIndex(node => node.id === userName), 1);
         else {
             const nodeIndex = this.shownNodes.findIndex(node => node.id === userName);
             this.shownNodes[nodeIndex].val -= 0.05;
+            this.shownNodes[nodeIndex].comments--;
         }
+        const parentIdx = this.shownNodes.findIndex(currentNode =>
+            currentNode.id === parentUserName);
+        this.shownNodes[parentIdx].commentsReceived--;
+
     };
 
     backByTimestamp = (messageIndex) => {
@@ -280,7 +294,7 @@ class Simulation extends Component {
     updateOpacityAll() {
         for (let index = 0; index < this.shownLinks.length; index++) {
             let newOpacity = (this.shownLinks.length - index) / this.shownLinks.length;
-            this.shownLinks[index] = Object.assign(this.shownLinks[index], {color: rgb(32, 32, 32, newOpacity)});
+            this.shownLinks[index].color = rgb(32, 32, 32, newOpacity);
         }
     }
 
@@ -289,7 +303,7 @@ class Simulation extends Component {
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
             const value = this.shownLinks[index].name;
-            this.shownLinks[index] = Object.assign(this.shownLinks[index], {width: (2 * (value - 1) / max) + 1});
+            this.shownLinks[index].width= (2 * (value - 1) / max) + 1;
         }
     }
 }

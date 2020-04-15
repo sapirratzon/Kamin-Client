@@ -169,6 +169,7 @@ class Chat extends Component {
                     timestamp: childComment["node"]["timestamp"],
                     name: 1,
                     width: 1,
+                    curvature: 0.2,
                     color: rgb(32, 32, 32, 1),
                     updateWidth: function (value) {
                         this.width = value;
