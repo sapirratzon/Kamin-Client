@@ -18,9 +18,9 @@ class HomePage extends Component {
     componentDidMount() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            const response = JSON.parse(xhr.responseText)["discussions"];
+            const allDiscussions = JSON.parse(xhr.responseText)["discussions"];
             this.setState({
-                allDiscussions: response,
+                allDiscussions: allDiscussions,
                 selectedDiscussion: ''
             });
         });

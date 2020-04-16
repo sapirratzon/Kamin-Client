@@ -45,6 +45,7 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
+            this.nodesChildren.set(this.shownMessages[0].id, []);
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
         const data = {
