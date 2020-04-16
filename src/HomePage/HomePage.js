@@ -22,9 +22,9 @@ class HomePage extends Component {
                 this.props.onLogOut();
             }
             else {
-                const response = JSON.parse(xhr.responseText)["discussions"];
+                const allDiscussions = JSON.parse(xhr.responseText)["discussions"];
                 this.setState({
-                    allDiscussions: response,
+                    allDiscussions: allDiscussions,
                     selectedDiscussion: ''
                 });
             }
