@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { timeThursday } from 'd3';
 
 class DiscussionStats extends Component {
     constructor(props) {
@@ -36,24 +38,26 @@ class DiscussionStats extends Component {
 
     getDiscussionStats() {
         const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', (res) => {
-            if (res.status === 400) {
-                // this.alert.show("Create Discussion Failed! No title or description");
+        xhr.addEventListener('load', () => {
+            if (xhr.status === 401) {
+                this.props.onLogOut();
             }
-            let stats = JSON.parse(xhr.responseText)["discussion_statistics"];
-            this.setState({
-                participants: stats.num_of_participants,
-                comments: stats.total_comments_num,
-                repliedMost: stats.max_commented_user,
-                receivedMost: stats.max_responded_user
-            })
+            else {
+                let stats = JSON.parse(xhr.responseText)["discussion_statistics"];
+                this.setState({
+                    participants: stats.num_of_participants,
+                    comments: stats.total_comments_num,
+                    repliedMost: stats.max_commented_user,
+                    receivedMost: stats.max_responded_user
+                })
+            }
         });
         xhr.addEventListener('error', (res) => console.log(res));
 
         xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
+        xhr.send(JSON.stringify({ discussionId: this.props.discussionId }));
     }
 
     render() {
@@ -92,4 +96,10 @@ class DiscussionStats extends Component {
     }
 }
 
-export default DiscussionStats;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(null, mapDispatchToProps)(DiscussionStats);

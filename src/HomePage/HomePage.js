@@ -18,11 +18,16 @@ class HomePage extends Component {
     componentDidMount() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            const response = JSON.parse(xhr.responseText)["discussions"];
-            this.setState({
-                allDiscussions: response,
-                selectedDiscussion: ''
-            });
+            if (xhr.status === 401) {
+                this.props.onLogOut();
+            }
+            else {
+                const response = JSON.parse(xhr.responseText)["discussions"];
+                this.setState({
+                    allDiscussions: response,
+                    selectedDiscussion: ''
+                });
+            }
         });
         xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussions/False');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
@@ -139,4 +144,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(HomePage);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomePage);

@@ -54,23 +54,23 @@ class UserStats extends Component {
 
     getUserStats() {
         const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', (res) => {
-            if (res.status === 400) {
-                // this.alert.show("Create Discussion Failed! No title or description");
-                console.log("Get User stats failed - status 400");
+        xhr.addEventListener('load', () => {
+            if (xhr.status === 401) {
+                this.props.onLogOut();
             }
-            let stats = JSON.parse(xhr.responseText)["user_in_discussion_statistics"];
-            this.setState({
-                commentsWritten: stats.num_of_comments,
-                usersResponded: stats.num_of_commented_users,
-                commentsReceived: stats.num_of_responses,
-                repliedUsers: stats.responded_users,
-                wordsWritten: stats.total_words,
-            })
+            else {
+                let stats = JSON.parse(xhr.responseText)["user_in_discussion_statistics"];
+                this.setState({
+                    commentsWritten: stats.num_of_comments,
+                    usersResponded: stats.num_of_commented_users,
+                    commentsReceived: stats.num_of_responses,
+                    repliedUsers: stats.responded_users,
+                    wordsWritten: stats.total_words,
+                })
+            }
+
         });
         xhr.addEventListener('error', (res) => console.log(res));
-        // xhr.addEventListener('abort', (res)=> console.log(res));
-
         xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStatisticsInDiscussion');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
@@ -130,4 +130,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(UserStats);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(UserStats);

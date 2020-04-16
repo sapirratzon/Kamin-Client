@@ -26,10 +26,15 @@ class Moderators extends Component {
     componentDidMount() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            this.setState({
-                regularUsers: JSON.parse(xhr.responseText)['users'],
-                moderatorUsers: JSON.parse(xhr.responseText)['moderators']
-            })
+            if (xhr.status === 401) {
+                this.props.onLogOut();
+            }
+            else {
+                this.setState({
+                    regularUsers: JSON.parse(xhr.responseText)['users'],
+                    moderatorUsers: JSON.parse(xhr.responseText)['moderators']
+                })
+            }
         });
         xhr.open('GET', process.env.REACT_APP_API + '/api/getUsers');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.state.token));
@@ -107,4 +112,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(Moderators);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Moderators);
