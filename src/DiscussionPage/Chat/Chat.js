@@ -98,7 +98,10 @@ class Chat extends Component {
     updateLinksOpacity() {
         this.shownLinks.forEach(link => {
             const index = this.shownLinks.indexOf(link);
-            let newOpacity = (this.shownLinks.length - index) / this.shownLinks.length;
+            let newOpacity = Math.pow(index, 4) / Math.pow(this.shownLinks.length - 1, 4);
+            if (newOpacity < 0.03) {
+                newOpacity = 0.03
+            }
             link.updateOpacity([32, 32, 32, newOpacity]);
         });
     }

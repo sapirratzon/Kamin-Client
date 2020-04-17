@@ -59,9 +59,9 @@ class Simulation extends Component {
     getMessagesNodesLinks = (node) => {
         if (node == null) return;
         if (node["node"]["isAlerted"])
-            this.props.alertsHandler({"position": this.messagesCounter, "text": node["node"]["actions"][0]});
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] });
         this.messagesCounter++;
-        Object.assign(node["node"], {color: "#" + this.props.nodeColor(node["node"]["author"])});
+        Object.assign(node["node"], { color: "#" + this.props.nodeColor(node["node"]["author"]) });
         this.allMessages.push(node["node"]);
         node["children"].forEach(child => {
             this.getMessagesNodesLinks(child);
@@ -116,7 +116,7 @@ class Simulation extends Component {
             const lastChildId = children[children.length - 1];
             let prevMessageIndex = this.shownMessages.findIndex(message => message.id === lastChildId);
             while (prevMessageIndex + 1 < this.shownMessages.length &&
-            this.shownMessages[prevMessageIndex + 1].depth > nextMessage.depth) {
+                this.shownMessages[prevMessageIndex + 1].depth > nextMessage.depth) {
                 prevMessageIndex++;
             }
             this.shownMessages.splice(prevMessageIndex + 1, 0, nextMessage);
@@ -244,28 +244,28 @@ class Simulation extends Component {
             <React.Fragment>
                 <div className={"row"}>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleResetClick}>Reset
+                        onClick={this.handleResetClick}>Reset
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleBackClick}>Back
+                        onClick={this.handleBackClick}>Back
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleNextClick}>Next
+                        onClick={this.handleNextClick}>Next
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleShowAllClick}>All
+                        onClick={this.handleShowAllClick}>All
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleSimulateClick}>Simulate
+                        onClick={this.handleSimulateClick}>Simulate
                     </button>
                     {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                         <React.Fragment>
                             <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
                                 <Switch className="commentsOrderToggle"
-                                        onChange={this.handleOrderSettings}
-                                        checked={this.state.isChronological}
-                                        offColor="#FFA500"
-                                        onColor="#FFA500"
+                                    onChange={this.handleOrderSettings}
+                                    checked={this.state.isChronological}
+                                    offColor="#FFA500"
+                                    onColor="#FFA500"
                                 />
                                 <span><b>{this.state.order}</b></span>
                             </div>
@@ -294,7 +294,10 @@ class Simulation extends Component {
 
     updateOpacityAll() {
         for (let index = 0; index < this.shownLinks.length; index++) {
-            let newOpacity = (this.shownLinks.length - index) / this.shownLinks.length;
+            let newOpacity = Math.pow(index, 4) / Math.pow(this.shownLinks.length - 1, 4);
+            if (newOpacity < 0.03) {
+                newOpacity = 0.03
+            }
             this.shownLinks[index].color = rgb(32, 32, 32, newOpacity);
         }
     }
@@ -304,7 +307,7 @@ class Simulation extends Component {
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
             const value = this.shownLinks[index].name;
-            this.shownLinks[index].width= (2 * (value - 1) / max) + 1;
+            this.shownLinks[index].width = (2 * (value - 1) / max) + 1;
         }
     }
 }
