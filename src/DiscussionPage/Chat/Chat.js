@@ -136,7 +136,7 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["isAlerted"]) {
-            this.props.alertsHandler({"position": this.messagesCounter, "text": commentNode["node"]["actions"][0]})
+            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
         }
         this.messagesCounter++;
         this.shownMessages.push({
@@ -161,29 +161,31 @@ class Chat extends Component {
             this.nodesMap.set(commentNode["node"]["author"], node)
         }
         commentNode["children"].forEach(childComment => {
-            const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
-            if (!this.linksMap.has(key)) {
-                const link = {
-                    source: childComment["node"]["author"],
-                    target: commentNode["node"]["author"],
-                    timestamp: childComment["node"]["timestamp"],
-                    name: 1,
-                    width: 1,
-                    curvature: 0.2,
-                    color: rgb(32, 32, 32, 1),
-                    updateWidth: function (value) {
-                        this.width = value;
-                    },
-                    updateOpacity: function (value) {
-                        this.color = rgb(value[0], value[1], value[2], value[3]);
-                    },
-                };
-                this.linksMap.set(key, link);
-            } else {
-                const link = this.linksMap.get(key);
-                link.timestamp = childComment["node"]["timestamp"];
-                link.name += 1;
-                this.nodesMap.get(link.source).updateVal(0.05);
+            if (childComment["node"]["author"] !== commentNode["node"]["author"]) {
+                const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
+                if (!this.linksMap.has(key)) {
+                    const link = {
+                        source: childComment["node"]["author"],
+                        target: commentNode["node"]["author"],
+                        timestamp: childComment["node"]["timestamp"],
+                        name: 1,
+                        width: 1,
+                        curvature: 0.2,
+                        color: rgb(32, 32, 32, 1),
+                        updateWidth: function (value) {
+                            this.width = value;
+                        },
+                        updateOpacity: function (value) {
+                            this.color = rgb(value[0], value[1], value[2], value[3]);
+                        },
+                    };
+                    this.linksMap.set(key, link);
+                } else {
+                    const link = this.linksMap.get(key);
+                    link.timestamp = childComment["node"]["timestamp"];
+                    link.name += 1;
+                    this.nodesMap.get(link.source).updateVal(0.05);
+                }
             }
             this.loadDiscussion(childComment);
         });
