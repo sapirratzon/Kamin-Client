@@ -18,21 +18,19 @@ class Graph extends Component {
             return (
                 <div id="graph-container">
                     <ForceGraph2D className="graph"
-                                  ref={element => { this.myRef = element }}
-                                  width={935}
-                                  height={566}
-                                  d3Force={"center"}
-                                  graphData={{
-                                      "nodes": this.props.nodes,
-                                      "links": this.props.links
-                                  }}
-                                  linkWidth="width"
-                                  linkCurvature="curvature"
-                                  linkDirectionalArrowRelPos={1}
-                                  linkDirectionalArrowLength={2.5}
-                                  cooldownTicks={1}
-                                  // nodeCanvasObjectMode={node => this.props.nodes.indexOf(node) === 0 ? 'before' : undefined}
-                                  // nodeCanvasObject={paintRing}
+                        ref={element => { this.myRef = element }}
+                        width={window.innerWidth/2.053}
+                        height={window.innerHeight/2.026}
+                        d3Force={"center"}
+                        graphData={{
+                            "nodes": this.props.nodes,
+                            "links": this.props.links
+                        }}
+                        linkWidth="width"
+                        linkCurvature="curvature"
+                        linkDirectionalArrowRelPos={1}
+                        linkDirectionalArrowLength={2.5}
+                        cooldownTicks={1}
                     />
                 </div>
             );
