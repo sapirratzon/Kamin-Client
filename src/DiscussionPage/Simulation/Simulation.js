@@ -295,8 +295,8 @@ class Simulation extends Component {
     updateOpacityAll() {
         for (let index = 0; index < this.shownLinks.length; index++) {
             let newOpacity = Math.pow(index, 3) / Math.pow(this.shownLinks.length - 1, 3);
-            if (newOpacity < 0.05) {
-                newOpacity = 0.05
+            if (newOpacity < 0.1) {
+                newOpacity = 0.1
             }
             this.shownLinks[index].color = rgb(32, 32, 32, newOpacity);
         }
