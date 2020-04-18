@@ -55,6 +55,11 @@ class Simulation extends Component {
         };
         this.socket.emit('join', data);
         this.handleModeratorActions();
+
+        /////////////////////////for gal tests////////////////////
+        this.socket.on('config',(response) => {
+            console.log(response);
+        });
     }
 
     getMessagesNodesLinks = (node) => {
@@ -92,8 +97,8 @@ class Simulation extends Component {
 
 
         /////////////////////////// for gal tests//////////////////////////
-        data = {}
-        this.socket.emit('on_config',data)
+        data = {config:[] }
+        this.socket.emit('config',data)
     };
 
     handleBackClick = () => {
@@ -111,6 +116,10 @@ class Simulation extends Component {
         this.updateLinksBack(userName, parentUserName);
         this.updateNodesBack(userName, parentUserName);
         this.update(-1);
+
+         /////////////////////////// for gal tests//////////////////////////
+         data = {config:[] }
+         this.socket.emit('config',data)
     };
 
     /*
