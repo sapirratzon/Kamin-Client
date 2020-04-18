@@ -89,6 +89,11 @@ class Simulation extends Component {
         this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
         this.update(1);
+
+
+        /////////////////////////// for gal tests//////////////////////////
+        data = {}
+        this.socket.emit('on_config',data)
     };
 
     handleBackClick = () => {
