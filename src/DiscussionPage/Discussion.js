@@ -114,7 +114,7 @@ class Discussion extends Component {
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
                         <div className="graph row blue-border mb-1">
-                            <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} currentUser={this.props.currentUser} updateSelectedUser={this.updateSelectedUserHanler.bind(this)} />
+                            {this.state.shownMessages.length > 0 && <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} currentUser={this.props.currentUser} updateSelectedUser={this.updateSelectedUserHanler.bind(this)} rootId={this.state.shownMessages[0]['author']} />}
                         </div>
                         <div className="row insights">
                             <div className="col-lg-6 col-md-12 p-0 blue-border mr-1">

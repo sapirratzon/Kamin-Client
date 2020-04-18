@@ -29,7 +29,7 @@ class Graph extends Component {
     paintRing(node, ctx) {
         ctx.beginPath();
         ctx.arc(node.x, node.y, this.NODE_R * 1.2 + node.val, 0, 2 * Math.PI, false);
-        if (this.props.nodes[0] === node) {
+        if (this.props.rootId === node.id) {
             ctx.fillStyle = 'rgba(255,255,51,0.9)';
         } else if (this.props.currentUser === node.id) {
             ctx.fillStyle = 'rgba(51,153,255,0.8)';
@@ -76,11 +76,12 @@ class Graph extends Component {
                         linkDirectionalArrowLength={2.5}
                         cooldownTicks={1} // Todo: what Is this for??? 
 
-                        nodeCanvasObjectMode={node => this.state.highlightNode === node 
-                        || this.props.nodes[0] === node || this.props.currentUser === node.id ? 'before' : undefined}
+                        nodeCanvasObjectMode={node =>
+                            // this.state.highlightNode === node || 
+                            this.props.rootId === node.id || this.props.currentUser === node.id ? 'before' : undefined}
                         nodeCanvasObject={this.paintRing.bind(this)}
                         onNodeClick={this.selectedNode.bind(this)}
-                        // onNodeHover={this.handleNodeHover.bind(this)}
+                    // onNodeHover={this.handleNodeHover.bind(this)}
                     />
                 </div>
             );

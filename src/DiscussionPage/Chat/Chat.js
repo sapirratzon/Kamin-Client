@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import Messages from "./MessagesList"
+import Messages from "./Messages"
 import "./Chat.css"
 import { rgb } from "d3";
 import io from 'socket.io-client'
