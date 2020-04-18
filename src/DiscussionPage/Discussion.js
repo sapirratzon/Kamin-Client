@@ -20,7 +20,7 @@ class Discussion extends Component {
             allAlerts: [],
             discussionId: this.props.simulationCode,
             title: '',
-            selectedUser :"",
+            selectedUser: "",
         };
     }
 
@@ -63,7 +63,7 @@ class Discussion extends Component {
         document.body.removeChild(dummy);
     };
 
-    getSelectedUser(){
+    getSelectedUser() {
         return this.state.selectedUser;
     }
 
@@ -113,31 +113,25 @@ class Discussion extends Component {
 
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
-                        <a href="#presentGraph" data-toggle="collapse">
-                            <i className="fa fa-angle-down" /></a>
-                        <div id="presentGraph" className="show collapse graph row blue-border mb-1">
+                        <div className="graph row blue-border mb-1">
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} currentUser={this.props.currentUser} updateSelectedUser={this.updateSelectedUserHanler.bind(this)} />
                         </div>
                         <div className="row insights">
-                            <a href="#presentStat" data-toggle="collapse">
-                                <i className="fa fa-angle-down" /></a>
-                            <div id="presentStat" className="show collapse col-lg-4 col-md-12 p-0 blue-border mr-1">
+                            <div className="col-lg-6 col-md-12 p-0 blue-border mr-1">
                                 <UserStats className="stats"
                                     getSelectedUser={this.getSelectedUser.bind(this)}
                                     discussionId={this.state.discussionId}
                                     getShownMessages={this.getShownMessages.bind(this)}
-                                    getShownLinks={this.getShownLinks.bind(this)} 
-                                    getShownNodes={this.getShownNodes.bind(this)} />
-                                    />
+                                    getShownLinks={this.getShownLinks.bind(this)}
+                                    getShownNodes={this.getShownNodes.bind(this)}
+                                />
                                 <DiscussionStats className="stats h-50"
                                     discussionId={this.state.discussionId}
                                     getShownMessages={this.getShownMessages.bind(this)}
                                     getShownLinks={this.getShownLinks.bind(this)}
                                     getShownNodes={this.getShownNodes.bind(this)} />
                             </div>
-                            <a href="#presentAlerts" data-toggle="collapse">
-                                <i className="fa fa-angle-down" /></a>
-                            <div id="presentAlerts" className="show collapse col p-0 blue-border">
+                            <div className="col p-0 blue-border">
                                 <AlertList alerts={this.state.shownAlerts} />
                             </div>
                         </div>
