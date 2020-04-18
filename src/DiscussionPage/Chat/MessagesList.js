@@ -7,8 +7,8 @@ const Messages = (props) => {
         <ul className="Messages-list">
             {props.messages.map((m, i) =>
                 <Message key={i} username={m.author} color={m.color} text={m.text} timestamp={m.timestamp}
-                         depth={m.depth} id={m.id} isSimulation={props.isSimulation}
-                         newMessageHandler={props.newMessageHandler} newAlertHandler={props.newAlertHandler}/>)}
+                    depth={m.depth} id={m.id} isSimulation={props.isSimulation}
+                    newMessageHandler={props.newMessageHandler} newAlertHandler={props.newAlertHandler} />)}
         </ul>
     );
 }
