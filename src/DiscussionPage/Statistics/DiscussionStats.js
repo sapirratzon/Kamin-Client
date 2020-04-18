@@ -69,19 +69,19 @@ class DiscussionStats extends Component {
                 <div className="card-body p-1">
                     <div className="container">
                         <div className="row xs-2">
-                            <div className="col-8">Participants:</div>
+                            <div className="col">Participants:</div>
                             <div className="col">{this.state.participants}</div>
                         </div>
                         <div className="row xs-2">
-                            <div className="col-8">Comments:</div>
+                            <div className="col">Comments:</div>
                             <div className="col">{this.state.comments}</div>
                         </div>
                         <div className="row xs-2">
-                            <div className="col-8">Replied Most Comments:</div>
+                            <div className="col">Replied Most Comments:</div>
                             <div className="col">{this.state.repliedMost}</div>
                         </div>
                         <div className="row xs-2">
-                            <div className="col-8">Received Most Comments:</div>
+                            <div className="col">Received Most Comments:</div>
                             <div className="col">{this.state.receivedMost}</div>
                         </div>
                     </div>

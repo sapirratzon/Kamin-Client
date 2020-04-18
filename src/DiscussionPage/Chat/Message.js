@@ -94,6 +94,7 @@ class Message extends Component {
                         style={{
                             "backgroundColor": this.props.color,
                         }}
+                        // onClick={this.props.updateSelectedUser(this.props.username)}
                     />
                     <div className="Message-content">
                         <div className="username">

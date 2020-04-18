@@ -6,6 +6,7 @@ class UserStats extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            selectedUser: null,
             commentsWritten: 0,
             usersResponded: 0,
             commentsReceived: 0,
@@ -15,7 +16,7 @@ class UserStats extends Component {
     }
 
     // componentDidMount() {
-    //     this.getUserStats();
+    //     this.calcUserStats();
     // }
 
     UNSAFE_componentWillReceiveProps (){
@@ -28,22 +29,24 @@ class UserStats extends Component {
         let usersResponded = 0;
         let commentsReceived = 0;
         let repliedUsers = 0;
+        let selectedUser = this.props.getSelectedUser();
         this.props.getShownLinks().forEach(link => {
-            if (link.source.id === this.props.currentUser){
+            if (link.source.id === selectedUser){
                 usersResponded++;
             }
-            if (link.target.id === this.props.currentUser){
+            if (link.target.id === selectedUser){
                 repliedUsers++;
                 commentsReceived += link.name;
             }
         });
         this.props.getShownMessages().forEach(message => {
-            if (message.author === this.props.currentUser){
+            if (message.author === selectedUser){
                 commentsWritten++;
                 wordsNumber += message.text.split(' ').length;
             }
         });
         this.setState({
+            selectedUser: selectedUser,
             commentsWritten: commentsWritten,
             usersResponded: usersResponded,
             commentsReceived: commentsReceived,
@@ -87,7 +90,7 @@ class UserStats extends Component {
         return (
             <div className="card card-stats">
                 <div className="card-header p-1">
-                    <h4 className="Card-title">Statistics of {this.props.currentUser} </h4>
+                    <h4 className="Card-title">Statistics of {this.state.selectedUser} </h4>
                 </div>
                 <div className="card-body p-1">
                     <div className="container">
