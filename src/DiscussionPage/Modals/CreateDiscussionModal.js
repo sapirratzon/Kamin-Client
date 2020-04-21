@@ -30,14 +30,12 @@ class CreateDiscussionModal extends Component {
         if (description && title) {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', (res) => {
-                if (xhr.status === 401) {
-                    this.props.onLogOut();
+                if (res.status === 400) {
+                    // this.alert.show("Create Discussion Failed! No title or description");
                 }
-                else {
-                    let discussion_id = JSON.parse(xhr.responseText)["discussion_id"];
-                    this.changePath('/Discussion/false/' + discussion_id);
-                    this.updateVisibility(false)
-                }
+                let discussion_id = JSON.parse(xhr.responseText)["discussion_id"];
+                this.changePath('/Discussion/false/' + discussion_id);
+                this.updateVisibility(false)
             });
             xhr.addEventListener('error', (res) => console.log(res));
 
@@ -108,10 +106,4 @@ const mapStateToProps = state => {
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onLogOut: () => dispatch({ type: 'LOGOUT' })
-    };
-};
-
-export default connect(mapStateToProps,mapDispatchToProps)(CreateDiscussionModal);
+export default connect(mapStateToProps)(CreateDiscussionModal);

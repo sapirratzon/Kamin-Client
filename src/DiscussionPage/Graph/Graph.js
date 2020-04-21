@@ -33,10 +33,7 @@ class Graph extends Component {
             ctx.fillStyle = 'rgba(255,255,51,0.9)';
         } else if (this.props.currentUser === node.id) {
             ctx.fillStyle = 'rgba(51,153,255,0.8)';
-
-        } else if (this.state.highlightNode == node) {
-            ctx.fillStyle = 'rgba(170,170,170,0.7)';
-        }
+        } else if (this.state.highlightNode === node) {ctx.fillStyle = 'rgba(170,170,170,0.7)';}
         ctx.fill();
     }
 

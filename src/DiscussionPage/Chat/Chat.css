@@ -1,9 +1,17 @@
 .chat {
     height: 100%;
+    border-top-style: none; /* add */
 }
 
 .Messages-list {
     height: 100%;
+    width: 100%;
+    overflow: auto;
+    padding-inline-start: 0;
+}
+
+.Messages-header{
+    /*height: 100%;*/
     width: 100%;
     overflow: auto;
     padding-inline-start: 0;
@@ -14,7 +22,8 @@
     text-align: left;
 }
 
-.Messages-message>.avatar {
+.avatar {
+    vertical-align: text-bottom;
     height: 25px;
     width: 25px;
     min-height: 25px;
@@ -27,16 +36,15 @@
 .Message-content>.username {
     display: block;
     color: gray;
-    font-size: 14px;
-    padding-bottom: 2px;
+    font-size: 16px;
+    margin-left: 4px;
 }
 
 .Message-content>.text {
-    padding: 10px;
+    font-size: 20px;
     border-radius: 12px;
     color: black;
     display: inline-block;
-    background-color: lightblue;
 }
 
 .reply {

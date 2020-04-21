@@ -35,7 +35,6 @@ class Simulation extends Component {
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
-            console.log(this.chronologicMessages);
             this.handleOrderSettings();
             this.shownMessages = this.allMessages.slice(0, 1);
             this.nodesChildren.set(this.shownMessages[0].id, []);
@@ -73,6 +72,9 @@ class Simulation extends Component {
     handleModeratorActions = () => {
         this.socket.on('next', ()=>this.handleNextClick());
         this.socket.on('back', this.handleBackClick());
+        this.socket.on('reset', this.handleResetClick());
+        this.socket.on('all', this.handleShowAllClick());
+        this.socket.on('jump', this.handleShowAllClick());
     };
 
     handleNextClick = () => {
@@ -222,17 +224,15 @@ class Simulation extends Component {
         this.shownMessages.splice(indexToDelete, 1);
     };
 
-    handleSimulateClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
-            await this.handleNextClick();
-            await (async () => {
-                await sleep(1000);
-            })();
+    handleShowAllClick = () => {
+        while (this.currentMessageIndex < this.allMessages.length) {
+            this.handleNextClick();
         }
+        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
-    handleShowAllClick = async () => {
-        while (this.currentMessageIndex < this.allMessages.length) {
+    handleJump = async (index) => {
+        while (this.currentMessageIndex < index) {
             await this.handleNextClick();
             await sleep(1);
         }
@@ -262,9 +262,6 @@ class Simulation extends Component {
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
                         onClick={this.handleShowAllClick}>All
-                    </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleSimulateClick}>Simulate
                     </button>
                     {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                         <React.Fragment>

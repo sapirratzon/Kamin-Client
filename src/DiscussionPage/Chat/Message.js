@@ -98,10 +98,10 @@ class Message extends Component {
 
     handleMessageDisplayLength = () => {
         this.state.fullyShown ? this.setState({
-            fullyShown: false,
-            shownText: this.props.text.substring(0, 500),
-            textLengthMessage: " Show more"
-        })
+                fullyShown: false,
+                shownText: this.props.text.substring(0, 500),
+                textLengthMessage: " Show more"
+            })
             : this.setState({
                 fullyShown: true,
                 shownText: this.props.text,
@@ -115,26 +115,27 @@ class Message extends Component {
         let verticalLines = [];
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div className="vl" key={i} style={{
-                "left": ((20 * (i + 1) - depthPixels) + 2) + "px",
-            }} />)
+                "left": ((2 * (i + 1) - depthPixels) + 2) + "px",
+            }}/>)
         }
         return (
-            <React.Fragment>
-                <li className="Messages-message" style={{ "marginLeft": depthString }}>
+            <div>
+                <li className="Messages-message" style={{"marginLeft": depthString}}>
                     {verticalLines}
-                    <span
-                        className="avatar"
-                        style={{
-                            "backgroundColor": this.props.color,
-                        }}
-                    />
-                    <div className="Message-content">
-                        <div className="username">
-                            {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
+                    <div className="Message-content mr-2 ml-2 mt-2">
+                        <div className="username mt-1 mb-1">
+                            <span
+                                className="avatar"
+                                style={{
+                                    "backgroundColor": this.props.color
+                                }}
+                            />
+                            <span> {this.props.username}{"  "}{this.getDate(this.props.timestamp)} </span>
                         </div>
-                        <div className="text">
+                        <div className="card-header text">
                             {this.state.shownText}
-                            {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b>}
+                            {this.state.longMessage && <b className="text-primary message-buttons"
+                                                          onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b>}
 
                         </div>
                         {!this.props.isSimulation ?
@@ -142,22 +143,22 @@ class Message extends Component {
                                 <div className="reply">
                                     <p>
                                         <i className="far fa-comment-dots mr-2 message-buttons"
-                                            onClick={this.replyHandler}>{this.state.replyText}</i>
+                                           onClick={this.replyHandler}>{this.state.replyText}</i>
                                         {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                                             <i className="far fa-bell message-buttons"
-                                                onClick={this.alertHandler}>{this.state.alertText}</i> : null}
+                                               onClick={this.alertHandler}>{this.state.alertText}</i> : null}
                                     </p>
                                 </div>
                             </React.Fragment>
                             : null
                         }
                         {this.state.showReplyInput || this.state.showAlertInput ?
-                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
+                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText}/>
                             : null
                         }
                     </div>
                 </li>
-            </React.Fragment>
+            </div>
         );
     }
 }
