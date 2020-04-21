@@ -222,19 +222,9 @@ class Simulation extends Component {
         this.shownMessages.splice(indexToDelete, 1);
     };
 
-    handleSimulateClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
-            await this.handleNextClick();
-            await (async () => {
-                await sleep(1000);
-            })();
-        }
-    };
-
-    handleShowAllClick = async () => {
+    handleShowAllClick = () => {
         while (this.currentMessageIndex < this.allMessages.length) {
-            await this.handleNextClick();
-            await sleep(1);
+            this.handleNextClick();
         }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
@@ -262,9 +252,6 @@ class Simulation extends Component {
                     </button>
                     <button type="button" className="btn btn-primary btn-sm"
                         onClick={this.handleShowAllClick}>All
-                    </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleSimulateClick}>Simulate
                     </button>
                     {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                         <React.Fragment>
@@ -321,8 +308,6 @@ class Simulation extends Component {
         }
     }
 }
-
-const sleep = m => new Promise(r => setTimeout(r, m));
 
 const mapStateToProps = state => {
     return {
