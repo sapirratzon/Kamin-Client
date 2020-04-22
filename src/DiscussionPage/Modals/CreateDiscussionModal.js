@@ -15,8 +15,8 @@ class CreateDiscussionModal extends Component {
     }
 
     handleChange = (e) => {
-        const {name, value} = e.target;
-        this.setState({[name]: value});
+        const { name, value } = e.target;
+        this.setState({ [name]: value });
     };
 
 
@@ -25,8 +25,8 @@ class CreateDiscussionModal extends Component {
     };
 
     createDiscussion = () => {
-        this.setState({submitted: true});
-        const {description, title} = this.state;
+        this.setState({ submitted: true });
+        const { description, title } = this.state;
         if (description && title) {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', (res) => {
@@ -44,7 +44,7 @@ class CreateDiscussionModal extends Component {
             xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhr.setRequestHeader("Content-Type", "application/json");
-            const comment = JSON.stringify({
+            const comment = {
                 "author": this.props.currentUser,
                 "text": description,
                 "parentId": null,
@@ -52,8 +52,8 @@ class CreateDiscussionModal extends Component {
                 "extra_data": null,
                 "timestamp": null,
                 "depth": 0
-            });
-            xhr.send(JSON.stringify({title: title, categories: [], root_comment_dict: comment}));
+            };
+            xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment, configuration: { default: { "graph": true, "alerts": true, "statistics": true}, replyPosition: "None" } }));
         }
     };
 
@@ -63,7 +63,7 @@ class CreateDiscussionModal extends Component {
     };
 
     render() {
-        const {description, title, submitted} = this.state;
+        const { description, title, submitted } = this.state;
         return (
             <Modal visible={this.props.isOpen}>
 
@@ -75,18 +75,18 @@ class CreateDiscussionModal extends Component {
                     <div>
                         <p className="title">Title:</p>
                         <input type="text" className="title-input" value={this.state.title} name="title"
-                               placeholder="Enter Title" onChange={this.handleChange.bind(this)}/>
+                            placeholder="Enter Title" onChange={this.handleChange.bind(this)} />
                         {submitted && !title &&
-                        <div className="help-block text-danger">Title is required</div>
+                            <div className="help-block text-danger">Title is required</div>
                         }
                     </div>
                     <div>
                         <p className="description">Description:</p>
                         <textarea className="description-input" name="description" value={this.state.description}
-                                  placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
+                            placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
                         />
                         {submitted && !description &&
-                        <div className="help-block text-danger">Description is required</div>
+                            <div className="help-block text-danger">Description is required</div>
                         }
                     </div>
                 </div>
@@ -114,4 +114,4 @@ const mapDispatchToProps = (dispatch) => {
     };
 };
 
-export default connect(mapStateToProps,mapDispatchToProps)(CreateDiscussionModal);
+export default connect(mapStateToProps, mapDispatchToProps)(CreateDiscussionModal);
