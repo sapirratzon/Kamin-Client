@@ -26,10 +26,10 @@ class Chat extends Component {
                 this.reloadChat();
                 this.setState(
                     {
-                        root: response["discussionDict"]["tree"],
+                        root: response["tree"],
                     }
                 );
-                this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+                this.props.setTitle(response["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);

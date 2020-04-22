@@ -268,7 +268,7 @@ class Simulation extends Component {
     update(dif, toUpdateState) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
         if (toUpdateState) {
-            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, null);
         }
     };
 
