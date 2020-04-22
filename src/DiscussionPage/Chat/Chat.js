@@ -84,7 +84,7 @@ class Chat extends Component {
             "discussionId": this.props.discussionId,
             "depth": depth
         });
-        this.socket.emit('add alert', comment)
+        this.socket.emit('add alert', comment);
     };
 
     addComment(message) {
