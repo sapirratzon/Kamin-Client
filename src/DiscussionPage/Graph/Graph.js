@@ -59,7 +59,7 @@ class Graph extends Component {
                         height={window.innerHeight / 2.026}
                         // backgroundColor={"rgba(204,204,204,0.8)"}
                         nodeRelSize={this.NODE_R}
-                        d3Force={"center"}
+                        // d3Force={"center"}
                         graphData={{
                             "nodes": this.props.nodes,
                             "links": this.props.links
@@ -74,7 +74,7 @@ class Graph extends Component {
                         linkCurvature="curvature"
                         linkDirectionalArrowRelPos={1}
                         linkDirectionalArrowLength={2.5}
-                        cooldownTicks={1} // Todo: what Is this for??? 
+                        // cooldownTicks={1} // Todo: what Is this for??? 
 
                         nodeCanvasObjectMode={node =>
                             // this.state.highlightNode === node || 
