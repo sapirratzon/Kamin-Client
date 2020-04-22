@@ -71,12 +71,18 @@ class Simulation extends Component {
     };
 
     handleModeratorActions = () => {
-        this.socket.on('next', ()=>this.handleNextClick());
+        this.socket.on('next', () => this.handleNextClick());
         this.socket.on('back', this.handleBackClick());
+        this.socket.on('reset', this.handleResetClick());
+        this.socket.on('all', this.handleShowAllClick());
     };
 
     handleNextClick = () => {
         if (this.currentMessageIndex === this.allMessages.length) return;
+        if (this.props.userType === "MODERATOR" || this.props.userType === "ROOT") {
+            const data = { "discussionId": this.props.discussionId };
+            this.socket.emit("next", data);
+        }
         const nextMessage = this.allMessages[this.currentMessageIndex];
         const userName = nextMessage.author;
         const parentId = nextMessage.parentId;
@@ -85,7 +91,7 @@ class Simulation extends Component {
         this.isChronological ?
             this.nextByTimestamp(nextMessage, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
-        if (selfMessage) {this.update(1); return;}
+        if (selfMessage) { this.update(1); return; }
         this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
         this.update(1);
@@ -93,6 +99,10 @@ class Simulation extends Component {
 
     handleBackClick = () => {
         if (this.currentMessageIndex === 1) return;
+        if (this.props.userType === "MODERATOR" || this.props.userType === "ROOT") {
+            const data = { "discussionId": this.props.discussionId };
+            this.socket.emit("back", data);
+        }
         const messageIndex = this.currentMessageIndex - 1;
         let deletedMessage = this.allMessages[messageIndex];
         const userName = deletedMessage.author;
@@ -102,7 +112,7 @@ class Simulation extends Component {
         this.isChronological ?
             this.backByTimestamp(messageIndex, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
-        if (selfMessage) {this.update(-1); return;}
+        if (selfMessage) { this.update(-1); return; }
         this.updateLinksBack(userName, parentUserName);
         this.updateNodesBack(userName, parentUserName);
         this.update(-1);
@@ -223,6 +233,10 @@ class Simulation extends Component {
     };
 
     handleShowAllClick = () => {
+        if (this.props.userType === "MODERATOR" || this.props.userType === "ROOT") {
+            const data = { "discussionId": this.props.discussionId };
+            this.socket.emit("all", data);
+        }
         while (this.currentMessageIndex < this.allMessages.length) {
             this.handleNextClick();
         }
@@ -230,6 +244,10 @@ class Simulation extends Component {
     };
 
     handleResetClick = () => {
+        if (this.props.userType === "MODERATOR" || this.props.userType === "ROOT") {
+            const data = { "discussionId": this.props.discussionId };
+            this.socket.emit("back", data);
+        }
         while (this.currentMessageIndex !== 1) {
             this.handleBackClick();
         }
@@ -237,23 +255,24 @@ class Simulation extends Component {
     };
 
 
+
     render() {
         return (
             <React.Fragment>
-                <div className={"row"}>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleResetClick}>Reset
+                {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                    <div className={"row"}>
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleResetClick}>Reset
                     </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleBackClick}>Back
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleBackClick}>Back
                     </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleNextClick}>Next
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleNextClick}>Next
                     </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleShowAllClick}>All
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={this.handleShowAllClick}>All
                     </button>
-                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                         <React.Fragment>
                             <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
                                 <Switch className="commentsOrderToggle"
@@ -264,8 +283,9 @@ class Simulation extends Component {
                                 />
                                 <span><b>{this.state.order}</b></span>
                             </div>
-                        </React.Fragment> : null}
-                </div>
+                        </React.Fragment>
+                    </div>
+                }
             </React.Fragment>
         );
     }
