@@ -9,6 +9,7 @@ import DiscussionStats from "./Statistics/DiscussionStats";
 import ReactTooltip from 'react-tooltip'
 import { connect } from 'react-redux'
 import io from 'socket.io-client';
+import VisualizationsModal from "./Modals/VisualizationsConfigModal";
 
 class Discussion extends Component {
     constructor(props) {
@@ -21,8 +22,12 @@ class Discussion extends Component {
             shownAlerts: [],
             allAlerts: [],
             discussionId: this.props.simulationCode,
+            showVisualizationSettingsModal: false,
             title: '',
             selectedUser: "",
+            showGraph: 'show',
+            showAlerts: 'show',
+            showStat: 'show'
         };
     }
 
@@ -61,15 +66,14 @@ class Discussion extends Component {
         this.state.allAlerts.push(newAlert);
     };
 
-    updateSelectedUserHanler(username) {
+    updateSelectedUserHandler(username) {
         this.setState({ selectedUser: username });
     }
 
     setTitle = (title) => {
         this.setState({
             title: title
-        }
-        );
+        });
     };
 
     handleShareClick = () => {
@@ -97,6 +101,20 @@ class Discussion extends Component {
         return this.state.shownNodes;
     };
 
+    updateModalHandler = (isOpen) => {
+        this.setState({
+            showVisualizationSettingsModal: isOpen
+        });
+    };
+
+    handleVisualizationSettings = (settings) => {
+        this.setState({
+            showGraph: settings.graph,
+            showAlerts: settings.alerts,
+            showStat: settings.stat
+        })
+    };
+
     handleEndSession = () => {
         const data = {
             "token": this.props.token,
@@ -116,9 +134,17 @@ class Discussion extends Component {
                     </button>}
                     </span>
                     <span className="col-4">
-                        <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer"
-                            data-tip="Copied!" data-event="click" /></h3>
-                        <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
+                        <h3><b>{this.state.title}</b>
+                            <i className="fas fa-share-square text-primary pl-2 cursor-pointer"
+                               data-tip="Copied!" data-event="click"/>
+                               <i className="fas fa-cog cursor-pointer"
+                                  onClick={() => this.updateModalHandler(true)}/></h3>
+                        <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick}/>
+                        {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                            <VisualizationsModal isOpen={this.state.showVisualizationSettingsModal}
+                                                 discussionId={this.state.discussionId}
+                                                 updateVisibility={this.updateModalHandler.bind(this)}/>
+                            : null}
                     </span>
                     <span className="col-4">
                         {this.props.isSimulation === 'true' ?
@@ -135,22 +161,27 @@ class Discussion extends Component {
                 <hr />
                 <div className="row content mr-3 ml-1">
                     <div className="discussion-col col-lg-6 col-md-12 px-1">
+                        {this.state.shownMessages.length > 0 &&
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
                             messagesHandler={this.updateMessagesHandler.bind(this)}
                             alertsHandler={this.updateAlertsHandler.bind(this)}
                             discussionId={this.props.simulationCode}
-                            updateSelectedUser={this.updateSelectedUserHanler.bind(this)}
+                            updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} socket={this.socket} />
+                            nodeColor={intToRGB} socket={this.socket} />}
 
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
                         <div className="graph row blue-border mb-1">
-                            {this.state.shownMessages.length > 0 && <Graph nodes={this.state.shownNodes} links={this.state.shownLinks} currentUser={this.props.currentUser}
-                                updateSelectedUser={this.updateSelectedUserHanler.bind(this)} rootId={this.state.shownMessages[0]['author']} />}
+                            {this.state.shownMessages.length > 0 &&
+                            <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}
+                                   currentUser={this.props.currentUser}
+                                   updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
+                                   rootId={this.state.shownMessages[0]['author']} />}
                         </div>
                         <div className="row insights">
-                            <div className="col-lg-6 col-md-12 p-0 blue-border mr-1">
+                            <div className={this.state.showStat +
+                            " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
                                 <UserStats className="stats"
                                     getSelectedUser={this.getSelectedUser.bind(this)}
                                     discussionId={this.state.discussionId}
@@ -164,13 +195,13 @@ class Discussion extends Component {
                                     getShownLinks={this.getShownLinks.bind(this)}
                                     getShownNodes={this.getShownNodes.bind(this)} />
                             </div>
-                            <div className="col p-0 blue-border">
-                                <AlertList alerts={this.state.shownAlerts} />
+                            <div className={this.state.showAlerts + " collapse col p-0 blue-border"}>
+                                <AlertList alerts={this.state.shownAlerts}/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div >
+            </div>
         );
     }
 }
