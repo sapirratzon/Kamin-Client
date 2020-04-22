@@ -23,6 +23,8 @@ class Chat extends Component {
     componentDidMount() {
         if (!this.props.isSimulation) {
             this.socket.on('join room', (response) => {
+                console.log('response');
+                console.log(response);
                 this.reloadChat();
                 this.setState(
                     {

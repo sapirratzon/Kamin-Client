@@ -29,7 +29,7 @@ class NavigationBar extends Component {
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav mr-auto">
                             <li className="nav-item active">
-                                <a className="nav-link" href="/">Home <span className="sr-only">(current)</span></a>
+                                <a className="nav-link" href="/#">Home <span className="sr-only">(current)</span></a>
                             </li>
                         </ul>
                         {this.props.currentUser ?
@@ -45,11 +45,11 @@ class NavigationBar extends Component {
                             </ul>
                             : <ul className="navbar-nav ml-auto">
                                 <li className="nav-item" onClick={() => this.changePath('/login')}>
-                                    <a className="nav-link" ><i className="fas fa-sign-in-alt pr-2" />Sign
+                                    <a className="nav-link" href='/#' ><i className="fas fa-sign-in-alt pr-2" />Sign
                                         In <span className="sr-only">(current)</span></a>
                                 </li>
                                 <li className="nav-item" onClick={() => this.changePath('/registration')}>
-                                    <a className="nav-link" ><i className="fas fa-user-plus pr-2" />Sign
+                                    <a className="nav-link" href='/#'><i className="fas fa-user-plus pr-2" />Sign
                                         Up <span className="sr-only">(current)</span></a>
                                 </li>
                             </ul>}

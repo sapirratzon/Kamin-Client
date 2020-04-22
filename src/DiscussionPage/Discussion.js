@@ -117,13 +117,13 @@ class Discussion extends Component {
         });
     };
 
-    handleVisualizationSettings = (settings) => {
-        this.setState({
-            showGraph: settings.graph,
-            showAlerts: settings.alerts,
-            showStat: settings.stat
-        })
-    };
+    // handleVisualizationSettings = (settings) => {
+    //     this.setState({
+    //         showGraph: settings.graph,
+    //         showAlerts: settings.alerts,
+    //         showStat: settings.stat
+    //     })
+    // };
 
     handleEndSession = () => {
         const data = {
