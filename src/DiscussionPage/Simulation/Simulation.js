@@ -270,6 +270,7 @@ class Simulation extends Component {
         if (toUpdateState) {
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         }
+        this.props.updateLastMessage(this.allMessages[this.currentMessageIndex - 1]);
     };
 
     updateOpacityAll() {

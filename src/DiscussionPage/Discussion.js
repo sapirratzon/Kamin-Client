@@ -15,6 +15,7 @@ class Discussion extends Component {
     constructor(props) {
         super(props);
         this.socket = io(process.env.REACT_APP_API);
+        this.lastMessage = {};
         this.state = {
             shownMessages: [],
             shownNodes: [],
@@ -25,6 +26,7 @@ class Discussion extends Component {
             showVisualizationSettingsModal: false,
             title: '',
             selectedUser: "",
+            lastMessage: {},
             showGraph: 'show',
             showAlerts: 'show',
             showStat: 'show'
@@ -47,7 +49,14 @@ class Discussion extends Component {
 
     }
 
-    updateMessagesHandler(newMessages, newNodes, newLinks) {
+    updateLastMessage = (message) => {
+        this.setState({
+            lastMessage: message
+        });
+        this.lastMessage = message;
+    };
+
+    updateMessagesHandler(newMessages, newNodes, newLinks, lastMessage) {
         const newAlerts = [];
         this.state.allAlerts.forEach((a) => {
             if (a.position <= newMessages.length - 1) {
@@ -58,7 +67,8 @@ class Discussion extends Component {
             shownMessages: newMessages,
             shownNodes: newNodes,
             shownLinks: newLinks,
-            shownAlerts: newAlerts
+            shownAlerts: newAlerts,
+            lastMessage: lastMessage
         });
     };
 
@@ -123,6 +133,11 @@ class Discussion extends Component {
         this.socket.emit('end_session', data);
     };
 
+    getLastMessage = () => {
+        // return this.state.lastMessage;
+        return this.lastMessage;
+    };
+
 
     render() {
         return (
@@ -143,7 +158,11 @@ class Discussion extends Component {
                         {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                             <VisualizationsModal isOpen={this.state.showVisualizationSettingsModal}
                                                  discussionId={this.state.discussionId}
-                                                 updateVisibility={this.updateModalHandler.bind(this)}/>
+                                                 updateVisibility={this.updateModalHandler.bind(this)}
+                                                 isSimulation={this.state.isSimulation}
+                                                 // getLastMessage={this.getLastMessage.bind(this)}
+                                                lastMessage = {this.state.lastMessage}
+                            />
                             : null}
                     </span>
                     <span className="col-4">
@@ -155,6 +174,7 @@ class Discussion extends Component {
                                 messagesOrder={'chronological'}
                                 nodeColor={intToRGB}
                                 socket={this.socket}
+                                        updateLastMessage={this.updateLastMessage.bind(this)}
                             /> : null}
                     </span>
                 </div>
@@ -168,7 +188,7 @@ class Discussion extends Component {
                             discussionId={this.props.simulationCode}
                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} socket={this.socket} />}
+                            nodeColor={intToRGB} socket={this.socket}/>}
 
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">

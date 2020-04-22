@@ -90,7 +90,7 @@ class Chat extends Component {
     addComment(message) {
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, message);
     };
 
     updateLinksOpacity() {

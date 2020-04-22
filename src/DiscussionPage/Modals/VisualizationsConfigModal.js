@@ -8,9 +8,9 @@ class VisualizationsModal extends Component {
     constructor() {
         super();
         this.socket = io(process.env.REACT_APP_API);
+        this.allSettings= new Map();
         this.state = {
             regularUsers: [],
-            allSettings: {},
             error: ''
         }
     }
@@ -19,14 +19,16 @@ class VisualizationsModal extends Component {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
             const allUsers = JSON.parse(xhr.responseText)['users'];
+            allUsers.unshift('All');
             this.setState({
                 regularUsers: allUsers,
                 selectedUser: ''
             });
         });
-        xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionUsers');
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getUsers');
+        // xhr.setRequestHeader("Content-Type", "application/json");
+        // xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
+        xhr.send();
     }
 
     updateVisibility = (isOpen) => {
@@ -34,34 +36,43 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = (event) => {
-        if (this.state.allSettings.keys)
-            this.state.allSettings.set(
-                event.target.name,
-                {
-                    showGraph: '',
-                    showAlerts: '',
-                    showStat: ''
-                });
-        this.state.allSettings[event.target.username].event.target.className = event.target.checked;
+        const userConfig = this.allSettings.get(event.target.name);
+        const elementToUpdate = event.target.className;
+        if (userConfig === undefined)
+            this.allSettings.set(event.target.name, {});
+        this.allSettings.get(event.target.name)[elementToUpdate] = event.target.checked;
     };
 
-    sendUsersVisualizationsSettings = () => {
+    realTimeUpdateConfig = () => {
+        console.log(this.props.lastMessage);
         const configComment = JSON.stringify({
             "author": this.props.currentUser,
             "text": 'Config',
             "parentId": 'targetId',
             "discussionId": this.props.discussionId,
-            "depth": 'depth'
+            "depth": 'depth',
+            "extra_data": this.allSettings
         });
         this.socket.emit('change_configuration', configComment);
+        this.updateVisibility(false);
+    };
 
-        this.socket.emit('updateUsersVisualizationsSettings', this.state.allSettings);
+    simulationUpdateConfig = () => {
+        const configComment = JSON.stringify({
+            "author": this.props.currentUser,
+            "text": 'Config',
+            "parentId": 'targetId',
+            "discussionId": this.props.discussionId,
+            "depth": '',
+            "extra_data": this.allSettings
+        });
+        this.socket.emit('change_configuration', configComment);
         this.updateVisibility(false);
     };
 
     render() {
         return (
-            <form onSubmit={this.sendUsersVisualizationsSettings}>
+            <form onSubmit={this.props.isSimulation ? this.simulationUpdateConfig : this.realTimeUpdateConfig}>
                 <Modal className="visualModal align-items-start" visible={this.props.isOpen}>
                     <div className="modal-header">
                         <h5 className="modal-title">Visualization Management</h5>
