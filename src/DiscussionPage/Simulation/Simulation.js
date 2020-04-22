@@ -30,8 +30,8 @@ class Simulation extends Component {
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            this.props.setTitle(response["discussion"]["title"]);
-            this.getMessagesNodesLinks(response["tree"]);
+            this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+            this.getMessagesNodesLinks(response["discussionDict"]["tree"]);
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
@@ -292,16 +292,16 @@ class Simulation extends Component {
                 {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
                     <div className={"row"}>
                         <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleModeratorActions("reset")}>Reset
+                            onClick={() => { this.handleNavigationClickModerator("reset") }}>Reset
                     </button>
                         <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleModeratorActions("back")}>Back
+                            onClick={() => { this.handleNavigationClickModerator("back") }}>Back
                     </button>
                         <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleModeratorActions("next")}>Next
+                            onClick={() => { this.handleNavigationClickModerator("next") }}>Next
                     </button>
                         <button type="button" className="btn btn-primary btn-sm"
-                            onClick={this.handleModeratorActions("all")}>All
+                            onClick={() => { this.handleNavigationClickModerator("all") }}>All
                     </button>
                         <React.Fragment>
                             <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
