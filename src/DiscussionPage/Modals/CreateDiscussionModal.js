@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Modal from 'react-bootstrap4-modal';
 import "./CreateDiscussionModal.css"
+import CheckBox from './Checkbox';
 
 
 class CreateDiscussionModal extends Component {
@@ -11,7 +12,12 @@ class CreateDiscussionModal extends Component {
             description: '',
             title: '',
             submitted: false,
+            replyPosition: "None",
+            graphChecked: true,
+            statsChecked: true,
+            alertsChecked: true,
         };
+        this.configuration = { default: { "graph": true, "alerts": true, "statistics": true }, replyPosition: "None" }
     }
 
     handleChange = (e) => {
@@ -19,6 +25,24 @@ class CreateDiscussionModal extends Component {
         this.setState({ [name]: value });
     };
 
+    vizConfigChange = (type) => {
+        this.configuration.default[type] = !this.configuration.default[type]
+        if (type === "graph") {
+            this.setState({ graphChecked: this.configuration.default[type] })
+        }
+        if (type === "statistics") {
+            this.setState({ statsChecked: this.configuration.default[type] })
+        }
+        if (type === "alerts") {
+            this.setState({ alertsChecked: this.configuration.default[type] })
+        }
+    }
+
+    replyConfigChange = (type) => {
+        console.log(type)
+        this.setState({ replyPosition: type })
+        this.configuration.replyPosition = type;
+    }
 
     changePath = (path) => {
         this.props.path.push(path);
@@ -51,7 +75,7 @@ class CreateDiscussionModal extends Component {
                 "timestamp": null,
                 "depth": 0
             };
-            xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment, configuration: { default: { "graph": true, "alerts": true, "statistics": true}, replyPosition: "None" } }));
+            xhr.send(JSON.stringify({ title: title, categories: [], root_comment_dict: comment, configuration: this.configuration }));
         }
     };
 
@@ -87,6 +111,25 @@ class CreateDiscussionModal extends Component {
                             <div className="help-block text-danger">Description is required</div>
                         }
                     </div>
+                    <div>
+                        <label className="config">Visualization Config:</label>
+                        <CheckBox changeHandler={this.vizConfigChange} text="graph" checked={this.state.graphChecked} />
+                        <CheckBox changeHandler={this.vizConfigChange} text="statistics" checked={this.state.statsChecked} />
+                        <CheckBox changeHandler={this.vizConfigChange} text="alerts" checked={this.state.alertsChecked} />
+                        <div class="dropdown">
+                            <label>Default reply position: </label>
+                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {this.state.replyPosition}
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a onClick={() => { this.replyConfigChange("None") }} class="dropdown-item">None</a>
+                                <a onClick={() => { this.replyConfigChange("Root") }} class="dropdown-item">Root</a>
+                                <a onClick={() => { this.replyConfigChange("Last") }} class="dropdown-item">Last</a>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div className="modal-footer">
                     <button type="button" onClick={() => this.updateVisibility(false)} className="btn btn-grey">Cancel
