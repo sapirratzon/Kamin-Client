@@ -20,11 +20,11 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
-        this.isChronological = false;
         this.socket = io(process.env.REACT_APP_API);
         this.state = {
             order: 'Regular',
-            switchOrder: 'Chronological'
+            switchOrder: 'Chronological',
+            isChronological: false
         }
     }
 
@@ -84,6 +84,8 @@ class Simulation extends Component {
         this.socket.on('back', () => { this.handleBackClick(true) });
         this.socket.on('reset', this.handleResetClick);
         this.socket.on('all', this.handleShowAllClick);
+        this.socket.on('change_simulation_order', this.handleOrderSettings);
+
     };
 
     handleNavigationClickModerator = (type) => {
@@ -100,7 +102,7 @@ class Simulation extends Component {
         const parentId = nextMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
         const selfMessage = (userName === parentUserName);
-        this.isChronological ?
+        this.state.isChronological ?
             this.nextByTimestamp(nextMessage, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
         this.updateNodesNext(userName, parentUserName);
@@ -116,7 +118,7 @@ class Simulation extends Component {
         const parentId = deletedMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
         const selfMessage = (userName === parentUserName);
-        this.isChronological ?
+        this.state.isChronological ?
             this.backByTimestamp(messageIndex, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
         this.updateLinksBack(userName, parentUserName);
@@ -254,15 +256,16 @@ class Simulation extends Component {
 
     handleOrderSettings = () => {
         let temp = this.state.order;
-        if (this.allMessages.length > 0 && window.confirm('This action will initialize the discussion. Are you sure?')) {
-            this.isChronological = !this.isChronological;
-            this.handleResetClick();
-            this.setState({
-                order: this.state.switchOrder,
-                switchOrder: temp
-            });
-        }
-        this.isChronological ?
+        this.setState((prevState) => ({
+            isChronological: !prevState.isChronological
+        }));
+
+        this.handleResetClick();
+        this.setState({
+            order: this.state.switchOrder,
+            switchOrder: temp
+        });
+        this.state.isChronological ?
             this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
     };
 
@@ -309,17 +312,15 @@ class Simulation extends Component {
                         <button type="button" className="btn btn-primary btn-sm"
                             onClick={() => { this.handleNavigationClickModerator("all") }}>All
                     </button>
-                        <React.Fragment>
-                            <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
-                                <Switch className="commentsOrderToggle"
-                                    onChange={this.handleOrderSettings}
-                                    checked={this.isChronological}
-                                    offColor="#FFA500"
-                                    onColor="#FFA500"
-                                />
-                                <span><b>{this.state.order}</b></span>
-                            </div>
-                        </React.Fragment>
+                        <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
+                            <Switch className="commentsOrderToggle"
+                                onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
+                                checked={this.state.isChronological}
+                                offColor="#FFA500"
+                                onColor="#FFA500"
+                            />
+                            <span><b>{this.state.order}</b></span>
+                        </div>
                     </div>
                 }
             </React.Fragment>
