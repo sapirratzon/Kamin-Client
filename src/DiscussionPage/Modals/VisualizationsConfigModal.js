@@ -17,17 +17,15 @@ class VisualizationsModal extends Component {
 
     componentDidMount() {
         const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            const allUsers = JSON.parse(xhr.responseText)['users'];
+        xhr.addEventListener('load', (response) => {
+            const allUsers = JSON.parse(xhr.responseText)['active_users'];
             allUsers.unshift('All');
             this.setState({
                 regularUsers: allUsers,
                 selectedUser: ''
             });
         });
-        xhr.open('GET', process.env.REACT_APP_API + '/api/getUsers');
-        // xhr.setRequestHeader("Content-Type", "application/json");
-        // xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getActiveDiscussionUsers/' + this.props.discussionId);
         xhr.send();
     }
 
@@ -58,6 +56,21 @@ class VisualizationsModal extends Component {
     };
 
     simulationUpdateConfig = () => {
+        const comment = JSON.stringify({
+            "author": this.props.currentUser,
+            "text": 'config',
+            "parentId": 'targetId',
+            "discussionId": this.props.discussionId,
+            "depth": 'depth',
+            "extra_data": {"Recipients_type": "all", "users_list": {"Guy":{"Graph": true, "Statistics": true, "Alerts": true}}}
+        });
+        const simData = JSON.stringify({
+            "discussionId": this.props.discussionId,
+            "Recipients_type": "list",
+            "users_list": {"Guy": {"Graph": true, "Statistics": true, "Alerts": true}}
+        });
+        this.socket.emit('change configuration', simData);
+
         const configComment = JSON.stringify({
             "author": this.props.currentUser,
             "text": 'Config',
@@ -90,7 +103,7 @@ class VisualizationsModal extends Component {
                             </thead>
                             <tbody>
                             {Object.keys(this.state.regularUsers).map((id) =>
-                                <tr id={this.state.regularUsers[id]}>
+                                <tr id={this.state.regularUsers[id]} key={this.state.regularUsers[id]}>
                                     <td>{this.state.regularUsers[id]}</td>
                                     <td className="showGraph1">
                                         <input name={this.state.regularUsers[id]} type="checkbox"

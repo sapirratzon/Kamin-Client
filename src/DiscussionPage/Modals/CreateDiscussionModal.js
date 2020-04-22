@@ -115,9 +115,9 @@ class CreateDiscussionModal extends Component {
                         <CheckBox changeHandler={this.vizConfigChange} text="graph" checked={this.state.graphChecked} />
                         <CheckBox changeHandler={this.vizConfigChange} text="statistics" checked={this.state.statsChecked} />
                         <CheckBox changeHandler={this.vizConfigChange} text="alerts" checked={this.state.alertsChecked} />
-                        <div class="dropdown">
+                        <div className="dropdown">
                             <label>Default reply position: </label>
-                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button className="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {this.state.replyPosition}
                             </button>
                             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">

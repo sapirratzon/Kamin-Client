@@ -45,11 +45,11 @@ class NavigationBar extends Component {
                             </ul>
                             : <ul className="navbar-nav ml-auto">
                                 <li className="nav-item" onClick={() => this.changePath('/login')}>
-                                    <a className="nav-link" ><i className="fas fa-sign-in-alt pr-2" />Sign
+                                    <a className="nav-link" href='/'><i className="fas fa-sign-in-alt pr-2" />Sign
                                         In <span className="sr-only">(current)</span></a>
                                 </li>
                                 <li className="nav-item" onClick={() => this.changePath('/registration')}>
-                                    <a className="nav-link" ><i className="fas fa-user-plus pr-2" />Sign
+                                    <a className="nav-link" href='/'><i className="fas fa-user-plus pr-2" />Sign
                                         Up <span className="sr-only">(current)</span></a>
                                 </li>
                             </ul>}
