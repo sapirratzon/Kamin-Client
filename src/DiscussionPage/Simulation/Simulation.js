@@ -48,7 +48,7 @@ class Simulation extends Component {
                 commentsReceived: 0
             });
             while (this.currentMessageIndex < response["currentIndex"]) {
-                this.handleNextClick();
+                this.handleNextClick(false);
             }
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
@@ -74,8 +74,8 @@ class Simulation extends Component {
     };
 
     handleModeratorActions = () => {
-        this.socket.on('next', this.handleNextClick);
-        this.socket.on('back', this.handleBackClick);
+        this.socket.on('next', () => { this.handleNextClick(true) });
+        this.socket.on('back', () => { this.handleBackClick(true) });
         this.socket.on('reset', this.handleResetClick);
         this.socket.on('all', this.handleShowAllClick);
     };
@@ -87,7 +87,7 @@ class Simulation extends Component {
         }
     };
 
-    handleNextClick = () => {
+    handleNextClick = (toUpdateState) => {
         if (this.currentMessageIndex === this.allMessages.length) return;
         const nextMessage = this.allMessages[this.currentMessageIndex];
         const userName = nextMessage.author;
@@ -97,13 +97,12 @@ class Simulation extends Component {
         this.isChronological ?
             this.nextByTimestamp(nextMessage, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
-        if (selfMessage) { this.update(1); return; }
         this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
-        this.update(1);
+        this.update(1, toUpdateState);
     };
 
-    handleBackClick = () => {
+    handleBackClick = (toUpdateState) => {
         if (this.currentMessageIndex === 1) return;
         const messageIndex = this.currentMessageIndex - 1;
         let deletedMessage = this.allMessages[messageIndex];
@@ -114,10 +113,9 @@ class Simulation extends Component {
         this.isChronological ?
             this.backByTimestamp(messageIndex, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
-        if (selfMessage) { this.update(-1); return; }
         this.updateLinksBack(userName, parentUserName);
         this.updateNodesBack(userName, parentUserName);
-        this.update(-1);
+        this.update(-1, toUpdateState);
     };
 
     /*
@@ -236,14 +234,14 @@ class Simulation extends Component {
 
     handleShowAllClick = () => {
         while (this.currentMessageIndex < this.allMessages.length) {
-            this.handleNextClick();
+            this.handleNextClick(false);
         }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
     handleResetClick = () => {
         while (this.currentMessageIndex !== 1) {
-            this.handleBackClick();
+            this.handleBackClick(false);
         }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
@@ -262,9 +260,11 @@ class Simulation extends Component {
             this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
     };
 
-    update(dif) {
+    update(dif, toUpdateState) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        if (toUpdateState) {
+            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        }
     };
 
     updateOpacityAll() {
