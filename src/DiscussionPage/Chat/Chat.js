@@ -76,12 +76,13 @@ class Chat extends Component {
         this.socket.emit('add comment', comment)
     };
 
-    sendAlert(targetId, message) {
+    sendAlert(targetId, message, depth) {
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
+            "depth": depth
         });
         this.socket.emit('add alert', comment)
     };
