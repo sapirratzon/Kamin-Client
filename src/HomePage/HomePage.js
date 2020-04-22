@@ -96,7 +96,8 @@ class HomePage extends Component {
 
     handleJoinClick = (event) => {
         event.preventDefault();
-        if (this.state.typedId && !Object.keys(this.state.simulationDiscussions).includes(this.state.typedId) && !Object.keys(this.state.realTimeDiscussions).includes(this.state.typedId)) {
+        if ((!this.state.selectedRealTimeDiscussion && !this.state.selectedSimulationDiscussion && !this.state.typedId) ||
+            (this.state.typedId && !Object.keys(this.state.simulationDiscussions).includes(this.state.typedId) && !Object.keys(this.state.realTimeDiscussions).includes(this.state.typedId))) {
             this.setState({
                 error: 'Invalid discussion id'
             });
