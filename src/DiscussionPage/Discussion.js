@@ -8,10 +8,12 @@ import UserStats from "./Statistics/UserStats";
 import DiscussionStats from "./Statistics/DiscussionStats";
 import ReactTooltip from 'react-tooltip'
 import { connect } from 'react-redux'
+import io from 'socket.io-client';
 
 class Discussion extends Component {
     constructor(props) {
         super(props);
+        this.socket = io(process.env.REACT_APP_API);
         this.state = {
             shownMessages: [],
             shownNodes: [],
@@ -22,6 +24,17 @@ class Discussion extends Component {
             title: '',
             selectedUser: "",
         };
+    }
+
+    componentDidMount() {
+        this.socket.on('unauthorized', () => {
+            this.props.onLogOut();
+            this.props.history.push('/');
+        });
+
+        this.socket.on('error', (response) => {
+            console.log({ response })
+        });
     }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
@@ -79,6 +92,7 @@ class Discussion extends Component {
         return this.state.shownNodes;
     };
 
+
     render() {
         return (
             <div className="App">
@@ -97,6 +111,7 @@ class Discussion extends Component {
                                 setTitle={this.setTitle}
                                 messagesOrder={'chronological'}
                                 nodeColor={intToRGB}
+                                socket={this.socket}
                             /> : null}
                     </span>
                 </div>
@@ -109,7 +124,7 @@ class Discussion extends Component {
                             discussionId={this.props.simulationCode}
                             updateSelectedUser={this.updateSelectedUserHanler.bind(this)}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} />
+                            nodeColor={intToRGB} socket={this.socket} />
 
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
@@ -159,9 +174,15 @@ function intToRGB(i) {
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        token: state.token,
-        userType: state.userType
+        userType: state.userType,
+        token: state.token
     };
 };
 
-export default connect(mapStateToProps)(Discussion);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Discussion);
