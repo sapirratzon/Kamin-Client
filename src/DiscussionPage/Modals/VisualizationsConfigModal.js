@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
 import io from 'socket.io-client';
 import { connect } from "react-redux";
-import './VisualizationManagementModal.css'
+import './VisualizationsConfigModal.css'
 
 class VisualizationsModal extends Component {
     constructor() {
