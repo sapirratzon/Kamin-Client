@@ -56,7 +56,13 @@ class Simulation extends Component {
             discussion_id: this.props.discussionId,
             token: this.props.token
         };
+
+        this.socket.on('unauthorized', () => {
+            this.props.onLogOut();
+        });
+        
         this.socket.emit('join', data);
+
         this.handleModeratorActions();
     }
 
@@ -329,4 +335,10 @@ const mapStateToProps = state => {
     };
 };
 
-export default connect(mapStateToProps)(Simulation);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Simulation);
