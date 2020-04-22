@@ -44,16 +44,18 @@ class CreateDiscussionModal extends Component {
             xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhr.setRequestHeader("Content-Type", "application/json");
-            const comment = JSON.stringify({
+            const comment = {
                 "author": this.props.currentUser,
                 "text": description,
                 "parentId": null,
                 "discussionId": "",
                 "extra_data": null,
                 "timestamp": null,
-                "depth": 0
-            });
-            xhr.send(JSON.stringify({title: title, categories: [], root_comment_dict: comment}));
+                "depth": 0            
+            };
+            xhr.send(JSON.stringify({title: title, categories: [], root_comment_dict: comment, configuration: {"default_config": {"graph": true, "alerts": true,
+            "statistics": true, "Config": true, "Self-control": true},
+            "reply_position": {}}}));
         }
     };
 

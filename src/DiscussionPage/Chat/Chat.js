@@ -37,6 +37,8 @@ class Chat extends Component {
             });
             this.socket.on('user joined', (response) => console.log(response));
 
+            this.socket.on('new configuration', (response) => console.log(response));
+
             const data = {
                 discussion_id: this.props.discussionId,
                 token: this.props.token
@@ -79,14 +81,21 @@ class Chat extends Component {
         this.socket.emit('add comment', comment)
     };
 
-    sendAlert(targetId, message) {
+    sendAlert(targetId, message, depth) {
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
+            "depth": depth,
+            "extra_data": {"Recipients_type": "all", "users_list": {"Guy":{"Graph": true, "Statistics": true, "Alerts": true}}}
         });
-        this.socket.emit('add alert', comment)
+        const simData = JSON.stringify({
+            "discussionId": this.props.discussionId,
+            "Recipients_type": "list",
+            "users_list": {"Guy": {"Graph": true, "Statistics": true, "Alerts": true}}
+        });
+        this.socket.emit('change configuration', simData)
     };
 
     addComment(message) {

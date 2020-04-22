@@ -97,8 +97,8 @@ class Simulation extends Component {
 
 
         /////////////////////////// for gal tests//////////////////////////
-        data = {config:[] }
-        this.socket.emit('config',data)
+        const data = {config:[] };
+        this.socket.emit('config',data);
     };
 
     handleBackClick = () => {
@@ -118,8 +118,8 @@ class Simulation extends Component {
         this.update(-1);
 
          /////////////////////////// for gal tests//////////////////////////
-         data = {config:[] }
-         this.socket.emit('config',data)
+        const data = {config:[] };
+        this.socket.emit('config',data);
     };
 
     /*
