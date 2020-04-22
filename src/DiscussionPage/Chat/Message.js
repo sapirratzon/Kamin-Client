@@ -155,6 +155,7 @@ class Message extends Component {
                             <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
                             : null
                         }
+                        {this.props.depth === 0 && <hr />}
                     </div>
                 </li>
             </React.Fragment>
