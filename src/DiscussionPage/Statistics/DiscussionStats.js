@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { timeThursday } from 'd3';
 
 class DiscussionStats extends Component {
     constructor(props) {
@@ -12,10 +11,6 @@ class DiscussionStats extends Component {
             receivedMost: ""
         }
     }
-
-    // componentDidMount() {
-    //     this.getDiscussionStats();
-    // }
 
     UNSAFE_componentWillReceiveProps() {
         this.calcDiscussionStats();

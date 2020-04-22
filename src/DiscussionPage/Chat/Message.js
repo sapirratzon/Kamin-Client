@@ -36,13 +36,6 @@ class Message extends Component {
         }
     };
 
-    componentDidUpdate = () => {
-        if (this.props.isSimulation) {
-            let messagesDiv = document.querySelector(".Messages-list");
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-    };
-
     replyHandler = () => {
         if (this.state.showReplyInput) {
             this.setState({
