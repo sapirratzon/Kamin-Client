@@ -17,7 +17,7 @@ class CreateDiscussionModal extends Component {
             statsChecked: true,
             alertsChecked: true,
         };
-        this.configuration = { default: { "graph": true, "alerts": true, "statistics": true }, replyPosition: "None" }
+        this.configuration = { default_config: { "graph": true, "alerts": true, "statistics": true }, replyPosition: "None" }
     }
 
     handleChange = (e) => {
@@ -26,23 +26,22 @@ class CreateDiscussionModal extends Component {
     };
 
     vizConfigChange = (type) => {
-        this.configuration.default[type] = !this.configuration.default[type]
+        this.configuration.default_config[type] = !this.configuration.default_config[type];
         if (type === "graph") {
-            this.setState({ graphChecked: this.configuration.default[type] })
+            this.setState({ graphChecked: this.configuration.default_config[type] })
         }
         if (type === "statistics") {
-            this.setState({ statsChecked: this.configuration.default[type] })
+            this.setState({ statsChecked: this.configuration.default_config[type] })
         }
         if (type === "alerts") {
-            this.setState({ alertsChecked: this.configuration.default[type] })
+            this.setState({ alertsChecked: this.configuration.default_config[type] })
         }
-    }
+    };
 
     replyConfigChange = (type) => {
-        console.log(type)
-        this.setState({ replyPosition: type })
+        this.setState({ replyPosition: type });
         this.configuration.replyPosition = type;
-    }
+    };
 
     changePath = (path) => {
         this.props.path.push(path);
@@ -53,7 +52,7 @@ class CreateDiscussionModal extends Component {
         const { description, title } = this.state;
         if (description && title) {
             const xhr = new XMLHttpRequest();
-            xhr.addEventListener('load', (res) => {
+            xhr.addEventListener('load', () => {
                 if (xhr.status === 401) {
                     this.props.onLogOut();
                 }
@@ -121,10 +120,10 @@ class CreateDiscussionModal extends Component {
                             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 {this.state.replyPosition}
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a onClick={() => { this.replyConfigChange("None") }} class="dropdown-item">None</a>
-                                <a onClick={() => { this.replyConfigChange("Root") }} class="dropdown-item">Root</a>
-                                <a onClick={() => { this.replyConfigChange("Last") }} class="dropdown-item">Last</a>
+                            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a href='/#' onClick={() => { this.replyConfigChange("None") }} className="dropdown-item">None</a>
+                                <a href='/#' onClick={() => { this.replyConfigChange("Root") }} className="dropdown-item">Root</a>
+                                <a href='/#' onClick={() => { this.replyConfigChange("Last") }} className="dropdown-item">Last</a>
                             </div>
                         </div>
                     </div>

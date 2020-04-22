@@ -29,8 +29,8 @@ class Simulation extends Component {
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-            this.getMessagesNodesLinks(response["discussionDict"]["tree"]);
+            this.props.setTitle(response["discussion"]["title"]);
+            this.getMessagesNodesLinks(response["tree"]);
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
@@ -270,7 +270,6 @@ class Simulation extends Component {
         if (toUpdateState) {
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         }
-        this.props.updateLastMessage(this.allMessages[this.currentMessageIndex - 1]);
     };
 
     updateOpacityAll() {

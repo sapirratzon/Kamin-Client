@@ -181,14 +181,13 @@ class Discussion extends Component {
                 <hr />
                 <div className="row content mr-3 ml-1">
                     <div className="discussion-col col-lg-6 col-md-12 px-1">
-                        {this.state.shownMessages.length > 0 &&
                         <Chat messages={this.state.shownMessages} isSimulation={this.props.isSimulation === 'true'}
                             messagesHandler={this.updateMessagesHandler.bind(this)}
                             alertsHandler={this.updateAlertsHandler.bind(this)}
                             discussionId={this.props.simulationCode}
                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} socket={this.socket}/>}
+                            nodeColor={intToRGB} socket={this.socket}/>
 
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
