@@ -99,6 +99,7 @@ class Simulation extends Component {
         this.state.isChronological ?
             this.nextByTimestamp(nextMessage, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
+        if (selfMessage) { this.update(1, true); return; }
         this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
         this.update(1, toUpdateState);
@@ -115,6 +116,7 @@ class Simulation extends Component {
         this.state.isChronological ?
             this.backByTimestamp(messageIndex, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
+        if (selfMessage) { this.update(-1, true); return; }
         this.updateLinksBack(userName, parentUserName);
         this.updateNodesBack(userName, parentUserName);
         this.update(-1, toUpdateState);
@@ -224,7 +226,7 @@ class Simulation extends Component {
     };
 
     backByTimestamp = (messageIndex, selfMessage) => {
-        this.nodesChildren.delete(this.allMessages[messageIndex].id);
+        // this.nodesChildren.delete(this.allMessages[messageIndex].id);
         const parentId = this.allMessages[messageIndex].parentId;
         let children = this.nodesChildren.get(parentId);
         children.splice(children.length - 1, 1);
@@ -310,8 +312,8 @@ class Simulation extends Component {
                             <Switch className="commentsOrderToggle"
                                 onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
                                 checked={this.state.isChronological}
-                                offColor="#FFA500"
-                                onColor="#FFA500"
+                                offColor="#4285f4"
+                                onColor="#4285f4"
                             />
                             <span><b>{this.state.order}</b></span>
                         </div>

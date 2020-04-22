@@ -32,9 +32,14 @@ class Discussion extends Component {
             this.props.history.push('/');
         });
 
+        this.socket.on('end_session', () => {
+            this.props.history.push('/');
+        });
+
         this.socket.on('error', (response) => {
             console.log({ response })
         });
+
     }
 
     updateMessagesHandler(newMessages, newNodes, newLinks) {
@@ -92,12 +97,24 @@ class Discussion extends Component {
         return this.state.shownNodes;
     };
 
+    handleEndSession = () => {
+        const data = {
+            "token": this.props.token,
+            "discussionId": this.state.discussionId
+        };
+        this.socket.emit('end_session', data);
+    };
+
 
     render() {
         return (
             <div className="App">
                 <div className="row text-center">
-                    <span className="col-4" />
+                    <span className="col-4" >
+                        {this.props.isSimulation === 'true' && <button type="button" className="btn btn-danger btn-sm"
+                            onClick={this.handleEndSession}>End Session
+                    </button>}
+                    </span>
                     <span className="col-4">
                         <h3><b>{this.state.title}</b><i className="fas fa-share-square text-primary pl-2 cursor-pointer"
                             data-tip="Copied!" data-event="click" /></h3>
@@ -153,7 +170,7 @@ class Discussion extends Component {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 }
