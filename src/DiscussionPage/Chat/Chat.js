@@ -42,6 +42,9 @@ class Chat extends Component {
             this.socket.on('message', (res) => {
                 this.addComment(res.comment);
             });
+            this.socket.on('alert', (res) => {
+                this.props.alertsHandler(res.comment);
+            });
         }
     };
 
