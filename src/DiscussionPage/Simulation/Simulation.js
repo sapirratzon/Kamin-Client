@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { rgb } from "d3";
 import { connect } from 'react-redux'
-import io from 'socket.io-client';
 import Switch from 'react-switch'
 import './Simulation.css';
 
@@ -20,7 +19,7 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
-        this.socket = io(process.env.REACT_APP_API);
+        this.socket = props.socket;
         this.state = {
             order: 'Regular',
             switchOrder: 'Chronological',
@@ -35,7 +34,6 @@ class Simulation extends Component {
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
-            console.log(this.chronologicMessages);
             this.handleOrderSettings();
             this.shownMessages = this.allMessages.slice(0, 1);
             this.nodesChildren.set(this.shownMessages[0].id, []);
@@ -57,10 +55,6 @@ class Simulation extends Component {
             token: this.props.token
         };
 
-        this.socket.on('unauthorized', () => {
-            this.props.onLogOut();
-        });
-        
         this.socket.emit('join', data);
 
         this.handleModeratorActions();
@@ -331,8 +325,8 @@ class Simulation extends Component {
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        token: state.token,
-        userType: state.userType
+        userType: state.userType,
+        token: state.token
     };
 };
 

@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import Messages from "./Messages"
 import "./Chat.css"
 import { rgb } from "d3";
-import io from 'socket.io-client'
 
 class Chat extends Component {
 
@@ -18,7 +17,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket = io(process.env.REACT_APP_API);
+        this.socket = props.socket;
     }
 
     componentDidMount() {
@@ -35,8 +34,6 @@ class Chat extends Component {
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-            this.socket.on('user joined', (response) => console.log(response));
-
             const data = {
                 discussion_id: this.props.discussionId,
                 token: this.props.token

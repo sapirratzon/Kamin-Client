@@ -47,8 +47,6 @@ class DiscussionStats extends Component {
                 })
             }
         });
-        xhr.addEventListener('error', (res) => console.log(res));
-
         xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");
