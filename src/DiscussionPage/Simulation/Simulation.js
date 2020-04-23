@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { rgb } from "d3";
 import { connect } from 'react-redux'
-import io from 'socket.io-client';
 import Switch from 'react-switch'
 import './Simulation.css';
 
@@ -20,11 +19,11 @@ class Simulation extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.messagesCounter = 0;
-        this.isChronological = false;
-        this.socket = io(process.env.REACT_APP_API);
+        this.socket = props.socket;
         this.state = {
             order: 'Regular',
-            switchOrder: 'Chronological'
+            switchOrder: 'Chronological',
+            isChronological: false
         }
     }
 
@@ -35,7 +34,6 @@ class Simulation extends Component {
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
-            console.log(this.chronologicMessages);
             this.handleOrderSettings();
             this.shownMessages = this.allMessages.slice(0, 1);
             this.nodesChildren.set(this.shownMessages[0].id, []);
@@ -47,13 +45,18 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
+            while (this.currentMessageIndex < response["currentIndex"]) {
+                this.handleNextClick(false);
+            }
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
         });
         const data = {
             discussion_id: this.props.discussionId,
             token: this.props.token
         };
+
         this.socket.emit('join', data);
+
         this.handleModeratorActions();
     }
 
@@ -71,27 +74,38 @@ class Simulation extends Component {
     };
 
     handleModeratorActions = () => {
-        this.socket.on('next', ()=>this.handleNextClick());
-        this.socket.on('back', this.handleBackClick());
+        this.socket.on('next', () => { this.handleNextClick(true) });
+        this.socket.on('back', () => { this.handleBackClick(true) });
+        this.socket.on('reset', this.handleResetClick);
+        this.socket.on('all', this.handleShowAllClick);
+        this.socket.on('change_simulation_order', this.handleOrderSettings);
+
     };
 
-    handleNextClick = () => {
+    handleNavigationClickModerator = (type) => {
+        if (this.props.userType === "MODERATOR" || this.props.userType === "ROOT") {
+            const data = { "discussionId": this.props.discussionId };
+            this.socket.emit(type, data);
+        }
+    };
+
+    handleNextClick = (toUpdateState) => {
         if (this.currentMessageIndex === this.allMessages.length) return;
         const nextMessage = this.allMessages[this.currentMessageIndex];
         const userName = nextMessage.author;
         const parentId = nextMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
         const selfMessage = (userName === parentUserName);
-        this.isChronological ?
+        this.state.isChronological ?
             this.nextByTimestamp(nextMessage, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
-        if (selfMessage) {this.update(1); return;}
+        if (selfMessage) { this.update(1, true); return; }
         this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
-        this.update(1);
+        this.update(1, toUpdateState);
     };
 
-    handleBackClick = () => {
+    handleBackClick = (toUpdateState) => {
         if (this.currentMessageIndex === 1) return;
         const messageIndex = this.currentMessageIndex - 1;
         let deletedMessage = this.allMessages[messageIndex];
@@ -99,13 +113,13 @@ class Simulation extends Component {
         const parentId = deletedMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
         const selfMessage = (userName === parentUserName);
-        this.isChronological ?
+        this.state.isChronological ?
             this.backByTimestamp(messageIndex, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
-        if (selfMessage) {this.update(-1); return;}
+        if (selfMessage) { this.update(-1, true); return; }
         this.updateLinksBack(userName, parentUserName);
         this.updateNodesBack(userName, parentUserName);
-        this.update(-1);
+        this.update(-1, toUpdateState);
     };
 
     /*
@@ -212,7 +226,7 @@ class Simulation extends Component {
     };
 
     backByTimestamp = (messageIndex, selfMessage) => {
-        this.nodesChildren.delete(this.allMessages[messageIndex].id);
+        // this.nodesChildren.delete(this.allMessages[messageIndex].id);
         const parentId = this.allMessages[messageIndex].parentId;
         let children = this.nodesChildren.get(parentId);
         children.splice(children.length - 1, 1);
@@ -222,85 +236,41 @@ class Simulation extends Component {
         this.shownMessages.splice(indexToDelete, 1);
     };
 
-    handleSimulateClick = async () => {
-        while (this.currentMessageIndex + 1 < this.allMessages.length) {
-            await this.handleNextClick();
-            await (async () => {
-                await sleep(1000);
-            })();
-        }
-    };
-
-    handleShowAllClick = async () => {
+    handleShowAllClick = () => {
         while (this.currentMessageIndex < this.allMessages.length) {
-            await this.handleNextClick();
-            await sleep(1);
+            this.handleNextClick(false);
         }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
 
     handleResetClick = () => {
         while (this.currentMessageIndex !== 1) {
-            this.handleBackClick();
+            this.handleBackClick(false);
         }
         this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
     };
-
-
-    render() {
-        return (
-            <React.Fragment>
-                <div className={"row"}>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleResetClick}>Reset
-                    </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleBackClick}>Back
-                    </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleNextClick}>Next
-                    </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleShowAllClick}>All
-                    </button>
-                    <button type="button" className="btn btn-primary btn-sm"
-                        onClick={this.handleSimulateClick}>Simulate
-                    </button>
-                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
-                        <React.Fragment>
-                            <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
-                                <Switch className="commentsOrderToggle"
-                                    onChange={this.handleOrderSettings}
-                                    checked={this.isChronological}
-                                    offColor="#FFA500"
-                                    onColor="#FFA500"
-                                />
-                                <span><b>{this.state.order}</b></span>
-                            </div>
-                        </React.Fragment> : null}
-                </div>
-            </React.Fragment>
-        );
-    }
 
     handleOrderSettings = () => {
         let temp = this.state.order;
-        if (this.allMessages.length > 0 && window.confirm('This action will initialize the discussion. Are you sure?')) {
-            this.isChronological = !this.isChronological;
-            this.handleResetClick();
-            this.setState({
-                order: this.state.switchOrder,
-                switchOrder: temp
-            });
-        }
-        this.isChronological ?
+        this.setState((prevState) => ({
+            isChronological: !prevState.isChronological
+        }));
+
+        this.handleResetClick();
+        this.setState({
+            order: this.state.switchOrder,
+            switchOrder: temp
+        });
+        this.state.isChronological ?
             this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
     };
 
-    update(dif) {
+    update(dif, toUpdateState) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
-    }
+        if (toUpdateState) {
+            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, null);
+        }
+    };
 
     updateOpacityAll() {
         for (let index = 0; index < this.shownLinks.length; index++) {
@@ -310,7 +280,7 @@ class Simulation extends Component {
             }
             this.shownLinks[index].color = rgb(32, 32, 32, newOpacity);
         }
-    }
+    };
 
     updateWidthAll() {
         const allMessagesNumber = this.shownLinks.map(link => link.name);
@@ -319,17 +289,53 @@ class Simulation extends Component {
             const value = this.shownLinks[index].name;
             this.shownLinks[index].width = (2 * (value - 1) / max) + 1;
         }
-    }
-}
+    };
 
-const sleep = m => new Promise(r => setTimeout(r, m));
+    render() {
+        return (
+            <React.Fragment>
+                {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                    <div className={"row"}>
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={() => { this.handleNavigationClickModerator("reset") }}>Reset
+                    </button>
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={() => { this.handleNavigationClickModerator("back") }}>Back
+                    </button>
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={() => { this.handleNavigationClickModerator("next") }}>Next
+                    </button>
+                        <button type="button" className="btn btn-primary btn-sm"
+                            onClick={() => { this.handleNavigationClickModerator("all") }}>All
+                    </button>
+                        <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
+                            <Switch className="commentsOrderToggle"
+                                onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
+                                checked={this.state.isChronological}
+                                offColor="#4285f4"
+                                onColor="#4285f4"
+                            />
+                            <span><b>{this.state.order}</b></span>
+                        </div>
+                    </div>
+                }
+            </React.Fragment>
+        );
+    };
+}
 
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        token: state.token,
-        userType: state.userType
+        userType: state.userType,
+        token: state.token
     };
 };
 
-export default connect(mapStateToProps)(Simulation);
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Simulation);

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { timeThursday } from 'd3';
 
 class DiscussionStats extends Component {
     constructor(props) {
@@ -12,10 +11,6 @@ class DiscussionStats extends Component {
             receivedMost: ""
         }
     }
-
-    // componentDidMount() {
-    //     this.getDiscussionStats();
-    // }
 
     UNSAFE_componentWillReceiveProps() {
         this.calcDiscussionStats();
@@ -52,8 +47,6 @@ class DiscussionStats extends Component {
                 })
             }
         });
-        xhr.addEventListener('error', (res) => console.log(res));
-
         xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
         xhr.setRequestHeader("Content-Type", "application/json");

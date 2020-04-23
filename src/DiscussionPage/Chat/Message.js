@@ -36,13 +36,6 @@ class Message extends Component {
         }
     };
 
-    componentDidUpdate = () => {
-        if (this.props.isSimulation) {
-            let messagesDiv = document.querySelector(".Messages-list");
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-    };
-
     replyHandler = () => {
         if (this.state.showReplyInput) {
             this.setState({
@@ -80,7 +73,7 @@ class Message extends Component {
     sendMessageHandler = (message) => {
         if (message.length === 0) return;
         this.state.showReplyInput ? this.props.newMessageHandler(this.props.id, "Guy", message, this.props.depth + 1) :
-            this.props.newAlertHandler(this.props.id, message);
+            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1);
         this.replyHandler();
     };
 
@@ -155,6 +148,7 @@ class Message extends Component {
                             <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
                             : null
                         }
+                        {this.props.depth === 0 && <hr />}
                     </div>
                 </li>
             </React.Fragment>

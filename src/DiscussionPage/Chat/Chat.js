@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import Messages from "./MessagesList"
+import Messages from "./Messages"
 import "./Chat.css"
 import { rgb } from "d3";
-import io from 'socket.io-client'
 
 class Chat extends Component {
 
@@ -18,7 +17,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket = io(process.env.REACT_APP_API);
+        this.socket = props.socket;
     }
 
     componentDidMount() {
@@ -35,8 +34,6 @@ class Chat extends Component {
                 this.updateGraph();
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             });
-            this.socket.on('user joined', (response) => console.log(response));
-
             const data = {
                 discussion_id: this.props.discussionId,
                 token: this.props.token
@@ -44,6 +41,9 @@ class Chat extends Component {
             this.socket.emit('join', data);
             this.socket.on('message', (res) => {
                 this.addComment(res.comment);
+            });
+            this.socket.on('alert', (res) => {
+                this.props.alertsHandler(res.comment);
             });
         }
     };
@@ -79,20 +79,21 @@ class Chat extends Component {
         this.socket.emit('add comment', comment)
     };
 
-    sendAlert(targetId, message) {
+    sendAlert(targetId, message, depth) {
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
+            "depth": depth
         });
-        this.socket.emit('add alert', comment)
+        this.socket.emit('add alert', comment);
     };
 
     addComment(message) {
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, message);
     };
 
     updateLinksOpacity() {
