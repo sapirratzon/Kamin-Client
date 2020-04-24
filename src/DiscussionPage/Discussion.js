@@ -136,14 +136,13 @@ class Discussion extends Component {
 
     handleNewConfig = (response) => {
         let settingsAll = response['all'];
-        for (let setting in settingsAll){
-            this.setState({ [setting]: userSettings[setting] });
+        for (let settingAll in settingsAll){
+            this.setState({ [settingAll]: settingsAll[settingAll] });
         };
         let userSettings = response[this.props.currentUser];
         for (let setting in userSettings){
             this.setState({ [setting]: userSettings[setting] });
         };
-
     };
 
 
@@ -168,7 +167,6 @@ class Discussion extends Component {
                                                  discussionId={this.state.discussionId}
                                                  updateVisibility={this.updateModalHandler.bind(this)}
                                                  isSimulation={this.state.isSimulation}
-                                                 // getLastMessage={this.getLastMessage.bind(this)}
                                                 lastMessage = {this.state.lastMessage}
                             />
                             : null}

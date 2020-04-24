@@ -10,6 +10,7 @@ class VisualizationsModal extends Component {
         this.socket = io(process.env.REACT_APP_API);
         this.allSettings = {};
         this.state = {
+            configType: '',
             regularUsers: [],
             error: ''
         }
@@ -34,32 +35,56 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = (event) => {
+        const username = this.allSettings[event.target.name];
+        const elementToUpdate = event.target.className;
         if (event.target.name === 'all')
             this.handleConfigAll(event);
-        const userConfig = this.allSettings[event.target.name];
-        const elementToUpdate = event.target.className;
-        if (userConfig === undefined)
-            this.allSettings[event.target.name] = {};
-        this.allSettings[event.target.name][elementToUpdate] = event.target.checked;
+        else if (username === undefined) {
+            if (this.allSettings['all'] !== undefined){
+                this.allSettings[event.target.name] = {};
+                this.handleConfigAll(event);
+            }
+            else {
+                this.allSettings[event.target.name] = {
+                    showGraph: this.state.regularUsers[event.target.name]['showGraph'],
+                    showAlerts: this.state.regularUsers[event.target.name]['showAlerts'],
+                    showStat: this.state.regularUsers[event.target.name]['showStat'],
+                };
+                this.allSettings[event.target.name][elementToUpdate] = event.target.checked;
+                this.state.regularUsers[event.target.name][elementToUpdate] = event.target.checked;
+            }
+        }
         console.log(this.allSettings);
     };
 
     handleConfigAll = (event) => {
-        for (let username in this.allSettings) {
-            if (username !== event.target.name)
-                delete this.allSettings[username][event.target.className];
+        if (Object.keys(this.allSettings).length > 1) {
+            this.state.regularUsers.forEach(user => {
+                if (this.allSettings[user] === undefined || this.allSettings[user] === {})
+                    this.allSettings[user] = this.state.regularUsers[user];
+                this.allSettings[user][event.target.className] = event.target.checked;
+                this.state.regularUsers[event.target.name][event.target.className] = event.target.checked;
+            });
+        }
+        else {
+            if (this.allSettings['all'] === undefined)
+                this.allSettings['all'] = {};
+            this.allSettings['all'][event.target.className] = event.target.checked;
+            this.state.regularUsers[event.target.name][event.target.className] = event.target.checked;
         }
     };
 
     updateConfig = () => {
+        let type = 'all';
+        if (this.allSettings['all'] === undefined || Object.keys(this.allSettings).length > 1)
+            type = 'list';
         const configComment = JSON.stringify({
             'author': this.props.currentUser,
             'text': 'config',
             'parentId': this.props.lastMessage.parentId,
             'depth': this.props.lastMessage.depth,
             'discussionId': this.props.discussionId,
-            'Recipients_type': 'list',
-            'extra_data': {'users_list': this.allSettings}
+            'extra_data': {Recipients_type: type, users_list: this.allSettings}
         });
         this.socket.emit('change configuration', configComment);
         this.updateVisibility(false);
