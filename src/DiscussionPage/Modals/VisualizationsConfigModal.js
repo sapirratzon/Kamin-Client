@@ -8,7 +8,7 @@ class VisualizationsModal extends Component {
     constructor() {
         super();
         this.socket = io(process.env.REACT_APP_API);
-        this.allSettings= new Map();
+        this.allSettings = {};
         this.state = {
             regularUsers: [],
             error: ''
@@ -19,7 +19,7 @@ class VisualizationsModal extends Component {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (response) => {
             const allUsers = JSON.parse(xhr.responseText)['active_users'];
-            allUsers.unshift('All');
+            allUsers.unshift('all');
             this.setState({
                 regularUsers: allUsers,
                 selectedUser: ''
@@ -34,58 +34,40 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = (event) => {
-        const userConfig = this.allSettings.get(event.target.name);
+        if (event.target.name === 'all')
+            this.handleConfigAll(event);
+        const userConfig = this.allSettings[event.target.name];
         const elementToUpdate = event.target.className;
         if (userConfig === undefined)
-            this.allSettings.set(event.target.name, {});
-        this.allSettings.get(event.target.name)[elementToUpdate] = event.target.checked;
+            this.allSettings[event.target.name] = {};
+        this.allSettings[event.target.name][elementToUpdate] = event.target.checked;
+        console.log(this.allSettings);
     };
 
-    realTimeUpdateConfig = () => {
-        console.log(this.props.lastMessage);
-        const configComment = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": 'Config',
-            "parentId": 'targetId',
-            "discussionId": this.props.discussionId,
-            "depth": 'depth',
-            "extra_data": this.allSettings
-        });
-        this.socket.emit('change_configuration', configComment);
-        this.updateVisibility(false);
+    handleConfigAll = (event) => {
+        for (let username in this.allSettings) {
+            if (username !== event.target.name)
+                delete this.allSettings[username][event.target.className];
+        }
     };
 
-    simulationUpdateConfig = () => {
-        const comment = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": 'config',
-            "parentId": 'targetId',
-            "discussionId": this.props.discussionId,
-            "depth": 'depth',
-            "extra_data": {"Recipients_type": "all", "users_list": {"Guy":{"Graph": true, "Statistics": true, "Alerts": true}}}
-        });
-        const simData = JSON.stringify({
-            "discussionId": this.props.discussionId,
-            "Recipients_type": "list",
-            "users_list": {"Guy": {"Graph": true, "Statistics": true, "Alerts": true}}
-        });
-        this.socket.emit('change configuration', simData);
-
+    updateConfig = () => {
         const configComment = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": 'Config',
-            "parentId": 'targetId',
-            "discussionId": this.props.discussionId,
-            "depth": '',
-            "extra_data": this.allSettings
+            'author': this.props.currentUser,
+            'text': 'config',
+            'parentId': this.props.lastMessage.parentId,
+            'depth': this.props.lastMessage.depth,
+            'discussionId': this.props.discussionId,
+            'Recipients_type': 'list',
+            'extra_data': {'users_list': this.allSettings}
         });
-        this.socket.emit('change_configuration', configComment);
+        this.socket.emit('change configuration', configComment);
         this.updateVisibility(false);
     };
 
     render() {
         return (
-            <form onSubmit={this.props.isSimulation ? this.simulationUpdateConfig : this.realTimeUpdateConfig}>
+            <form onSubmit={this.updateConfig}>
                 <Modal className="visualModal align-items-start" visible={this.props.isOpen}>
                     <div className="modal-header">
                         <h5 className="modal-title">Visualization Management</h5>

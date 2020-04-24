@@ -27,9 +27,9 @@ class Discussion extends Component {
             title: '',
             selectedUser: "",
             lastMessage: {},
-            showGraph: 'show',
-            showAlerts: 'show',
-            showStat: 'show'
+            showGraph: true,
+            showAlerts: true,
+            showStat: true
         };
     }
 
@@ -50,9 +50,6 @@ class Discussion extends Component {
     }
 
     updateLastMessage = (message) => {
-        this.setState({
-            lastMessage: message
-        });
         this.lastMessage = message;
     };
 
@@ -134,8 +131,19 @@ class Discussion extends Component {
     };
 
     getLastMessage = () => {
-        // return this.state.lastMessage;
         return this.lastMessage;
+    };
+
+    handleNewConfig = (response) => {
+        let settingsAll = response['all'];
+        for (let setting in settingsAll){
+            this.setState({ [setting]: userSettings[setting] });
+        };
+        let userSettings = response[this.props.currentUser];
+        for (let setting in userSettings){
+            this.setState({ [setting]: userSettings[setting] });
+        };
+
     };
 
 
@@ -175,6 +183,7 @@ class Discussion extends Component {
                                 nodeColor={intToRGB}
                                 socket={this.socket}
                                         updateLastMessage={this.updateLastMessage.bind(this)}
+                                        handleNewConfig={this.handleNewConfig.bind(this)}
                             /> : null}
                     </span>
                 </div>
@@ -187,11 +196,13 @@ class Discussion extends Component {
                             discussionId={this.props.simulationCode}
                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} socket={this.socket}/>
-
+                            nodeColor={intToRGB} socket={this.socket}
+                              handleNewConfig={this.handleNewConfig.bind(this)}
+                        />
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
-                        <div className="graph row blue-border mb-1">
+                        <div className={(this.state.showGraph ? 'show' : '') +
+                        " collapse graph row blue-border mb-1"}>
                             {this.state.shownMessages.length > 0 &&
                             <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}
                                    currentUser={this.props.currentUser}
@@ -199,7 +210,7 @@ class Discussion extends Component {
                                    rootId={this.state.shownMessages[0]['author']} />}
                         </div>
                         <div className="row insights">
-                            <div className={this.state.showStat +
+                            <div className={(this.state.showStat ? 'show' : '') +
                             " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
                                 <UserStats className="stats"
                                     getSelectedUser={this.getSelectedUser.bind(this)}
@@ -214,7 +225,7 @@ class Discussion extends Component {
                                     getShownLinks={this.getShownLinks.bind(this)}
                                     getShownNodes={this.getShownNodes.bind(this)} />
                             </div>
-                            <div className={this.state.showAlerts + " collapse col p-0 blue-border"}>
+                            <div className={(this.state.showAlerts ? 'show' : '') + " collapse col p-0 blue-border"}>
                                 <AlertList alerts={this.state.shownAlerts}/>
                             </div>
                         </div>

@@ -11,6 +11,7 @@ class Chat extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
+        this.timestampMessages = [];
         this.linksMap = new Map();
         this.nodesMap = new Map();
         this.messagesCounter = 0;
@@ -32,7 +33,10 @@ class Chat extends Component {
                 this.props.setTitle(response["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
-                this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+                this.timestampMessages.sort(function (a, b) {
+                    return b.timestamp - a.timestamp;
+                });
+                this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, this.timestampMessages[0]);
             });
             const data = {
                 discussion_id: this.props.discussionId,
@@ -46,6 +50,11 @@ class Chat extends Component {
                 this.props.alertsHandler(res.comment);
             });
         }
+        this.handleVisualizations();
+    };
+
+    handleVisualizations = () => {
+        this.socket.on('new configuration', (response) => { this.props.handleNewConfig(response) });
     };
 
     updateGraph() {
@@ -148,6 +157,11 @@ class Chat extends Component {
             id: commentNode["node"]["id"],
             color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
             text: commentNode["node"]["text"],
+            depth: commentNode["node"]["depth"],
+            timestamp: commentNode["node"]["timestamp"]
+        });
+        this.timestampMessages.push({
+            parentId: commentNode["node"]["parentId"],
             depth: commentNode["node"]["depth"],
             timestamp: commentNode["node"]["timestamp"]
         });
