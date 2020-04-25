@@ -151,7 +151,7 @@ class Discussion extends Component {
             <div className="App">
                 <div className="row text-center">
                     <span className="col-4" >
-                        {this.props.isSimulation === 'true' && <button type="button" className="btn btn-danger btn-sm"
+                        {this.props.isSimulation === 'false' && <button type="button" className="btn btn-danger btn-sm"
                             onClick={this.handleEndSession}>End Session
                     </button>}
                     </span>
