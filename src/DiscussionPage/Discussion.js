@@ -167,7 +167,8 @@ class Discussion extends Component {
                                                  discussionId={this.state.discussionId}
                                                  updateVisibility={this.updateModalHandler.bind(this)}
                                                  isSimulation={this.state.isSimulation}
-                                                lastMessage = {this.state.lastMessage}
+                                                lastMessage={this.state.lastMessage}
+                                                socket={this.socket}
                             />
                             : null}
                     </span>

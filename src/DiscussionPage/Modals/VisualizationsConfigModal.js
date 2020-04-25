@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
-import io from 'socket.io-client';
 import { connect } from "react-redux";
 import './VisualizationsConfigModal.css'
 
 class VisualizationsModal extends Component {
-    constructor() {
-        super();
-        this.socket = io(process.env.REACT_APP_API);
+    constructor(props) {
+        super(props);
+        this.socket = props.socket;
         this.allSettings = {};
         this.state = {
             configType: '',
@@ -17,6 +16,13 @@ class VisualizationsModal extends Component {
     }
 
     componentDidMount() {
+        this.loadActiveUsers();
+        this.socket.on("user joined", () => {
+            this.loadActiveUsers();
+        })
+    }
+
+    loadActiveUsers(){
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (response) => {
             const allUsers = JSON.parse(xhr.responseText)['active_users'];
@@ -40,7 +46,7 @@ class VisualizationsModal extends Component {
         if (event.target.name === 'all')
             this.handleConfigAll(event);
         else if (username === undefined) {
-            if (this.allSettings['all'] !== undefined){
+            if (this.allSettings['all'] !== undefined) {
                 this.allSettings[event.target.name] = {};
                 this.handleConfigAll(event);
             }
@@ -84,7 +90,7 @@ class VisualizationsModal extends Component {
             'parentId': this.props.lastMessage.parentId,
             'depth': this.props.lastMessage.depth,
             'discussionId': this.props.discussionId,
-            'extra_data': {Recipients_type: type, users_list: this.allSettings}
+            'extra_data': { Recipients_type: type, users_list: this.allSettings }
         });
         this.socket.emit('change configuration', configComment);
         this.updateVisibility(false);
@@ -100,50 +106,50 @@ class VisualizationsModal extends Component {
                     <div className="modal-body">
                         <table className="table">
                             <thead>
-                            <tr>
-                                <th>username</th>
-                                <th>Graph</th>
-                                <th>Statistics</th>
-                                <th>Alerts</th>
-                                <th/>
-                            </tr>
+                                <tr>
+                                    <th>username</th>
+                                    <th>Graph</th>
+                                    <th>Statistics</th>
+                                    <th>Alerts</th>
+                                    <th />
+                                </tr>
                             </thead>
                             <tbody>
-                            {Object.keys(this.state.regularUsers).map((id) =>
-                                <tr id={this.state.regularUsers[id]} key={this.state.regularUsers[id]}>
-                                    <td>{this.state.regularUsers[id]}</td>
-                                    <td className="showGraph1">
-                                        <input name={this.state.regularUsers[id]} type="checkbox"
-                                               id={this.state.regularUsers[id] + " showGraph"}
-                                               className="showGraph"
-                                               onChange={(event) => this.updateUserVisualizations(event)}
-                                        />
-                                        <label htmlFor={this.state.regularUsers[id] + " showGraph"}/>
-                                    </td>
-                                    <td className="showStat1">
-                                        <input name={this.state.regularUsers[id]} type="checkbox"
-                                               id={this.state.regularUsers[id] + " showStat"}
-                                               className="showStat"
-                                               onChange={(event) => this.updateUserVisualizations(event)}
-                                        />
-                                        <label htmlFor={this.state.regularUsers[id] + " showStat"}/>
-                                    </td>
-                                    <td className="showAlerts1">
-                                        <input name={this.state.regularUsers[id]} type="checkbox"
-                                               id={this.state.regularUsers[id] + " showAlerts"}
-                                               className="showAlerts"
-                                               onChange={(event) => this.updateUserVisualizations(event)}
-                                        />
-                                        <label htmlFor={this.state.regularUsers[id] + " showAlerts"}/>
-                                    </td>
-                                </tr>
-                            )}
+                                {Object.keys(this.state.regularUsers).map((id) =>
+                                    <tr id={this.state.regularUsers[id]} key={this.state.regularUsers[id]}>
+                                        <td>{this.state.regularUsers[id]}</td>
+                                        <td className="showGraph1">
+                                            <input name={this.state.regularUsers[id]} type="checkbox"
+                                                id={this.state.regularUsers[id] + " showGraph"}
+                                                className="showGraph"
+                                                onChange={(event) => this.updateUserVisualizations(event)}
+                                            />
+                                            <label htmlFor={this.state.regularUsers[id] + " showGraph"} />
+                                        </td>
+                                        <td className="showStat1">
+                                            <input name={this.state.regularUsers[id]} type="checkbox"
+                                                id={this.state.regularUsers[id] + " showStat"}
+                                                className="showStat"
+                                                onChange={(event) => this.updateUserVisualizations(event)}
+                                            />
+                                            <label htmlFor={this.state.regularUsers[id] + " showStat"} />
+                                        </td>
+                                        <td className="showAlerts1">
+                                            <input name={this.state.regularUsers[id]} type="checkbox"
+                                                id={this.state.regularUsers[id] + " showAlerts"}
+                                                className="showAlerts"
+                                                onChange={(event) => this.updateUserVisualizations(event)}
+                                            />
+                                            <label htmlFor={this.state.regularUsers[id] + " showAlerts"} />
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-grey"
-                                onClick={() => this.updateVisibility(false)}>Cancel
+                            onClick={() => this.updateVisibility(false)}>Cancel
                         </button>
                         <button className="btn btn-info">OK</button>
                     </div>
