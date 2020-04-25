@@ -51,6 +51,7 @@ class VisualizationsModal extends Component {
                 this.handleConfigAll(event);
             }
             else {
+                //TODO: use setState instead of direct assignment to state
                 this.allSettings[event.target.name] = {
                     showGraph: this.state.regularUsers[event.target.name]['showGraph'],
                     showAlerts: this.state.regularUsers[event.target.name]['showAlerts'],
