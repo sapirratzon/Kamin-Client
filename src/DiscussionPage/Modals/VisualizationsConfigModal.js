@@ -10,29 +10,29 @@ class VisualizationsModal extends Component {
         this.allSettings = {};
         this.state = {
             configType: '',
-            regularUsers: [],
+            activeUsers: {},
             error: ''
         }
     }
 
     componentDidMount() {
-        this.loadActiveUsers();
-        this.socket.on("user joined", () => {
+        this.setState({
+            activeUsers: {'all': {showGraph: true, showAlerts: true, showStat: true}}
+        });
+        this.socket.on("user joined", (response) => {
             this.loadActiveUsers();
         })
     }
 
-    loadActiveUsers(){
+    loadActiveUsers() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (response) => {
-            const allUsers = JSON.parse(xhr.responseText)['active_users'];
-            allUsers.unshift('all');
+            const allUsers = {'all': {alerts: true, graph: true, statistics: true} , ...JSON.parse(xhr.responseText)['config']};
             this.setState({
-                regularUsers: allUsers,
-                selectedUser: ''
+                activeUsers: allUsers
             });
         });
-        xhr.open('GET', process.env.REACT_APP_API + '/api/getActiveDiscussionUsers/' + this.props.discussionId);
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getActiveUsersConfigurations/' + this.props.discussionId);
         xhr.send();
     }
 
@@ -53,47 +53,48 @@ class VisualizationsModal extends Component {
             else {
                 //TODO: use setState instead of direct assignment to state
                 this.allSettings[event.target.name] = {
-                    showGraph: this.state.regularUsers[event.target.name]['showGraph'],
-                    showAlerts: this.state.regularUsers[event.target.name]['showAlerts'],
-                    showStat: this.state.regularUsers[event.target.name]['showStat'],
+                    showGraph: this.state.activeUsers[event.target.name]['showGraph'],
+                    showAlerts: this.state.activeUsers[event.target.name]['showAlerts'],
+                    showStat: this.state.activeUsers[event.target.name]['showStat'],
                 };
                 this.allSettings[event.target.name][elementToUpdate] = event.target.checked;
-                this.state.regularUsers[event.target.name][elementToUpdate] = event.target.checked;
+                this.state.activeUsers[event.target.name][elementToUpdate] = event.target.checked;
             }
         }
-        console.log(this.allSettings);
     };
 
     handleConfigAll = (event) => {
         if (Object.keys(this.allSettings).length > 1) {
-            this.state.regularUsers.forEach(user => {
+            this.state.activeUsers.forEach(user => {
                 if (this.allSettings[user] === undefined || this.allSettings[user] === {})
-                    this.allSettings[user] = this.state.regularUsers[user];
+                    this.allSettings[user] = this.state.activeUsers[user];
                 this.allSettings[user][event.target.className] = event.target.checked;
-                this.state.regularUsers[event.target.name][event.target.className] = event.target.checked;
+                this.state.activeUsers[event.target.name][event.target.className] = event.target.checked;
             });
         }
         else {
             if (this.allSettings['all'] === undefined)
                 this.allSettings['all'] = {};
             this.allSettings['all'][event.target.className] = event.target.checked;
-            this.state.regularUsers[event.target.name][event.target.className] = event.target.checked;
+            this.state.activeUsers[event.target.name][event.target.className] = event.target.checked;
         }
     };
 
     updateConfig = () => {
-        let type = 'all';
-        if (this.allSettings['all'] === undefined || Object.keys(this.allSettings).length > 1)
-            type = 'list';
-        const configComment = JSON.stringify({
-            'author': this.props.currentUser,
-            'text': 'config',
-            'parentId': this.props.lastMessage.parentId,
-            'depth': this.props.lastMessage.depth,
-            'discussionId': this.props.discussionId,
-            'extra_data': { Recipients_type: type, users_list: this.allSettings }
-        });
-        this.socket.emit('change configuration', configComment);
+        if (this.state.activeUsers.length > 0) {
+            let type = 'all';
+            if (this.allSettings['all'] === undefined || Object.keys(this.allSettings).length > 1)
+                type = 'list';
+            const configComment = JSON.stringify({
+                'author': this.props.currentUser,
+                'text': 'config',
+                'parentId': this.props.lastMessage.parentId,
+                'depth': this.props.lastMessage.depth,
+                'discussionId': this.props.discussionId,
+                'extra_data': { recipients_type: type, users_list: this.allSettings }
+            });
+            this.socket.emit('change configuration', configComment);
+        }
         this.updateVisibility(false);
     };
 
@@ -105,6 +106,8 @@ class VisualizationsModal extends Component {
                         <h5 className="modal-title">Visualization Management</h5>
                     </div>
                     <div className="modal-body">
+                        {this.state.activeUsers.length < 0 ?
+                        <p> There are no users in the discussion </p> :
                         <table className="table">
                             <thead>
                                 <tr>
@@ -116,37 +119,41 @@ class VisualizationsModal extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.keys(this.state.regularUsers).map((id) =>
-                                    <tr id={this.state.regularUsers[id]} key={this.state.regularUsers[id]}>
-                                        <td>{this.state.regularUsers[id]}</td>
+                                {Object.keys(this.state.activeUsers).map((id) =>
+                                    <tr id={id} key={id}>
+                                        <td>{id}</td>
                                         <td className="showGraph1">
-                                            <input name={this.state.regularUsers[id]} type="checkbox"
-                                                id={this.state.regularUsers[id] + " showGraph"}
+                                            <input name={id} type="checkbox"
+                                                id={id + " showGraph"}
                                                 className="showGraph"
+                                                   // checked={this.state.activeUsers[id]['graph']}
                                                 onChange={(event) => this.updateUserVisualizations(event)}
                                             />
-                                            <label htmlFor={this.state.regularUsers[id] + " showGraph"} />
+                                            <label htmlFor={id + " showGraph"} />
                                         </td>
                                         <td className="showStat1">
-                                            <input name={this.state.regularUsers[id]} type="checkbox"
-                                                id={this.state.regularUsers[id] + " showStat"}
+                                            <input name={id} type="checkbox"
+                                                   // checked={this.state.activeUsers[id]['statistics']}
+                                                id={id + " showStat"}
                                                 className="showStat"
                                                 onChange={(event) => this.updateUserVisualizations(event)}
                                             />
-                                            <label htmlFor={this.state.regularUsers[id] + " showStat"} />
+                                            <label htmlFor={id + " showStat"} />
                                         </td>
                                         <td className="showAlerts1">
-                                            <input name={this.state.regularUsers[id]} type="checkbox"
-                                                id={this.state.regularUsers[id] + " showAlerts"}
+                                            <input name={id} type="checkbox"
+                                                   // checked={this.state.activeUsers[id]['alerts']}
+                                                id={id + " showAlerts"}
                                                 className="showAlerts"
                                                 onChange={(event) => this.updateUserVisualizations(event)}
                                             />
-                                            <label htmlFor={this.state.regularUsers[id] + " showAlerts"} />
+                                            <label htmlFor={id + " showAlerts"} />
                                         </td>
                                     </tr>
                                 )}
                             </tbody>
                         </table>
+                        }
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-grey"

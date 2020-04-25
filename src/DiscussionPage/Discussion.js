@@ -46,6 +46,9 @@ class Discussion extends Component {
         this.socket.on('error', (response) => {
             console.log({ response })
         });
+        this.socket.on('new configuration', (response) => {
+            this.handleNewConfig(response)
+        });
 
     }
 
@@ -180,7 +183,6 @@ class Discussion extends Component {
                                 nodeColor={intToRGB}
                                 socket={this.socket}
                                 updateLastMessage={this.updateLastMessage.bind(this)}
-                                handleNewConfig={this.handleNewConfig.bind(this)}
                             /> : null}
                     </span>
                 </div>
@@ -194,7 +196,6 @@ class Discussion extends Component {
                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
                             nodeColor={intToRGB} socket={this.socket}
-                            handleNewConfig={this.handleNewConfig.bind(this)}
                         />
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
