@@ -16,9 +16,6 @@ class VisualizationsModal extends Component {
     }
 
     componentDidMount() {
-        this.setState({
-            activeUsers: {'all': {showGraph: true, showAlerts: true, showStat: true}}
-        });
         this.socket.on("user joined", (response) => {
             this.loadActiveUsers();
         })
@@ -27,7 +24,10 @@ class VisualizationsModal extends Component {
     loadActiveUsers() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (response) => {
-            const allUsers = {'all': {alerts: true, graph: true, statistics: true} , ...JSON.parse(xhr.responseText)['config']};
+            const allUsers = {'all': {showGraph: this.props.defaultConfig['Graph'],
+                    showAlerts: this.props.defaultConfig['Alerts'],
+                    showStat: this.props.defaultConfig['statistics']},
+                ...JSON.parse(xhr.responseText)['config']};
             this.setState({
                 activeUsers: allUsers
             });
@@ -51,37 +51,48 @@ class VisualizationsModal extends Component {
                 this.handleConfigAll(event);
             }
             else {
-                //TODO: use setState instead of direct assignment to state
                 this.allSettings[event.target.name] = {
-                    showGraph: this.state.activeUsers[event.target.name]['showGraph'],
-                    showAlerts: this.state.activeUsers[event.target.name]['showAlerts'],
-                    showStat: this.state.activeUsers[event.target.name]['showStat'],
+                    showGraph: this.state.activeUsers[event.target.name]['graph'],
+                    showAlerts: this.state.activeUsers[event.target.name]['alerts'],
+                    showStat: this.state.activeUsers[event.target.name]['statistics'],
                 };
                 this.allSettings[event.target.name][elementToUpdate] = event.target.checked;
-                this.state.activeUsers[event.target.name][elementToUpdate] = event.target.checked;
+                let activeUsersSettings = this.state.activeUsers;
+                activeUsersSettings[event.target.name][elementToUpdate] = event.target.checked;
+                this.setState({
+                    activeUsers: activeUsersSettings
+                });
             }
         }
     };
 
     handleConfigAll = (event) => {
         if (Object.keys(this.allSettings).length > 1) {
-            this.state.activeUsers.forEach(user => {
+            Object.keys(this.state.activeUsers).forEach(user => {
                 if (this.allSettings[user] === undefined || this.allSettings[user] === {})
                     this.allSettings[user] = this.state.activeUsers[user];
                 this.allSettings[user][event.target.className] = event.target.checked;
-                this.state.activeUsers[event.target.name][event.target.className] = event.target.checked;
+                let activeUsersSettings = this.state.activeUsers;
+                activeUsersSettings[event.target.name][event.target.className] = event.target.checked;
+                this.setState({
+                    activeUsers: activeUsersSettings
+                });
             });
         }
         else {
             if (this.allSettings['all'] === undefined)
                 this.allSettings['all'] = {};
             this.allSettings['all'][event.target.className] = event.target.checked;
-            this.state.activeUsers[event.target.name][event.target.className] = event.target.checked;
+            let activeUsersSettings = this.state.activeUsers;
+            activeUsersSettings[event.target.name][event.target.className] = event.target.checked;
+            this.setState({
+                activeUsers: activeUsersSettings
+            });
         }
     };
 
     updateConfig = () => {
-        if (this.state.activeUsers.length > 0) {
+        if (Object.keys(this.allSettings).length > 0) {
             let type = 'all';
             if (this.allSettings['all'] === undefined || Object.keys(this.allSettings).length > 1)
                 type = 'list';
@@ -100,7 +111,6 @@ class VisualizationsModal extends Component {
 
     render() {
         return (
-            <form onSubmit={this.updateConfig}>
                 <Modal className="visualModal align-items-start" visible={this.props.isOpen}>
                     <div className="modal-header">
                         <h5 className="modal-title">Visualization Management</h5>
@@ -122,29 +132,29 @@ class VisualizationsModal extends Component {
                                 {Object.keys(this.state.activeUsers).map((id) =>
                                     <tr id={id} key={id}>
                                         <td>{id}</td>
-                                        <td className="showGraph1">
+                                        <td className="graph">
                                             <input name={id} type="checkbox"
                                                 id={id + " showGraph"}
                                                 className="showGraph"
-                                                   // checked={this.state.activeUsers[id]['graph']}
+                                                   defaultChecked={this.state.activeUsers[id]['showGraph']}
                                                 onChange={(event) => this.updateUserVisualizations(event)}
                                             />
                                             <label htmlFor={id + " showGraph"} />
                                         </td>
-                                        <td className="showStat1">
+                                        <td className="Statistics">
                                             <input name={id} type="checkbox"
-                                                   // checked={this.state.activeUsers[id]['statistics']}
                                                 id={id + " showStat"}
                                                 className="showStat"
+                                                   defaultChecked={this.state.activeUsers[id]['showStat']}
                                                 onChange={(event) => this.updateUserVisualizations(event)}
                                             />
                                             <label htmlFor={id + " showStat"} />
                                         </td>
-                                        <td className="showAlerts1">
+                                        <td className="alerts">
                                             <input name={id} type="checkbox"
-                                                   // checked={this.state.activeUsers[id]['alerts']}
                                                 id={id + " showAlerts"}
                                                 className="showAlerts"
+                                                   defaultChecked={this.state.activeUsers[id]['showAlerts']}
                                                 onChange={(event) => this.updateUserVisualizations(event)}
                                             />
                                             <label htmlFor={id + " showAlerts"} />
@@ -159,10 +169,9 @@ class VisualizationsModal extends Component {
                         <button type="button" className="btn btn-grey"
                             onClick={() => this.updateVisibility(false)}>Cancel
                         </button>
-                        <button className="btn btn-info">OK</button>
+                        <button className="btn btn-info" onClick={this.updateConfig}>OK</button>
                     </div>
                 </Modal>
-            </form>
         );
     }
 }
