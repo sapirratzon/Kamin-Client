@@ -96,15 +96,18 @@ class VisualizationsModal extends Component {
             let type = 'all';
             if (this.allSettings['all'] === undefined || Object.keys(this.allSettings).length > 1)
                 type = 'list';
-            const configComment = JSON.stringify({
-                'author': this.props.currentUser,
-                'text': 'config',
-                'parentId': this.props.lastMessage.parentId,
-                'depth': this.props.lastMessage.depth,
+            const configComment = {
                 'discussionId': this.props.discussionId,
                 'extra_data': { recipients_type: type, users_list: this.allSettings }
-            });
-            this.socket.emit('change configuration', configComment);
+            };
+            if (!this.props.isSimulation){
+                Object.assign(configComment, {'author': this.props.currentUser,
+                    'text': 'config',
+                    'parentId': this.props.lastMessage.parentId,
+                    'depth': this.props.lastMessage.depth})
+            }
+            console.log(configComment);
+            // this.socket.emit('change configuration', JSON.stringify(configComment));
         }
         this.updateVisibility(false);
     };

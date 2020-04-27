@@ -57,6 +57,7 @@ class Discussion extends Component {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (response) => {
             this.defaultConfig = JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'];
+            console.log(this.defaultConfig);
             this.setState({
                 showGraph: this.defaultConfig['Graph'],
                 showAlerts: this.defaultConfig['Alerts'],
@@ -175,7 +176,7 @@ class Discussion extends Component {
                             <VisualizationsModal isOpen={this.state.showVisualizationSettingsModal}
                                 discussionId={this.state.discussionId}
                                 updateVisibility={this.updateModalHandler.bind(this)}
-                                isSimulation={this.state.isSimulation}
+                                isSimulation={this.props.isSimulation === 'true'}
                                 lastMessage={this.state.lastMessage}
                                                  defaultConfig={this.defaultConfig}
                                 socket={this.socket}
