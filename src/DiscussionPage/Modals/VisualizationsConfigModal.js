@@ -1,31 +1,38 @@
 import React, { Component } from 'react';
 import Modal from 'react-bootstrap4-modal';
-import io from 'socket.io-client';
 import { connect } from "react-redux";
 import './VisualizationsConfigModal.css'
 
 class VisualizationsModal extends Component {
-    constructor() {
-        super();
-        this.socket = io(process.env.REACT_APP_API);
-        this.allSettings= new Map();
+    constructor(props) {
+        super(props);
+        this.socket = props.socket;
+        this.allSettings = {};
         this.state = {
-            regularUsers: [],
+            configType: '',
+            activeUsers: {},
             error: ''
         }
     }
 
     componentDidMount() {
+        this.socket.on("user joined", (response) => {
+            this.loadActiveUsers();
+        })
+    }
+
+    loadActiveUsers() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (response) => {
-            const allUsers = JSON.parse(xhr.responseText)['active_users'];
-            allUsers.unshift('All');
+            const allUsers = {'all': {showGraph: this.props.defaultConfig['Graph'],
+                    showAlerts: this.props.defaultConfig['Alerts'],
+                    showStat: this.props.defaultConfig['statistics']},
+                ...JSON.parse(xhr.responseText)['config']};
             this.setState({
-                regularUsers: allUsers,
-                selectedUser: ''
+                activeUsers: allUsers
             });
         });
-        xhr.open('GET', process.env.REACT_APP_API + '/api/getActiveDiscussionUsers/' + this.props.discussionId);
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getActiveUsersConfigurations/' + this.props.discussionId);
         xhr.send();
     }
 
@@ -34,114 +41,140 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = (event) => {
-        const userConfig = this.allSettings.get(event.target.name);
+        const username = this.allSettings[event.target.name];
         const elementToUpdate = event.target.className;
-        if (userConfig === undefined)
-            this.allSettings.set(event.target.name, {});
-        this.allSettings.get(event.target.name)[elementToUpdate] = event.target.checked;
+        if (event.target.name === 'all')
+            this.handleConfigAll(event);
+        else if (username === undefined) {
+            if (this.allSettings['all'] !== undefined) {
+                this.allSettings[event.target.name] = {};
+                this.handleConfigAll(event);
+            }
+            else {
+                this.allSettings[event.target.name] = {
+                    showGraph: this.state.activeUsers[event.target.name]['graph'],
+                    showAlerts: this.state.activeUsers[event.target.name]['alerts'],
+                    showStat: this.state.activeUsers[event.target.name]['statistics'],
+                };
+                this.allSettings[event.target.name][elementToUpdate] = event.target.checked;
+                let activeUsersSettings = this.state.activeUsers;
+                activeUsersSettings[event.target.name][elementToUpdate] = event.target.checked;
+                this.setState({
+                    activeUsers: activeUsersSettings
+                });
+            }
+        }
     };
 
-    realTimeUpdateConfig = () => {
-        console.log(this.props.lastMessage);
-        const configComment = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": 'Config',
-            "parentId": 'targetId',
-            "discussionId": this.props.discussionId,
-            "depth": 'depth',
-            "extra_data": this.allSettings
-        });
-        this.socket.emit('change_configuration', configComment);
-        this.updateVisibility(false);
+    handleConfigAll = (event) => {
+        if (Object.keys(this.allSettings).length > 1) {
+            Object.keys(this.state.activeUsers).forEach(user => {
+                if (this.allSettings[user] === undefined || this.allSettings[user] === {})
+                    this.allSettings[user] = this.state.activeUsers[user];
+                this.allSettings[user][event.target.className] = event.target.checked;
+                let activeUsersSettings = this.state.activeUsers;
+                activeUsersSettings[event.target.name][event.target.className] = event.target.checked;
+                this.setState({
+                    activeUsers: activeUsersSettings
+                });
+            });
+        }
+        else {
+            if (this.allSettings['all'] === undefined)
+                this.allSettings['all'] = {};
+            this.allSettings['all'][event.target.className] = event.target.checked;
+            let activeUsersSettings = this.state.activeUsers;
+            activeUsersSettings[event.target.name][event.target.className] = event.target.checked;
+            this.setState({
+                activeUsers: activeUsersSettings
+            });
+        }
     };
 
-    simulationUpdateConfig = () => {
-        const comment = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": 'config',
-            "parentId": 'targetId',
-            "discussionId": this.props.discussionId,
-            "depth": 'depth',
-            "extra_data": {"Recipients_type": "all", "users_list": {"Guy":{"Graph": true, "Statistics": true, "Alerts": true}}}
-        });
-        const simData = JSON.stringify({
-            "discussionId": this.props.discussionId,
-            "Recipients_type": "list",
-            "users_list": {"Guy": {"Graph": true, "Statistics": true, "Alerts": true}}
-        });
-        this.socket.emit('change configuration', simData);
-
-        const configComment = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": 'Config',
-            "parentId": 'targetId',
-            "discussionId": this.props.discussionId,
-            "depth": '',
-            "extra_data": this.allSettings
-        });
-        this.socket.emit('change_configuration', configComment);
+    updateConfig = () => {
+        if (Object.keys(this.allSettings).length > 0) {
+            let type = 'all';
+            if (this.allSettings['all'] === undefined || Object.keys(this.allSettings).length > 1)
+                type = 'list';
+            const configComment = {
+                'discussionId': this.props.discussionId,
+                'extra_data': { recipients_type: type, users_list: this.allSettings }
+            };
+            if (!this.props.isSimulation){
+                Object.assign(configComment, {'author': this.props.currentUser,
+                    'text': 'config',
+                    'parentId': this.props.lastMessage.parentId,
+                    'depth': this.props.lastMessage.depth})
+            }
+            console.log(configComment);
+            // this.socket.emit('change configuration', JSON.stringify(configComment));
+        }
         this.updateVisibility(false);
     };
 
     render() {
         return (
-            <form onSubmit={this.props.isSimulation ? this.simulationUpdateConfig : this.realTimeUpdateConfig}>
                 <Modal className="visualModal align-items-start" visible={this.props.isOpen}>
                     <div className="modal-header">
                         <h5 className="modal-title">Visualization Management</h5>
                     </div>
                     <div className="modal-body">
+                        {this.state.activeUsers.length < 0 ?
+                        <p> There are no users in the discussion </p> :
                         <table className="table">
                             <thead>
-                            <tr>
-                                <th>username</th>
-                                <th>Graph</th>
-                                <th>Statistics</th>
-                                <th>Alerts</th>
-                                <th/>
-                            </tr>
+                                <tr>
+                                    <th>username</th>
+                                    <th>Graph</th>
+                                    <th>Statistics</th>
+                                    <th>Alerts</th>
+                                    <th />
+                                </tr>
                             </thead>
                             <tbody>
-                            {Object.keys(this.state.regularUsers).map((id) =>
-                                <tr id={this.state.regularUsers[id]} key={this.state.regularUsers[id]}>
-                                    <td>{this.state.regularUsers[id]}</td>
-                                    <td className="showGraph1">
-                                        <input name={this.state.regularUsers[id]} type="checkbox"
-                                               id={this.state.regularUsers[id] + " showGraph"}
-                                               className="showGraph"
-                                               onChange={(event) => this.updateUserVisualizations(event)}
-                                        />
-                                        <label htmlFor={this.state.regularUsers[id] + " showGraph"}/>
-                                    </td>
-                                    <td className="showStat1">
-                                        <input name={this.state.regularUsers[id]} type="checkbox"
-                                               id={this.state.regularUsers[id] + " showStat"}
-                                               className="showStat"
-                                               onChange={(event) => this.updateUserVisualizations(event)}
-                                        />
-                                        <label htmlFor={this.state.regularUsers[id] + " showStat"}/>
-                                    </td>
-                                    <td className="showAlerts1">
-                                        <input name={this.state.regularUsers[id]} type="checkbox"
-                                               id={this.state.regularUsers[id] + " showAlerts"}
-                                               className="showAlerts"
-                                               onChange={(event) => this.updateUserVisualizations(event)}
-                                        />
-                                        <label htmlFor={this.state.regularUsers[id] + " showAlerts"}/>
-                                    </td>
-                                </tr>
-                            )}
+                                {Object.keys(this.state.activeUsers).map((id) =>
+                                    <tr id={id} key={id}>
+                                        <td>{id}</td>
+                                        <td className="graph">
+                                            <input name={id} type="checkbox"
+                                                id={id + " showGraph"}
+                                                className="showGraph"
+                                                   defaultChecked={this.state.activeUsers[id]['showGraph']}
+                                                onChange={(event) => this.updateUserVisualizations(event)}
+                                            />
+                                            <label htmlFor={id + " showGraph"} />
+                                        </td>
+                                        <td className="Statistics">
+                                            <input name={id} type="checkbox"
+                                                id={id + " showStat"}
+                                                className="showStat"
+                                                   defaultChecked={this.state.activeUsers[id]['showStat']}
+                                                onChange={(event) => this.updateUserVisualizations(event)}
+                                            />
+                                            <label htmlFor={id + " showStat"} />
+                                        </td>
+                                        <td className="alerts">
+                                            <input name={id} type="checkbox"
+                                                id={id + " showAlerts"}
+                                                className="showAlerts"
+                                                   defaultChecked={this.state.activeUsers[id]['showAlerts']}
+                                                onChange={(event) => this.updateUserVisualizations(event)}
+                                            />
+                                            <label htmlFor={id + " showAlerts"} />
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
+                        }
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-grey"
-                                onClick={() => this.updateVisibility(false)}>Cancel
+                            onClick={() => this.updateVisibility(false)}>Cancel
                         </button>
-                        <button className="btn btn-info">OK</button>
+                        <button className="btn btn-info" onClick={this.updateConfig}>OK</button>
                     </div>
                 </Modal>
-            </form>
         );
     }
 }

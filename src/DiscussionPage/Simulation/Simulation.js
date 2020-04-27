@@ -56,7 +56,6 @@ class Simulation extends Component {
         };
 
         this.socket.emit('join', data);
-
         this.handleModeratorActions();
     }
 
@@ -79,7 +78,6 @@ class Simulation extends Component {
         this.socket.on('reset', this.handleResetClick);
         this.socket.on('all', this.handleShowAllClick);
         this.socket.on('change_simulation_order', this.handleOrderSettings);
-
     };
 
     handleNavigationClickModerator = (type) => {

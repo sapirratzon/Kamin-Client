@@ -11,6 +11,7 @@ class Chat extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
+        this.timestampMessages = [];
         this.linksMap = new Map();
         this.nodesMap = new Map();
         this.messagesCounter = 0;
@@ -32,7 +33,10 @@ class Chat extends Component {
                 this.props.setTitle(response["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
-                this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+                this.timestampMessages.sort(function (a, b) {
+                    return b.timestamp - a.timestamp;
+                });
+                this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, this.timestampMessages[0]);
             });
             const data = {
                 discussion_id: this.props.discussionId,
@@ -42,8 +46,8 @@ class Chat extends Component {
             this.socket.on('message', (res) => {
                 this.addComment(res.comment);
             });
-            this.socket.on('alert', (res) => {
-                this.props.alertsHandler(res.comment);
+            this.socket.on('new alert', (res) => {
+                this.props.alertsHandler(res.comment.text);
             });
         }
     };
@@ -85,7 +89,8 @@ class Chat extends Component {
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
-            "depth": depth
+            "depth": depth,
+            "extra_data": { "recipients_type": "all" }
         });
         this.socket.emit('add alert', comment);
     };
@@ -139,30 +144,36 @@ class Chat extends Component {
 
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
-        if (commentNode["node"]["isAlerted"]) {
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": commentNode["node"]["actions"][0] })
-        }
-        this.messagesCounter++;
-        this.shownMessages.push({
-            author: commentNode["node"]["author"],
-            id: commentNode["node"]["id"],
-            color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
-            text: commentNode["node"]["text"],
-            depth: commentNode["node"]["depth"],
-            timestamp: commentNode["node"]["timestamp"]
-        });
-        if (!this.nodesMap.has(commentNode["node"]["author"])) {
-            let node = {
-                id: commentNode["node"]["author"],
+        if (commentNode["node"]["comment_type"] === "alert") {
+            this.props.alertsHandler(commentNode["node"])
+        } else {
+            this.messagesCounter++;
+            this.shownMessages.push({
+                author: commentNode["node"]["author"],
+                id: commentNode["node"]["id"],
                 color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
-                name: commentNode["node"]["author"],
-                timestamp: commentNode["node"]["timestamp"],
-                val: 0.5,
-                updateVal: function (value) {
-                    this.val += value;
-                },
-            };
-            this.nodesMap.set(commentNode["node"]["author"], node)
+                text: commentNode["node"]["text"],
+                depth: commentNode["node"]["depth"],
+                timestamp: commentNode["node"]["timestamp"]
+            });
+            this.timestampMessages.push({
+                parentId: commentNode["node"]["parentId"],
+                depth: commentNode["node"]["depth"],
+                timestamp: commentNode["node"]["timestamp"]
+            });
+            if (!this.nodesMap.has(commentNode["node"]["author"])) {
+                let node = {
+                    id: commentNode["node"]["author"],
+                    color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
+                    name: commentNode["node"]["author"],
+                    timestamp: commentNode["node"]["timestamp"],
+                    val: 0.5,
+                    updateVal: function (value) {
+                        this.val += value;
+                    },
+                };
+                this.nodesMap.set(commentNode["node"]["author"], node)
+            }
         }
         commentNode["children"].forEach(childComment => {
             if (childComment["node"]["author"] !== commentNode["node"]["author"]) {

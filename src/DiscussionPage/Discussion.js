@@ -16,6 +16,7 @@ class Discussion extends Component {
         super(props);
         this.socket = io(process.env.REACT_APP_API);
         this.lastMessage = {};
+        this.defaultConfig = {};
         this.state = {
             shownMessages: [],
             shownNodes: [],
@@ -27,9 +28,9 @@ class Discussion extends Component {
             title: '',
             selectedUser: "",
             lastMessage: {},
-            showGraph: 'show',
-            showAlerts: 'show',
-            showStat: 'show'
+            showGraph: true,
+            showAlerts: true,
+            showStat: true,
         };
     }
 
@@ -46,22 +47,37 @@ class Discussion extends Component {
         this.socket.on('error', (response) => {
             console.log({ response })
         });
-
+        this.socket.on('new configuration', (response) => {
+            this.handleNewConfig(response)
+        });
+        this.setDefaultConfig();
     }
 
-    updateLastMessage = (message) => {
-        this.setState({
-            lastMessage: message
+    setDefaultConfig = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', (response) => {
+            this.defaultConfig = JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'];
+            console.log(this.defaultConfig);
+            this.setState({
+                showGraph: this.defaultConfig['Graph'],
+                showAlerts: this.defaultConfig['Alerts'],
+                showStat: this.defaultConfig['statistics']
+            })
         });
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send();
+    };
+
+    updateLastMessage = (message) => {
         this.lastMessage = message;
     };
 
     updateMessagesHandler(newMessages, newNodes, newLinks, lastMessage) {
         const newAlerts = [];
         this.state.allAlerts.forEach((a) => {
-            if (a.position <= newMessages.length - 1) {
-                newAlerts.push(a);
-            }
+            newAlerts.push(a);
         });
         this.setState({
             shownMessages: newMessages,
@@ -121,7 +137,7 @@ class Discussion extends Component {
         this.setState({
             showGraph: settings.graph,
             showAlerts: settings.alerts,
-            showStat: settings.stat
+            showStat: settings.statistics
         })
     };
 
@@ -133,9 +149,10 @@ class Discussion extends Component {
         this.socket.emit('end_session', data);
     };
 
-    getLastMessage = () => {
-        // return this.state.lastMessage;
-        return this.lastMessage;
+    handleNewConfig = (response) => {
+        for (let setting in response) {
+            this.setState({ [setting]: response[setting] })
+        }
     };
 
 
@@ -144,24 +161,25 @@ class Discussion extends Component {
             <div className="App">
                 <div className="row text-center">
                     <span className="col-4" >
-                        {this.props.isSimulation === 'true' && <button type="button" className="btn btn-danger btn-sm"
+                        {this.props.isSimulation === 'false' && <button type="button" className="btn btn-danger btn-sm"
                             onClick={this.handleEndSession}>End Session
                     </button>}
                     </span>
                     <span className="col-4">
                         <h3><b>{this.state.title}</b>
                             <i className="fas fa-share-square text-primary pl-2 cursor-pointer"
-                               data-tip="Copied!" data-event="click"/>
-                               <i className="fas fa-cog cursor-pointer"
-                                  onClick={() => this.updateModalHandler(true)}/></h3>
-                        <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick}/>
+                                data-tip="Copied!" data-event="click" />
+                            <i className="fas fa-cog cursor-pointer"
+                                onClick={() => this.updateModalHandler(true)} /></h3>
+                        <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
                         {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                             <VisualizationsModal isOpen={this.state.showVisualizationSettingsModal}
-                                                 discussionId={this.state.discussionId}
-                                                 updateVisibility={this.updateModalHandler.bind(this)}
-                                                 isSimulation={this.state.isSimulation}
-                                                 // getLastMessage={this.getLastMessage.bind(this)}
-                                                lastMessage = {this.state.lastMessage}
+                                discussionId={this.state.discussionId}
+                                updateVisibility={this.updateModalHandler.bind(this)}
+                                isSimulation={this.props.isSimulation === 'true'}
+                                lastMessage={this.state.lastMessage}
+                                                 defaultConfig={this.defaultConfig}
+                                socket={this.socket}
                             />
                             : null}
                     </span>
@@ -174,7 +192,7 @@ class Discussion extends Component {
                                 messagesOrder={'chronological'}
                                 nodeColor={intToRGB}
                                 socket={this.socket}
-                                        updateLastMessage={this.updateLastMessage.bind(this)}
+                                updateLastMessage={this.updateLastMessage.bind(this)}
                             /> : null}
                     </span>
                 </div>
@@ -187,20 +205,21 @@ class Discussion extends Component {
                             discussionId={this.props.simulationCode}
                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
-                            nodeColor={intToRGB} socket={this.socket}/>
-
+                            nodeColor={intToRGB} socket={this.socket}
+                        />
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">
-                        <div className="graph row blue-border mb-1">
+                        <div className={(this.state.showGraph ? 'show' : '') +
+                            " collapse graph row blue-border mb-1"}>
                             {this.state.shownMessages.length > 0 &&
-                            <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}
-                                   currentUser={this.props.currentUser}
-                                   updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
-                                   rootId={this.state.shownMessages[0]['author']} />}
+                                <Graph nodes={this.state.shownNodes} links={this.state.shownLinks}
+                                    currentUser={this.props.currentUser}
+                                    updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
+                                    rootId={this.state.shownMessages[0]['author']} />}
                         </div>
                         <div className="row insights">
-                            <div className={this.state.showStat +
-                            " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
+                            <div className={(this.state.showStat ? 'show' : '') +
+                                " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
                                 <UserStats className="stats"
                                     getSelectedUser={this.getSelectedUser.bind(this)}
                                     discussionId={this.state.discussionId}
@@ -214,8 +233,8 @@ class Discussion extends Component {
                                     getShownLinks={this.getShownLinks.bind(this)}
                                     getShownNodes={this.getShownNodes.bind(this)} />
                             </div>
-                            <div className={this.state.showAlerts + " collapse col p-0 blue-border"}>
-                                <AlertList alerts={this.state.shownAlerts}/>
+                            <div className={(this.state.showAlerts ? 'show' : '') + " collapse col p-0 blue-border"}>
+                                <AlertList alerts={this.state.shownAlerts} />
                             </div>
                         </div>
                     </div>
