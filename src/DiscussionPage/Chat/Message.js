@@ -108,7 +108,7 @@ class Message extends Component {
         let verticalLines = [];
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div className="vl" key={i} style={{
-                "left": ((20 * (i + 1) - depthPixels) + 2) + "px",
+                "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
             }} />)
         }
         return (
@@ -121,25 +121,23 @@ class Message extends Component {
                             "backgroundColor": this.props.color,
                         }}
                     />
-                    <div className="Message-content">
-                        <div className="username">
+                    <div className="card Message-content">
+                        <div className="card-header p-1 username">
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div>
-                        <div className="text">
+                        <div className="text ml-2">
                             {this.state.shownText}
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b>}
 
                         </div>
                         {!this.props.isSimulation ?
                             <React.Fragment>
-                                <div className="reply">
-                                    <p>
-                                        <i className="far fa-comment-dots mr-2 message-buttons"
+                                <div className="reply ml-2">
+                                        <i className="far fa-comment-dots mr-2 mb-2 message-buttons"
                                             onClick={this.replyHandler}>{this.state.replyText}</i>
                                         {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                                             <i className="far fa-bell message-buttons"
                                                 onClick={this.alertHandler}>{this.state.alertText}</i> : null}
-                                    </p>
                                 </div>
                             </React.Fragment>
                             : null
@@ -148,7 +146,7 @@ class Message extends Component {
                             <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
                             : null
                         }
-                        {this.props.depth === 0 && <hr />}
+                        {this.props.depth === 0 }
                     </div>
                 </li>
             </React.Fragment>

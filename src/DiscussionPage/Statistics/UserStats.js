@@ -15,10 +15,6 @@ class UserStats extends Component {
         }
     }
 
-    // componentDidMount() {
-    //     this.calcUserStats();
-    // }
-
     UNSAFE_componentWillReceiveProps (){
         this.calcUserStats();
     }
@@ -115,11 +111,6 @@ class UserStats extends Component {
                         </div>
                     </div>
                 </div>
-                {/* <CardFooter>
-                    <div className="stats">
-                        <i className="now-ui-icons ui-2_time-alarm" /> Last 7 days
-                  </div>
-                </CardFooter> */}
             </div>
         );
     }

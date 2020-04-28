@@ -16,6 +16,7 @@ class Discussion extends Component {
         super(props);
         this.socket = io(process.env.REACT_APP_API);
         this.lastMessage = {};
+        this.defaultConfig = {};
         this.state = {
             shownMessages: [],
             shownNodes: [],
@@ -29,7 +30,7 @@ class Discussion extends Component {
             lastMessage: {},
             showGraph: true,
             showAlerts: true,
-            showStat: true
+            showStat: true,
         };
     }
 
@@ -46,8 +47,28 @@ class Discussion extends Component {
         this.socket.on('error', (response) => {
             console.log({ response })
         });
-
+        this.socket.on('new configuration', (response) => {
+            this.handleNewConfig(response)
+        });
+        this.setDefaultConfig();
     }
+
+    setDefaultConfig = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', (response) => {
+            this.defaultConfig = JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'];
+            console.log(this.defaultConfig);
+            this.setState({
+                showGraph: this.defaultConfig['Graph'],
+                showAlerts: this.defaultConfig['Alerts'],
+                showStat: this.defaultConfig['statistics']
+            })
+        });
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send();
+    };
 
     updateLastMessage = (message) => {
         this.lastMessage = message;
@@ -116,7 +137,7 @@ class Discussion extends Component {
         this.setState({
             showGraph: settings.graph,
             showAlerts: settings.alerts,
-            showStat: settings.stat
+            showStat: settings.statistics
         })
     };
 
@@ -128,19 +149,10 @@ class Discussion extends Component {
         this.socket.emit('end_session', data);
     };
 
-    getLastMessage = () => {
-        return this.lastMessage;
-    };
-
     handleNewConfig = (response) => {
-        let settingsAll = response['all'];
-        for (let settingAll in settingsAll) {
-            this.setState({ [settingAll]: settingsAll[settingAll] });
-        };
-        let userSettings = response[this.props.currentUser];
-        for (let setting in userSettings) {
-            this.setState({ [setting]: userSettings[setting] });
-        };
+        for (let setting in response) {
+            this.setState({ [setting]: response[setting] })
+        }
     };
 
 
@@ -164,8 +176,9 @@ class Discussion extends Component {
                             <VisualizationsModal isOpen={this.state.showVisualizationSettingsModal}
                                 discussionId={this.state.discussionId}
                                 updateVisibility={this.updateModalHandler.bind(this)}
-                                isSimulation={this.state.isSimulation}
+                                isSimulation={this.props.isSimulation === 'true'}
                                 lastMessage={this.state.lastMessage}
+                                                 defaultConfig={this.defaultConfig}
                                 socket={this.socket}
                             />
                             : null}
@@ -180,7 +193,6 @@ class Discussion extends Component {
                                 nodeColor={intToRGB}
                                 socket={this.socket}
                                 updateLastMessage={this.updateLastMessage.bind(this)}
-                                handleNewConfig={this.handleNewConfig.bind(this)}
                             /> : null}
                     </span>
                 </div>
@@ -194,7 +206,6 @@ class Discussion extends Component {
                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                             setTitle={this.setTitle}
                             nodeColor={intToRGB} socket={this.socket}
-                            handleNewConfig={this.handleNewConfig.bind(this)}
                         />
                     </div>
                     <div className="discussion-col col-lg-6 col-md-12">

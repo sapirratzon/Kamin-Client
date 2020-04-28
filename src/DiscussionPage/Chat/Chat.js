@@ -50,11 +50,6 @@ class Chat extends Component {
                 this.props.alertsHandler(res);
             });
         }
-        this.handleVisualizations();
-    };
-
-    handleVisualizations = () => {
-        this.socket.on('new configuration', (response) => { this.props.handleNewConfig(response) });
     };
 
     updateGraph() {
