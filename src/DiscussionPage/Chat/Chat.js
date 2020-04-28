@@ -171,8 +171,19 @@ class Chat extends Component {
                     updateVal: function ( value ) {
                         this.val += value;
                     },
+                    comments: 1,
+                    commentsReceived: 0
                 };
                 this.nodesMap.set( commentNode[ "node" ][ "author" ], node )
+            }
+            else
+                this.nodesMap.get(commentNode[ 'node' ][ 'author' ])['comments'] ++;
+            const parentId = this.shownMessages.find( message =>
+                message.id === commentNode[ 'node' ][ 'parentId' ] );
+            if (parentId !== undefined){
+                console.log(parentId);
+                let parentUsername = parentId.author;
+                this.nodesMap.get(parentUsername)['commentsReceived'] ++;
             }
         }
         commentNode[ "children" ].forEach( childComment => {
