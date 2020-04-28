@@ -9,7 +9,7 @@
     padding-inline-start: 0;
 }
 
-.Messages-header{
+.Messages-header {
     width: 100%;
     overflow: auto;
     padding-inline-start: 0;
@@ -21,7 +21,7 @@
     padding-top: 10px;
 }
 
-.Messages-message>.vl{
+.Messages-message > .vl {
     transform: scaleY(1.5);
     top: 30px;
 }
@@ -37,13 +37,13 @@
     margin: 0 10px;
 }
 
-.Message-content>.username {
+.Message-content > .username {
     display: block;
     color: gray;
     font-size: 16px;
 }
 
-.Message-content>.text {
+.Message-content > .text {
     font-size: 20px;
     border-radius: 12px;
     color: black;
