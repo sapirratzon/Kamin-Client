@@ -64,14 +64,14 @@ class Discussion extends Component {
             });
     }
 
-    setDefaultVisualConfig=(configuration) => {
+    setDefaultVisualConfig = (configuration) => {
         // this.setState({
         //     visualConfig: configuration,
         // });
-        const xhr=new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.addEventListener('load', () => {
-            this.defaultConfig=JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'
-                ];
+            this.defaultConfig = JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'
+            ];
         });
         xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId);
         xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
@@ -80,12 +80,12 @@ class Discussion extends Component {
         xhr.send();
     };
 
-    setCurrentConfig=() => {
-        const xhr=new XMLHttpRequest();
+    setCurrentConfig = () => {
+        const xhr = new XMLHttpRequest();
         xhr.addEventListener("load", (response) => {
-            const configuration=JSON.parse(xhr.responseText)["config"][
+            const configuration = JSON.parse(xhr.responseText)["config"][
                 this.props.currentUser
-                ];
+            ];
             this.setState({
                 showGraph: configuration["showGraph"],
                 showAlerts: configuration["showAlerts"],
@@ -101,14 +101,14 @@ class Discussion extends Component {
         xhr.send();
     };
 
-    setModeratorSettings=(element, toShow) => {
+    setModeratorSettings = (element, toShow) => {
         this.setState({
             [element]: toShow,
         });
     };
 
-    updateLastMessage=(message) => {
-        this.lastMessage=message;
+    updateLastMessage = (message) => {
+        this.lastMessage = message;
     };
 
     updateMessagesHandler(newMessages, newNodes, newLinks, lastMessage) {
@@ -200,64 +200,42 @@ class Discussion extends Component {
         return (
             <div className="App">
                 {this.state.isLoading && (
-                    <Loader
-                        className="mt-5 text-center"
-                        type="TailSpin"
-                        color="#007bff"
-                        height={300}
-                        width={300}
-                    />
+                    <Loader className="mt-5 text-center" type="TailSpin" color="#007bff" height={300} width={300} />
                 )}
                 <React.Fragment>
                     <div className="row text-center">
-                        {!this.state.isLoading ? (
+                        {!this.state.isLoading &&
                             <React.Fragment>
                                 <span className="col-4">
-                                    {this.props.isSimulation === "false" && (
-                                        <button
-                                            type="button"
-                                            className="btn btn-danger btn-sm"
-                                            onClick={this.handleEndSession}
-                                        >
+                                    {this.props.isSimulation === "false" &&
+                                        <button type="button" className="btn btn-danger btn-sm" onClick={this.handleEndSession}>
                                             End Session
                                         </button>
-                                    )}
+                                    }
                                 </span>
                                 <span className="col-4">
                                     <h3>
                                         <b>{this.state.title}</b>
-                                        <i
-                                            className="fas fa-share-square text-primary pl-2 cursor-pointer"
-                                            data-tip="Copied!"
-                                            data-event="click"
-                                        />
-                                        <i
-                                            className="fas fa-cog cursor-pointer"
-                                            onClick={() => this.updateModalHandler(true)}
-                                        />
+                                        <i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!" data-event="click" />
+                                        <i className="fas fa-cog cursor-pointer" onClick={() => this.updateModalHandler(true)} />
                                     </h3>
-                                    <ReactTooltip
-                                        eventOff="mousemove"
-                                        afterShow={this.handleShareClick}
-                                    />
-                                    {this.props.userType === "MODERATOR" ||
-                                        this.props.userType === "ROOT" ? (
-                                            <VisualizationsModal
-                                                isOpen={this.state.showVisualizationSettingsModal}
-                                                discussionId={this.state.discussionId}
-                                                updateVisibility={this.updateModalHandler.bind(this)}
-                                                isSimulation={this.props.isSimulation === "true"}
-                                                lastMessage={this.state.lastMessage}
-                                                defaultConfig={this.defaultConfig}
-                                                socket={this.socket}
-                                            />
-                                        ) : null}
+                                    <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
+                                    {this.props.userType === "MODERATOR" || this.props.userType === "ROOT" &&
+                                        <VisualizationsModal
+                                            isOpen={this.state.showVisualizationSettingsModal}
+                                            discussionId={this.state.discussionId}
+                                            updateVisibility={this.updateModalHandler.bind(this)}
+                                            isSimulation={this.props.isSimulation === "true"}
+                                            lastMessage={this.state.lastMessage}
+                                            defaultConfig={this.defaultConfig}
+                                            socket={this.socket}
+                                        />
+                                    }
                                 </span>
                             </React.Fragment>
-                        ) : null}
-
+                        }
                         <span className="col-4">
-                            {this.props.isSimulation === "true" ? (
+                            {this.props.isSimulation === "true" &&
                                 <Simulation
                                     messagesHandler={this.updateMessagesHandler.bind(this)}
                                     alertsHandler={this.updateAlertsHandler.bind(this)}
@@ -270,7 +248,7 @@ class Discussion extends Component {
                                     isLoading={this.state.isLoading}
                                     handleFinishLoading={this.handleFinishLoading}
                                 />
-                            ) : null}
+                            }
                         </span>
                     </div>
                     {!this.state.isLoading && <hr />}
@@ -290,33 +268,21 @@ class Discussion extends Component {
                                 handleFinishLoading={this.handleFinishLoading}
                             />
                         </div>
-                        {!this.state.isLoading ? (
+                        {!this.state.isLoading &&
                             <div className="discussion-col col-lg-6 col-md-12">
-                                <div
-                                    className={
-                                        (this.state.showGraph ? "show" : "") +
-                                        " collapse graph row blue-border mb-1"
-                                    }
-                                >
-                                    {this.state.shownMessages.length > 0 && (
+                                <div className={(this.state.showGraph ? "show" : "") + " collapse graph row blue-border mb-1"} >
+                                    {this.state.shownMessages.length > 0 &&
                                         <Graph
                                             nodes={this.state.shownNodes}
                                             links={this.state.shownLinks}
                                             currentUser={this.props.currentUser}
-                                            updateSelectedUser={this.updateSelectedUserHandler.bind(
-                                                this
-                                            )}
+                                            updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                                             rootId={this.state.shownMessages[0]["author"]}
                                         />
-                                    )}
+                                    }
                                 </div>
                                 <div className="row insights">
-                                    <div
-                                        className={
-                                            (this.state.showStat ? "show" : "") +
-                                            " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"
-                                        }
-                                    >
+                                    <div className={(this.state.showStat ? "show" : "") + " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
                                         <UserStats
                                             className="stats"
                                             getSelectedUser={this.getSelectedUser.bind(this)}
@@ -333,17 +299,12 @@ class Discussion extends Component {
                                             getShownNodes={this.getShownNodes.bind(this)}
                                         />
                                     </div>
-                                    <div
-                                        className={
-                                            (this.state.showAlerts ? "show" : "") +
-                                            " collapse col p-0 blue-border"
-                                        }
-                                    >
+                                    <div className={(this.state.showAlerts ? "show" : "") + " collapse col p-0 blue-border"}>
                                         <AlertList alerts={this.state.shownAlerts} />
                                     </div>
                                 </div>
                             </div>
-                        ) : null}
+                        }
                     </div>
                 </React.Fragment>
             </div>
