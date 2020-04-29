@@ -304,7 +304,7 @@ class Discussion extends Component {
                             <div className="discussion-col col-lg-6 col-md-12" >
                                 <div
                                     id="presentGraph"
-                                    className={(this.state.graph ? "show" : "") + " collapse graph row blue-border mb-1"} >
+                                    className={(this.state.graph ? "show" : "") + " collapse graph row mb-1"} >
                                     {this.state.shownMessages.length > 0 &&
                                         <Graph
                                             nodes={this.state.shownNodes}
@@ -324,7 +324,7 @@ class Discussion extends Component {
                                 <div className="row insights" >
                                     <div
                                         id="presentStat"
-                                        className={(this.state.statistics ? "show" : "") + " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"} >
+                                        className={(this.state.statistics ? "show" : "") + " collapse statistics col-lg-4 col-md-12 p-0 mr-1"} >
                                         <UserStats
                                             className="stats"
                                             getSelectedUser={this.getSelectedUser.bind(this)}
@@ -349,7 +349,7 @@ class Discussion extends Component {
                                             className="fa fa-angle-up p-2" />Statistics</h4 ></a >}
                                     <div
                                         id="presentAlerts"
-                                        className={(this.state.alerts ? "show" : "") + " collapse col p-0 blue-border"} >
+                                        className={(this.state.alerts ? "show" : "") + " collapse col p-0 alerts"} >
                                         <AlertList
                                             alerts={this.state.shownAlerts}
                                             handleHide={() => this.handleHideInsight('alerts')}

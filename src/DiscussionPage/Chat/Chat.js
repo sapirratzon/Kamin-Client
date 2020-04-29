@@ -226,7 +226,7 @@ class Chat extends Component {
     render() {
         return (
             <React.Fragment>
-                {!this.props.isLoading ? <div className="chat blue-border" >
+                {!this.props.isLoading ? <div className="chat" >
                     <Messages
                         messages={this.props.messages} isSimulation={this.props.isSimulation}
                         newMessageHandler={this.sendComment.bind(this)}
