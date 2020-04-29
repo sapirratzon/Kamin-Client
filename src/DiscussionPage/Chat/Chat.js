@@ -18,7 +18,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket = props.socket;
+        this.socket=props.socket;
     }
 
     componentDidMount() {
@@ -233,7 +233,7 @@ class Chat extends Component {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps=state => {
     return {
         currentUser: state.currentUser,
         token: state.token

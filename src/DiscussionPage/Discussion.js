@@ -53,51 +53,62 @@ class Discussion extends Component {
         this.socket.on("new configuration", (response) => {
             this.handleNewConfig(response);
         });
-        this.setDefaultConfig();
         // this.socket.on ('join room', () => {
         //     this.setCurrentConfig();
         // });
-        if (this.props.userType === 'MODERATOR')
-            this.setState( {
+        if (this.props.userType === "MODERATOR")
+            this.setState({
                 showGraph: true,
                 showAlerts: true,
-                showStat: true
-            } )
+                showStat: true,
+            });
     }
 
-    setDefaultConfig = () => {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener( 'load', () => {
-            this.defaultConfig = JSON.parse( xhr.responseText )[ 'discussion' ][ 'configuration' ][ 'default_config' ];
-        } );
-        xhr.open( 'GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId );
-        xhr.setRequestHeader( "Authorization", "Basic " + btoa( this.props.token + ":" ) );
-        xhr.setRequestHeader( "Content-Type", "application/json" );
+    setDefaultVisualConfig=(configuration) => {
+        // this.setState({
+        //     visualConfig: configuration,
+        // });
+        const xhr=new XMLHttpRequest();
+        xhr.addEventListener('load', () => {
+            this.defaultConfig=JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'
+                ];
+        });
+        xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader(
+            "Content-Type", "application/json");
         xhr.send();
     };
 
-    setCurrentConfig = () => {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener( 'load', ( response ) => {
-            const configuration = JSON.parse( xhr.responseText )[ 'config' ][ this.props.currentUser ];
-            this.setState( {
-                showGraph: configuration['showGraph'],
-                showAlerts: configuration[ 'showAlerts' ],
-                showStat: configuration[ 'showStat' ]
-            } )
-        } );
-        xhr.open( 'GET', process.env.REACT_APP_API + '/api/getActiveUsersConfigurations/' + this.state.discussionId );
+    setCurrentConfig=() => {
+        const xhr=new XMLHttpRequest();
+        xhr.addEventListener("load", (response) => {
+            const configuration=JSON.parse(xhr.responseText)["config"][
+                this.props.currentUser
+                ];
+            this.setState({
+                showGraph: configuration["showGraph"],
+                showAlerts: configuration["showAlerts"],
+                showStat: configuration["showStat"],
+            });
+        });
+        xhr.open(
+            "GET",
+            process.env.REACT_APP_API +
+            "/api/getActiveUsersConfigurations/" +
+            this.state.discussionId
+        );
         xhr.send();
     };
 
-    setModeratorSettings = (element, toShow) => {
-        this.setState( {
-            [element]: toShow
-        } )
+    setModeratorSettings=(element, toShow) => {
+        this.setState({
+            [element]: toShow,
+        });
     };
 
-    updateLastMessage = ( message ) => {
-        this.lastMessage = message;
+    updateLastMessage=(message) => {
+        this.lastMessage=message;
     };
 
     updateMessagesHandler(newMessages, newNodes, newLinks, lastMessage) {

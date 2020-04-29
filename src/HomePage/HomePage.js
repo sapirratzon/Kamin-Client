@@ -183,7 +183,7 @@ class HomePage extends Component {
 
 }
 
-const mapStateToProps = state => {
+const mapStateToProps=state => {
     return {
         currentUser: state.currentUser,
         userType: state.userType,

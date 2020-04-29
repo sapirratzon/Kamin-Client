@@ -266,7 +266,7 @@ class Simulation extends Component {
             switchOrder: temp
         });
         this.state.isChronological ?
-            this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
+            this.allMessages=this.chronologicMessages : this.allMessages=this.regularMessages;
     };
 
     update(dif, toUpdateState) {
@@ -336,7 +336,7 @@ class Simulation extends Component {
     };
 }
 
-const mapStateToProps = state => {
+const mapStateToProps=state => {
     return {
         currentUser: state.currentUser,
         userType: state.userType,
