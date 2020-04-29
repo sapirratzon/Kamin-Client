@@ -118,7 +118,7 @@ class HomePage extends Component {
                                 onClick={() => this.updateModalHandler(true)} >Create New Discussion
                             </button >
                             {this.props.userType === 'ROOT' &&
-                                <Link to={'moderatorsManagement'}><button
+                                <Link to={'/moderatorsManagement'}><button
                                     type="button" className="btn btn-info btn-sm">Manage moderators</button ></Link>}
                             <CreateDiscussionModal
                                 isOpen={this.state.discussionModal}
@@ -166,10 +166,10 @@ class HomePage extends Component {
                         <h1 >Hi and welcome to Kamin!</h1 >
                         <h3 >In order to use the application you need to create an account or sign in if you already have
                          one.</h3 >
-                        <Link to={'login'}><button
+                        <Link to={'/login'}><button
                             type="button" className="btn btn-info btn-sm"
                         >Sign in</button ></Link>
-                        <Link to={'registration'}>
+                        <Link to={'/registration'}>
                             <button type="button" className="btn btn-info btn-sm">Sign up
                     </button ></Link>
                     </div >

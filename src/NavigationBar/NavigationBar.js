@@ -35,12 +35,12 @@ class NavigationBar extends Component {
                             </ul >
                             : <ul className="navbar-nav ml-auto" >
                                 <li className="nav-item" >
-                                    <Link className="nav-link" to={'login'} >
+                                    <Link className="nav-link" to={'/login'} >
                                         <i className="fas fa-sign-in-alt pr-2" />Sign In
                                     </Link >
                                 </li >
                                 <li className="nav-item" >
-                                    <Link className="nav-link" to={'registration'} >
+                                    <Link className="nav-link" to={'/registration'} >
                                         <i className="fas fa-user-plus pr-2" />Sign Up
                                     </Link >
                                 </li >
