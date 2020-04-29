@@ -5,11 +5,13 @@
   "dependencies": {
     "d3": "^5.12.0",
     "lodash": "latest",
+    "prettier": "^2.0.5",
     "react": "^16.10.0",
     "react-bootstrap4-modal": "^1.7.4",
     "react-d3-graph": "^2.3.0",
     "react-dom": "^16.10.0",
     "react-force-graph-2d": "^1.13.6",
+    "react-loader-spinner": "^3.1.14",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.1",

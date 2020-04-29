@@ -29,8 +29,8 @@ class Simulation extends Component {
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            this.props.setTitle(response["discussion"]["title"]);
-            this.getMessagesNodesLinks(response["tree"]);
+            this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+            this.getMessagesNodesLinks(response["discussionDict"]["tree"]);
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
@@ -45,16 +45,18 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
+            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             while (this.currentMessageIndex < response["currentIndex"]) {
                 this.handleNextClick(false);
             }
-            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+            response['visualConfig']['configuration']);
+            this.props.handleFinishLoading();
         });
         const data = {
             discussion_id: this.props.discussionId,
             token: this.props.token
         };
-
         this.socket.emit('join', data);
         this.handleModeratorActions();
     }
@@ -97,7 +99,10 @@ class Simulation extends Component {
         this.state.isChronological ?
             this.nextByTimestamp(nextMessage, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
-        if (selfMessage) { this.update(1, true); return; }
+        if (selfMessage) {
+            this.update(1, true);
+            return;
+        }
         this.updateNodesNext(userName, parentUserName);
         this.updateLinksNext(userName, parentUserName);
         this.update(1, toUpdateState);
@@ -114,19 +119,22 @@ class Simulation extends Component {
         this.state.isChronological ?
             this.backByTimestamp(messageIndex, selfMessage)
             : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
-        if (selfMessage) { this.update(-1, true); return; }
+        if (selfMessage) {
+            this.update(-1, true);
+            return;
+        }
         this.updateLinksBack(userName, parentUserName);
         this.updateNodesBack(userName, parentUserName);
         this.update(-1, toUpdateState);
     };
 
     /*
-    nextMessage - the next message that will be presented in the chat.
-    Each node has an array of the ids of its children.
-    Once the user press next, the function add the message to the children array of the parent of the author,
-    add new element of the node (author).
-    If the parent there are no children yet, the node will be add directly to the array, otherwise, the function
-    will look for the last child (message) of its parent and will add this child after it.
+     nextMessage - the next message that will be presented in the chat.
+     Each node has an array of the ids of its children.
+     Once the user press next, the function add the message to the children array of the parent of the author,
+     add new element of the node (author).
+     If the parent there are no children yet, the node will be add directly to the array, otherwise, the function
+     will look for the last child (message) of its parent and will add this child after it.
      */
     nextByTimestamp = (nextMessage) => {
         const parentId = nextMessage.parentId;
@@ -149,10 +157,10 @@ class Simulation extends Component {
     };
 
     /*
-    properties:
-    name - represents the messages number (also the tooltip)
-    width - represent the
-    color - represents the updating of the last message
+     properties:
+     name - represents the messages number (also the tooltip)
+     width - represent the
+     color - represents the updating of the last message
      */
 
     updateLinksNext = (userName, parentUserName) => {
@@ -281,6 +289,7 @@ class Simulation extends Component {
     };
 
     updateWidthAll() {
+
         const allMessagesNumber = this.shownLinks.map(link => link.name);
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
@@ -292,31 +301,38 @@ class Simulation extends Component {
     render() {
         return (
             <React.Fragment>
-                {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
-                    <div className={"row"}>
-                        <button type="button" className="btn btn-primary btn-sm"
-                            onClick={() => { this.handleNavigationClickModerator("reset") }}>Reset
-                    </button>
-                        <button type="button" className="btn btn-primary btn-sm"
-                            onClick={() => { this.handleNavigationClickModerator("back") }}>Back
-                    </button>
-                        <button type="button" className="btn btn-primary btn-sm"
-                            onClick={() => { this.handleNavigationClickModerator("next") }}>Next
-                    </button>
-                        <button type="button" className="btn btn-primary btn-sm"
-                            onClick={() => { this.handleNavigationClickModerator("all") }}>All
-                    </button>
-                        <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'}>
-                            <Switch className="commentsOrderToggle"
-                                onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
-                                checked={this.state.isChronological}
-                                offColor="#4285f4"
-                                onColor="#4285f4"
-                            />
-                            <span><b>{this.state.order}</b></span>
-                        </div>
-                    </div>
-                }
+                {!this.props.isLoading ? <React.Fragment >
+                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                        <div className={"row"} >
+                            <button
+                                type="button" className="btn btn-primary btn-sm"
+                                onClick={() => { this.handleNavigationClickModerator("reset") }} >Reset
+                    </button >
+                            <button
+                                type="button" className="btn btn-primary btn-sm"
+                                onClick={() => { this.handleNavigationClickModerator("back") }} >Back
+                    </button >
+                            <button
+                                type="button" className="btn btn-primary btn-sm"
+                                onClick={() => { this.handleNavigationClickModerator("next") }} >Next
+                    </button >
+                            <button
+                                type="button" className="btn btn-primary btn-sm"
+                                onClick={() => { this.handleNavigationClickModerator("all") }} >All
+                    </button >
+                            <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'} >
+                                <Switch
+                                    className="commentsOrderToggle"
+                                    onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
+                                    checked={this.state.isChronological}
+                                    offColor="#4285f4"
+                                    onColor="#4285f4"
+                                />
+                                <span ><b >{this.state.order}</b ></span >
+                            </div >
+                        </div >
+                    }
+                </React.Fragment > : null}
             </React.Fragment>
         );
     };

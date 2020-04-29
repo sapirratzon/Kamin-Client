@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
 import './HomePage.css';
+import { Link } from "react-router-dom";
 import CreateDiscussionModal from "../DiscussionPage/Modals/CreateDiscussionModal";
+import Loader from 'react-loader-spinner'
 
 class HomePage extends Component {
     constructor(props) {
@@ -15,7 +17,8 @@ class HomePage extends Component {
             selectedRealTimeDiscussion: '',
             selectedSimulationDiscussion: '',
             typedId: '',
-            error: ''
+            error: '',
+            isLoading: false
         };
     }
 
@@ -25,8 +28,7 @@ class HomePage extends Component {
             xhrRealTime.addEventListener('load', () => {
                 if (xhrRealTime.status === 401) {
                     this.props.onLogOut();
-                }
-                else {
+                } else {
                     const realTimeDiscussions = JSON.parse(xhrRealTime.responseText)["discussions"];
                     this.setState({
                         realTimeDiscussions: realTimeDiscussions,
@@ -40,22 +42,19 @@ class HomePage extends Component {
             xhrSimulation.addEventListener('load', () => {
                 if (xhrSimulation.status === 401) {
                     this.props.onLogOut();
-                }
-                else {
+                } else {
                     const simulationDiscussions = JSON.parse(xhrSimulation.responseText)["discussions"];
                     this.setState({
                         simulationDiscussions: simulationDiscussions,
                     });
                 }
+                this.setState({ isLoading: false });
             });
+            this.setState({ isLoading: true });
             xhrSimulation.open('GET', process.env.REACT_APP_API + '/api/getDiscussions/True');
             xhrSimulation.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhrSimulation.send();
         }
-    };
-
-    changePath = (path) => {
-        this.props.history.push(path);
     };
 
     updateModalHandler = (isOpen) => {
@@ -72,8 +71,7 @@ class HomePage extends Component {
                 selectedRealTimeDiscussion: '',
                 typedId: ''
             });
-        }
-        else {
+        } else {
             this.setState({
                 isSimulation: "false",
                 selectedSimulationDiscussion: '',
@@ -85,7 +83,7 @@ class HomePage extends Component {
 
     handleTypedId = (event) => {
         let id = event.target.value;
-        let isSimulation = Object.keys(this.state.simulationDiscussions).includes(id)
+        let isSimulation = Object.keys(this.state.simulationDiscussions).includes(id);
         this.setState({
             isSimulation: isSimulation,
             selectedSimulationDiscussion: '',
@@ -109,61 +107,74 @@ class HomePage extends Component {
 
     render() {
         return (
-            <div className="HomePage">
+            <div className="HomePage" >
                 <div className="headline" />
-                {this.props.currentUser ? <div className="container">
+                {this.props.currentUser ? <div className="container" >
                     {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
-                        <React.Fragment>
-                            <p>Moderation tools:</p>
-                            <button type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.updateModalHandler(true)}>Create New Discussion
-                            </button>
-                            {this.props.userType === 'ROOT' ? <button type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.changePath('/moderatorsManagement')}>Manage
-                                moderators</button> : null}
-                            <CreateDiscussionModal isOpen={this.state.discussionModal}
+                        <React.Fragment >
+                            <p >Moderation tools:</p >
+                            <button
+                                type="button" className="btn btn-info btn-sm"
+                                onClick={() => this.updateModalHandler(true)} >Create New Discussion
+                            </button >
+                            {this.props.userType === 'ROOT' &&
+                                <Link to={'moderatorsManagement'}><button
+                                    type="button" className="btn btn-info btn-sm">Manage moderators</button ></Link>}
+                            <CreateDiscussionModal
+                                isOpen={this.state.discussionModal}
                                 updateVisibility={this.updateModalHandler.bind(this)}
                                 path={this.props.history} />
-                        </React.Fragment> : null}
-                    <form onSubmit={this.handleJoinClick}>
-                        <h3>Join existing discussions:</h3>
-                        <div className="row text-center">
+                        </React.Fragment > : null}
+                    {!this.state.isLoading ? <form onSubmit={this.handleJoinClick} >
+                        <h3 >Join existing discussions:</h3 >
+                        <div className="row text-center" >
                             <span className="col-6" >
-                                <p>Simulations:</p>
-                                <select className="discussions" value={this.state.selectedSimulationDiscussion} onChange={(e) => { this.handleSelectedDiscussion(e, true) }}>
-                                    <option value="">Select Discussion</option>
+                                <p >Simulations:</p >
+                                <select
+                                    className="discussions" value={this.state.selectedSimulationDiscussion}
+                                    onChange={(e) => { this.handleSelectedDiscussion(e, true) }} >
+                                    <option value="" >Select Discussion</option >
                                     {Object.keys(this.state.simulationDiscussions).map((id) =>
-                                        <option key={id} value={id} >{this.state.simulationDiscussions[id]}, {id}</option>)}
-                                </select>
-                            </span>
+                                        <option
+                                            key={id}
+                                            value={id} >{this.state.simulationDiscussions[id]}, {id}</option >)}
+                                </select >
+                            </span >
                             <span className="col-6" >
-                                <p>Real time:</p>
-                                <select className="discussions" value={this.state.selectedRealTimeDiscussion} onChange={(e) => { this.handleSelectedDiscussion(e, false) }}>
-                                    <option value="">Select Discussion</option>
+                                <p >Real time:</p >
+                                <select
+                                    className="discussions" value={this.state.selectedRealTimeDiscussion}
+                                    onChange={(e) => { this.handleSelectedDiscussion(e, false) }} >
+                                    <option value="" >Select Discussion</option >
                                     {Object.keys(this.state.realTimeDiscussions).map((id) =>
-                                        <option key={id} value={id} >{this.state.realTimeDiscussions[id]}, {id}</option>)}
-                                </select>
-                            </span>
-                        </div>
-                        <span className="font-size-xxl">Or</span>
-                        <input type="text" className="codeInput form-control" name="unique"
-                            placeholder="Enter code" onChange={this.handleTypedId} value={this.state.typedId} />
-                        <p className="text-danger">{this.state.error}</p>
-                        <button className="btn btn-info btn-sm">Join</button>
-                    </form>
-                </div> : <div>
-                        <h1>Hi and welcome to Kamin!</h1>
-                        <h3>In order to use the application you need to create an account or sign in if you already have
-                        one.</h3>
-                        <button type="button" className="btn btn-info btn-sm"
-                            onClick={() => this.changePath('/login')}>Sign in
-                    </button>
-                        <button type="button" className="btn btn-info btn-sm"
-                            onClick={() => this.changePath('/registration')}>Sign up
-                    </button>
-                    </div>
+                                        <option
+                                            key={id}
+                                            value={id} >{this.state.realTimeDiscussions[id]}, {id}</option >)}
+                                </select >
+                            </span >
+                        </div >
+                        <span className="font-size-xxl" >Or</span >
+                        <input
+                            type="text" className="codeInput form-control" name="unique"
+                            placeholder="Enter code" onChange={this.handleTypedId}
+                            value={this.state.typedId} />
+                        <p className="text-danger" >{this.state.error}</p >
+                        <button className="btn btn-info btn-sm" >Join</button >
+                    </form > : <Loader className="mt-3" type="TailSpin" color="#007bff" height={80} width={80} />}
+
+                </div > : <div >
+                        <h1 >Hi and welcome to Kamin!</h1 >
+                        <h3 >In order to use the application you need to create an account or sign in if you already have
+                         one.</h3 >
+                        <Link to={'login'}><button
+                            type="button" className="btn btn-info btn-sm"
+                        >Sign in</button ></Link>
+                        <Link to={'registration'}>
+                            <button type="button" className="btn btn-info btn-sm">Sign up
+                    </button ></Link>
+                    </div >
                 }
-            </div>
+            </div >
         );
     }
 

@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 class Moderators extends Component {
     constructor(props) {
         super(props);
-        this.state = {
+        this.state={
             regularUsers: [],
             moderatorUsers: [],
             selectedRegularUser: null,
@@ -15,8 +15,8 @@ class Moderators extends Component {
         };
     }
 
-    handleChange = (event) => {
-        const {name, value} = event.target;
+    handleChange=(event) => {
+        const {name, value}=event.target;
         if (value !== "")
             this.setState({
                 [name]: value
@@ -24,12 +24,11 @@ class Moderators extends Component {
     };
 
     componentDidMount() {
-        const xhr = new XMLHttpRequest();
+        const xhr=new XMLHttpRequest();
         xhr.addEventListener('load', () => {
             if (xhr.status === 401) {
                 this.props.onLogOut();
-            }
-            else {
+            } else {
                 this.setState({
                     regularUsers: JSON.parse(xhr.responseText)['users'],
                     moderatorUsers: JSON.parse(xhr.responseText)['moderators']
@@ -41,7 +40,7 @@ class Moderators extends Component {
         xhr.send();
     }
 
-    handleSaveClick = () => {
+    handleSaveClick=() => {
         if (this.state.selectedRegularUser === null && this.state.selectedModeratorUser === null) {
             this.setState({
                 statusMessage: 'At least one of the options must be selected!',
@@ -49,7 +48,7 @@ class Moderators extends Component {
                 submitted: true
             })
         }
-        const xhr = new XMLHttpRequest();
+        const xhr=new XMLHttpRequest();
         if (this.state.selectedRegularUser !== null) {
             xhr.open('POST', process.env.REACT_APP_API + '/api/changeUserPermission');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
@@ -79,42 +78,46 @@ class Moderators extends Component {
 
     render() {
         return (
-            <div className="container p-5 text-center">
-                <h2 className="pb-5">Moderators Management</h2>
-                <div className="input-group mb-3 w-50 mx-auto">
-                    <label className="text-danger">Revoke moderation powers:</label>
-                    <select className="custom-select w-25 mb-2" id="inputRevoke" name="selectedModeratorUser"
-                            onChange={this.handleChange} defaultValue="">
-                        <option value="">Choose...</option>
-                        {this.state.moderatorUsers.map((user) =>
-                            <option key={user} value={user}>{user}</option>)}
-                    </select>
-                    <label className="text-success">Give moderation powers:</label>
-                    <select className="custom-select w-25" id="inputGrand" name="selectedRegularUser"
-                            onChange={this.handleChange} defaultValue="">
-                        <option value="">Choose...</option>
-                        {this.state.regularUsers.map((user) =>
-                            <option key={user} value={user}>{user}</option>)}
-                    </select>
-                </div>
-                <button type="button mx-auto" className="btn btn-primary" onClick={this.handleSaveClick}>Save</button>
-                {this.state.submitted ? <h3 className={"confirmMessage text-center " + this.state.messageType}>
-                    <b>{this.state.statusMessage}</b></h3> : null}
-            </div>
+            <div className="container p-5 text-center" >
+                <h2 className="pb-5" >Moderators Management</h2 >
+                <div className="input-group mb-3 w-50 mx-auto" >
+                    <label className="text-danger" >Revoke moderation powers:</label >
+                    <select
+                        className="custom-select w-25 mb-2" id="inputRevoke" name="selectedModeratorUser"
+                        onChange={ this.handleChange } defaultValue="" >
+                        <option value="" >Choose...</option >
+                        { this.state.moderatorUsers.map((user) =>
+                            <option key={ user } value={ user } >{ user }</option >) }
+                    </select >
+                    <label className="text-success" >Give moderation powers:</label >
+                    <select
+                        className="custom-select w-25" id="inputGrand" name="selectedRegularUser"
+                        onChange={ this.handleChange } defaultValue="" >
+                        <option value="" >Choose...</option >
+                        { this.state.regularUsers.map((user) =>
+                            <option key={ user } value={ user } >{ user }</option >) }
+                    </select >
+                </div >
+                <button
+                    type="button mx-auto" className="btn btn-primary" onClick={ this.handleSaveClick } >Save
+                </button >
+                { this.state.submitted ? <h3 className={ "confirmMessage text-center " + this.state.messageType } >
+                    <b >{ this.state.statusMessage }</b ></h3 > : null }
+            </div >
         );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps=state => {
     return {
         currentUser: state.currentUser,
         token: state.token
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps=(dispatch) => {
     return {
-        onLogOut: () => dispatch({ type: 'LOGOUT' })
+        onLogOut: () => dispatch({type: 'LOGOUT'})
     };
 };
 

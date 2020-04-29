@@ -18,7 +18,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket = props.socket;
+        this.socket=props.socket;
     }
 
     componentDidMount() {
@@ -27,16 +27,19 @@ class Chat extends Component {
                 this.reloadChat();
                 this.setState(
                     {
-                        root: response["tree"],
+                        root: response["discussionDict"]["tree"],
                     }
                 );
-                this.props.setTitle(response["discussion"]["title"]);
+                this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.timestampMessages.sort(function (a, b) {
                     return b.timestamp - a.timestamp;
                 });
+                this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                response['visualConfig']['configuration']);
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, this.timestampMessages[0]);
+                this.props.handleFinishLoading();
             });
             const data = {
                 discussion_id: this.props.discussionId,
@@ -47,7 +50,7 @@ class Chat extends Component {
                 this.addComment(res.comment);
             });
             this.socket.on('new alert', (res) => {
-                this.props.alertsHandler(res.comment.text);
+                this.props.alertsHandler(res);
             });
         }
     };
@@ -171,8 +174,19 @@ class Chat extends Component {
                     updateVal: function (value) {
                         this.val += value;
                     },
+                    comments: 1,
+                    commentsReceived: 0
                 };
                 this.nodesMap.set(commentNode["node"]["author"], node)
+            }
+            else
+
+                this.nodesMap.get(commentNode['node']['author'])['comments']++;
+            const parentId = this.shownMessages.find(message =>
+                message.id === commentNode['node']['parentId']);
+            if (parentId !== undefined) {
+                let parentUsername = parentId.author;
+                this.nodesMap.get(parentUsername)['commentsReceived']++;
             }
         }
         commentNode["children"].forEach(childComment => {
@@ -209,16 +223,20 @@ class Chat extends Component {
 
     render() {
         return (
-            <div className="chat blue-border">
-                <Messages
-                    messages={this.props.messages} isSimulation={this.props.isSimulation}
-                    newMessageHandler={this.sendComment.bind(this)} newAlertHandler={this.sendAlert.bind(this)}
-                />
-            </div>);
+            <React.Fragment>
+                {!this.props.isLoading ? <div className="chat" >
+                    <Messages
+                        messages={this.props.messages} isSimulation={this.props.isSimulation}
+                        newMessageHandler={this.sendComment.bind(this)}
+                        newAlertHandler={this.sendAlert.bind(this)}
+                    />
+                </div > : null}
+            </React.Fragment>
+        );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps=state => {
     return {
         currentUser: state.currentUser,
         token: state.token

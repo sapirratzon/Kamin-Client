@@ -12,12 +12,13 @@ class Graph extends Component {
             currentUserNode: null,
             highlightLink: null,
             highlightNode: null,
-        }
+        };
         this.NODE_R = 4;
     }
 
     componentDidMount() {
         this.myRef.zoom(4, 0)
+        console.log(this.props.allowHide);
     }
 
     handleLinkHover(link) {
@@ -43,6 +44,7 @@ class Graph extends Component {
     selectedNode(node, event) {
         this.props.updateSelectedUser(node.id)
     }
+
     handleNodeHover(node) {
         this.setState({
             highlightNode: node
@@ -52,38 +54,42 @@ class Graph extends Component {
     render() {
         if (this.props.nodes != null) {
             return (
-                <div id="graph-container">
-                    <ForceGraph2D className="graph"
-                        ref={element => { this.myRef = element }}
-                        width={window.innerWidth / 2.053}
-                        height={window.innerHeight / 2.026}
-                        // backgroundColor={"rgba(204,204,204,0.8)"}
-                        nodeRelSize={this.NODE_R}
-                        // d3Force={"center"}
-                        graphData={{
-                            "nodes": this.props.nodes,
-                            "links": this.props.links
-                        }}
+                <React.Fragment>
+                    {this.props.allowHide && <a href="#presentGraph" data-toggle="collapse" onClick={this.props.handleHide}><h4><i className="fa fa-angle-down p-2"  /></h4></a>}
+                    <div id="graph-container" >
+                        <ForceGraph2D
+                            className="graph"
+                            ref={element => { this.myRef = element }}
+                            width={window.innerWidth / 2.053}
+                            height={window.innerHeight / 2.026}
+                            // backgroundColor={"rgba(204,204,204,0.8)"}
+                            nodeRelSize={this.NODE_R}
+                            // d3Force={"center"}
+                            graphData={{
+                                "nodes": this.props.nodes,
+                                "links": this.props.links
+                            }}
 
-                        // linkDirectionalParticles={4}
-                        // linkDirectionalParticleWidth={link => link === this.state.highlightLink ? 4 : 0}
-                        // linkDirectionalParticleSpeed={link => link.width * 0.01}
-                        // onLinkHover={this.handleLinkHover.bind(this)}
+                            // linkDirectionalParticles={4}
+                            // linkDirectionalParticleWidth={link => link === this.state.highlightLink ? 4 : 0}
+                            // linkDirectionalParticleSpeed={link => link.width * 0.01}
+                            // onLinkHover={this.handleLinkHover.bind(this)}
 
-                        linkWidth="width"
-                        linkCurvature="curvature"
-                        linkDirectionalArrowRelPos={1}
-                        linkDirectionalArrowLength={2.5}
-                        // cooldownTicks={1} // Todo: what Is this for??? 
+                            linkWidth="width"
+                            linkCurvature="curvature"
+                            linkDirectionalArrowRelPos={1}
+                            linkDirectionalArrowLength={2.5}
+                            // cooldownTicks={1} // Todo: what Is this for??? 
 
-                        nodeCanvasObjectMode={node =>
-                            // this.state.highlightNode === node || 
-                            this.props.rootId === node.id || this.props.currentUser === node.id ? 'before' : undefined}
-                        nodeCanvasObject={this.paintRing.bind(this)}
-                        onNodeClick={this.selectedNode.bind(this)}
-                    // onNodeHover={this.handleNodeHover.bind(this)}
-                    />
-                </div>
+                            nodeCanvasObjectMode={node =>
+                                // this.state.highlightNode === node || 
+                                this.props.rootId === node.id || this.props.currentUser === node.id ? 'before' : undefined}
+                            nodeCanvasObject={this.paintRing.bind(this)}
+                            onNodeClick={this.selectedNode.bind(this)}
+                        // onNodeHover={this.handleNodeHover.bind(this)}
+                        />
+                    </div >
+                </React.Fragment>
             );
         }
     };
