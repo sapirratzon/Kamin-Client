@@ -184,19 +184,20 @@ class Discussion extends Component {
             <div className = "App" >
                 <div className = "row text-center" >
                     <span className = "col-4" >
-                        { this.props.isSimulation === 'false' && <button
-                            type = "button" className = "btn btn-danger btn-sm"
-                            onClick = { this.handleEndSession } >End Session
-                        </button > }
+                        { (this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT') && this.props.isSimulation === 'false' ?
+                        <button type = "button" className = "btn btn-danger btn-sm"
+                            onClick = { this.handleEndSession } >End Session </button >
+                        : null}
                     </span >
                     <span className = "col-4" >
                         <h3 ><b >{ this.state.title }</b >
                             <i
                                 className = "fas fa-share-square text-primary pl-2 cursor-pointer"
                                 data-tip = "Copied!" data-event = "click" />
+                            { this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                             <i
                                 className = "fas fa-cog cursor-pointer"
-                                onClick = { () => this.updateModalHandler( true ) } /></h3 >
+                                onClick = { () => this.updateModalHandler( true ) } /> : null}</h3 >
                         <ReactTooltip eventOff = "mousemove" afterShow = { this.handleShareClick } />
                         { this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
                             <VisualizationsModal
@@ -240,8 +241,12 @@ class Discussion extends Component {
                         />
                     </div >
                     <div className = "discussion-col col-lg-6 col-md-12" >
-                        <div
-                            className = { ( this.state.showGraph ? 'show' : '' ) +
+                        {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                            <React.Fragment>
+                                <a href="#presentGraph" data-toggle="collapse">
+                                    <i className="fa fa-angle-down"/></a>
+                            </React.Fragment> : null}
+                        <div id="presentGraph" className = { ( this.state.showGraph ? 'show' : '' ) +
                             " collapse graph row blue-border mb-1" } >
                             { this.state.shownMessages.length > 0 &&
                             <Graph
@@ -251,8 +256,12 @@ class Discussion extends Component {
                                 rootId = { this.state.shownMessages[ 0 ][ 'author' ] } /> }
                         </div >
                         <div className = "row insights" >
-                            <div
-                                className = { ( this.state.showStat ? 'show' : '' ) +
+                            {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                                <React.Fragment>
+                                    <a href="#presentStat" data-toggle="collapse">
+                                        <i className="fa fa-angle-down"/></a>
+                                </React.Fragment> : null}
+                            <div id="presentStat" className = { ( this.state.showStat ? 'show' : '' ) +
                                 " collapse col-lg-4 col-md-12 p-0 blue-border mr-1" } >
                                 <UserStats
                                     className = "stats"
@@ -269,8 +278,12 @@ class Discussion extends Component {
                                     getShownLinks = { this.getShownLinks.bind( this ) }
                                     getShownNodes = { this.getShownNodes.bind( this ) } />
                             </div >
-                            <div
-                                className = { ( this.state.showAlerts ? 'show' : '' ) + " collapse col p-0 blue-border" } >
+                            {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                                <React.Fragment>
+                                    <a href="#presentAlerts" data-toggle="collapse">
+                                        <i className="fa fa-angle-down"/></a>
+                                </React.Fragment> : null}
+                            <div id="presentAlerts" className = { ( this.state.showAlerts ? 'show' : '' ) + " collapse col p-0 blue-border" } >
                                 <AlertList alerts = { this.state.shownAlerts } />
                             </div >
                         </div >

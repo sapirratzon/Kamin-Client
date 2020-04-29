@@ -57,19 +57,6 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = ( event ) => {
-        // if (this.props.currentUser === event.target.name && this.props.userType === 'MODERATOR'){
-        //     this.props.setModeratorSettings(event.target.className, event.target.checked);
-        //     let username = event.target.name;
-        //     let elementToUpdate = event.target.className;
-        //     let value = event.target.checked;
-        //     this.setState( prevState => {
-        //         let activeUsersSettings = Object.assign(
-        //             {[username]: {[elementToUpdate]: value}}, prevState.activeUsers);
-        //         activeUsersSettings[this.props.currentUser][elementToUpdate] = value;
-        //         return { activeUsersSettings };
-        //     } );
-        //     return;
-        // }
         if ( event.target.name === 'all' ) {
             Object.keys( this.state.activeUsers ).forEach( user => {
                 this.updateConfigInState( event, user );
