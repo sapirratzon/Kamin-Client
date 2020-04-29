@@ -114,7 +114,7 @@ class Chat extends Component {
 
     updateLinksWidth() {
         const allMessagesNumber = this.shownLinks.map( link => link.name );
-        const max = Math.max( ... allMessagesNumber );
+        const max = Math.max( ...allMessagesNumber );
         this.shownLinks.forEach( link => {
             const value = link.name;
             link.updateWidth( ( 2 * ( value - 1 ) / max ) + 1 );
@@ -181,7 +181,6 @@ class Chat extends Component {
             const parentId = this.shownMessages.find( message =>
                 message.id === commentNode[ 'node' ][ 'parentId' ] );
             if (parentId !== undefined){
-                console.log(parentId);
                 let parentUsername = parentId.author;
                 this.nodesMap.get(parentUsername)['commentsReceived'] ++;
             }

@@ -51,23 +51,46 @@ class Discussion extends Component {
             this.handleNewConfig( response )
         } );
         this.setDefaultConfig();
+        // this.socket.on ('join room', () => {
+        //     this.setCurrentConfig();
+        // });
+        if (this.props.userType === 'MODERATOR')
+            this.setState( {
+                showGraph: true,
+                showAlerts: true,
+                showStat: true
+            } )
     }
 
     setDefaultConfig = () => {
         const xhr = new XMLHttpRequest();
-        xhr.addEventListener( 'load', ( response ) => {
+        xhr.addEventListener( 'load', () => {
             this.defaultConfig = JSON.parse( xhr.responseText )[ 'discussion' ][ 'configuration' ][ 'default_config' ];
-            console.log( this.defaultConfig );
-            this.setState( {
-                showGraph: this.defaultConfig[ 'Graph' ],
-                showAlerts: this.defaultConfig[ 'Alerts' ],
-                showStat: this.defaultConfig[ 'statistics' ]
-            } )
         } );
         xhr.open( 'GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId );
         xhr.setRequestHeader( "Authorization", "Basic " + btoa( this.props.token + ":" ) );
         xhr.setRequestHeader( "Content-Type", "application/json" );
         xhr.send();
+    };
+
+    setCurrentConfig = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener( 'load', ( response ) => {
+            const configuration = JSON.parse( xhr.responseText )[ 'config' ][ this.props.currentUser ];
+            this.setState( {
+                showGraph: configuration['showGraph'],
+                showAlerts: configuration[ 'showAlerts' ],
+                showStat: configuration[ 'showStat' ]
+            } )
+        } );
+        xhr.open( 'GET', process.env.REACT_APP_API + '/api/getActiveUsersConfigurations/' + this.state.discussionId );
+        xhr.send();
+    };
+
+    setModeratorSettings = (element, toShow) => {
+        this.setState( {
+            [element]: toShow
+        } )
     };
 
     updateLastMessage = ( message ) => {
@@ -184,6 +207,7 @@ class Discussion extends Component {
                                 lastMessage = { this.state.lastMessage }
                                 defaultConfig = { this.defaultConfig }
                                 socket = { this.socket }
+                                setModeratorSettings={ () => this.setModeratorSettings.bind(this) }
                             />
                             : null }
                     </span >
