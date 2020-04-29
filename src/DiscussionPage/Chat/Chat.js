@@ -27,10 +27,10 @@ class Chat extends Component {
                 this.reloadChat();
                 this.setState(
                     {
-                        root: response["tree"],
+                        root: response["discussionDict"]["tree"],
                     }
                 );
-                this.props.setTitle(response["discussion"]["title"]);
+                this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.timestampMessages.sort(function (a, b) {

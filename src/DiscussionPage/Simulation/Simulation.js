@@ -29,8 +29,8 @@ class Simulation extends Component {
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            this.props.setTitle(response["discussion"]["title"]);
-            this.getMessagesNodesLinks(response["tree"]);
+            this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+            this.getMessagesNodesLinks(response["discussionDict"]["tree"]);
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
@@ -45,10 +45,10 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
+            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             while (this.currentMessageIndex < response["currentIndex"]) {
                 this.handleNextClick(false);
             }
-            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
             this.props.handleFinishLoading();
         });
         const data = {
@@ -266,7 +266,7 @@ class Simulation extends Component {
             switchOrder: temp
         });
         this.state.isChronological ?
-            this.allMessages=this.chronologicMessages : this.allMessages=this.regularMessages;
+            this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
     };
 
     update(dif, toUpdateState) {
@@ -336,7 +336,7 @@ class Simulation extends Component {
     };
 }
 
-const mapStateToProps=state => {
+const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
         userType: state.userType,
