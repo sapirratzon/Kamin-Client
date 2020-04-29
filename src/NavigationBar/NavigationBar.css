@@ -1,5 +1,4 @@
 .navbar {
-    background-color: #1fc8db;
-    background-image: linear-gradient(141deg, #47dcdc 0%, #1fc8db 55%, #2cb5e8 61%);
+    background-image: linear-gradient(141deg, #03d4d4 0%, #1fc8db 51%, #2cb5e8 61%);
     z-index: 1;
 }
