@@ -18,7 +18,6 @@ class Graph extends Component {
 
     componentDidMount() {
         this.myRef.zoom(4, 0)
-        console.log(this.props.allowHide);
     }
 
     handleLinkHover(link) {
@@ -79,10 +78,10 @@ class Graph extends Component {
                             linkCurvature="curvature"
                             linkDirectionalArrowRelPos={1}
                             linkDirectionalArrowLength={2.5}
-                            // cooldownTicks={1} // Todo: what Is this for??? 
+                            // cooldownTicks={1} // Todo: what Is this for???
 
                             nodeCanvasObjectMode={node =>
-                                // this.state.highlightNode === node || 
+                                // this.state.highlightNode === node ||
                                 this.props.rootId === node.id || this.props.currentUser === node.id ? 'before' : undefined}
                             nodeCanvasObject={this.paintRing.bind(this)}
                             onNodeClick={this.selectedNode.bind(this)}

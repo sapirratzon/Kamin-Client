@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 class DiscussionStats extends Component {
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             participants: 0,
             comments: 0,
             repliedMost: "",
@@ -17,39 +17,18 @@ class DiscussionStats extends Component {
     }
 
     calcDiscussionStats() {
-        let nodes=this.props.getShownNodes();
+        let nodes = this.props.getShownNodes();
         if (nodes.length === 0) return;
         nodes.sort(function (a, b) { return b.comments - a.comments; });
-        let maxComments=nodes[0].id;
+        let maxComments = nodes[0].id;
         nodes.sort(function (a, b) { return b.commentsReceived - a.commentsReceived; });
-        let maxReceivedComments=nodes[0].id;
+        let maxReceivedComments = nodes[0].id;
         this.setState({
             participants: this.props.getShownNodes().length,
             comments: this.props.getShownMessages().length,
             repliedMost: maxComments,
             receivedMost: maxReceivedComments
         });
-    }
-
-    getDiscussionStats() {
-        const xhr=new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            if (xhr.status === 401) {
-                this.props.onLogOut();
-            } else {
-                let stats=JSON.parse(xhr.responseText)["discussion_statistics"];
-                this.setState({
-                    participants: stats.num_of_participants,
-                    comments: stats.total_comments_num,
-                    repliedMost: stats.max_commented_user,
-                    receivedMost: stats.max_responded_user
-                })
-            }
-        });
-        xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
-        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
     }
 
     render() {
@@ -83,7 +62,7 @@ class DiscussionStats extends Component {
     }
 }
 
-const mapDispatchToProps=(dispatch) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onLogOut: () => dispatch({type: 'LOGOUT'})
     };

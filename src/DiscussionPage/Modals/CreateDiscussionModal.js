@@ -8,7 +8,7 @@ import CheckBox from './Checkbox';
 class CreateDiscussionModal extends Component {
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             description: '',
             title: '',
             submitted: false,
@@ -17,49 +17,49 @@ class CreateDiscussionModal extends Component {
             statsChecked: true,
             alertsChecked: true,
         };
-        this.configuration={
-            default_config: {"graph": true, "alerts": true, "statistics": true},
+        this.configuration = {
+            vis_config: {"graph": true, "alerts": true, "statistics": true},
             replyPosition: "None"
         }
     }
 
-    handleChange=(e) => {
-        const {name, value}=e.target;
+    handleChange = (e) => {
+        const {name, value} = e.target;
         this.setState({[name]: value});
     };
 
-    vizConfigChange=(type) => {
-        this.configuration.default_config[type]= !this.configuration.default_config[type];
+    vizConfigChange = (type) => {
+        this.configuration[type] = !this.configuration.vis_config[type];
         if (type === "graph") {
-            this.setState({graphChecked: this.configuration.default_config[type]})
+            this.setState({graphChecked: this.configuration.vis_config[type]})
         }
         if (type === "statistics") {
-            this.setState({statsChecked: this.configuration.default_config[type]})
+            this.setState({statsChecked: this.configuration.vis_config[type]})
         }
         if (type === "alerts") {
-            this.setState({alertsChecked: this.configuration.default_config[type]})
+            this.setState({alertsChecked: this.configuration.vis_config[type]})
         }
     };
 
-    replyConfigChange=(type) => {
+    replyConfigChange = (type) => {
         this.setState({replyPosition: type});
-        this.configuration.replyPosition=type;
+        this.configuration.replyPosition = type;
     };
 
-    changePath=(path) => {
+    changePath = (path) => {
         this.props.path.push(path);
     };
 
-    createDiscussion=() => {
+    createDiscussion = () => {
         this.setState({submitted: true});
-        const {description, title}=this.state;
+        const {description, title} = this.state;
         if (description && title) {
-            const xhr=new XMLHttpRequest();
+            const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', () => {
                 if (xhr.status === 401) {
                     this.props.onLogOut();
                 } else {
-                    let discussion_id=JSON.parse(xhr.responseText)["discussion_id"];
+                    let discussion_id = JSON.parse(xhr.responseText)["discussion_id"];
                     this.changePath('/Discussion/false/' + discussion_id);
                     this.updateVisibility(false)
                 }
@@ -67,7 +67,7 @@ class CreateDiscussionModal extends Component {
             xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
             xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhr.setRequestHeader("Content-Type", "application/json");
-            const comment={
+            const comment = {
                 "author": this.props.currentUser,
                 "text": description,
                 "parentId": null,
@@ -86,12 +86,12 @@ class CreateDiscussionModal extends Component {
     };
 
 
-    updateVisibility=(isOpen) => {
+    updateVisibility = (isOpen) => {
         this.props.updateVisibility(isOpen);
     };
 
     render() {
-        const {description, title, submitted}=this.state;
+        const {description, title, submitted} = this.state;
         return (
             <Modal visible={ this.props.isOpen } >
 
@@ -169,14 +169,14 @@ class CreateDiscussionModal extends Component {
     }
 }
 
-const mapStateToProps=state => {
+const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
         token: state.token
     };
 };
 
-const mapDispatchToProps=(dispatch) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onLogOut: () => dispatch({type: 'LOGOUT'})
     };

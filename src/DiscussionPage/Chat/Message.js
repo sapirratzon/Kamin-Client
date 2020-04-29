@@ -7,7 +7,7 @@ class Message extends Component {
 
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             showReplyInput: false,
             replyText: "Reply",
             showAlertInput: false,
@@ -36,7 +36,7 @@ class Message extends Component {
         }
     };
 
-    replyHandler=() => {
+    replyHandler = () => {
         if (this.state.showReplyInput) {
             this.setState({
                 showReplyInput: false,
@@ -53,7 +53,7 @@ class Message extends Component {
         }
     };
 
-    alertHandler=() => {
+    alertHandler = () => {
         if (this.state.showAlertInput) {
             this.setState({
                 showAlertInput: false,
@@ -70,15 +70,15 @@ class Message extends Component {
         }
     };
 
-    sendMessageHandler=(message) => {
+    sendMessageHandler = (message) => {
         if (message.length === 0) return;
         this.state.showReplyInput ? this.props.newMessageHandler(this.props.id, "Guy", message, this.props.depth + 1) :
             this.props.newAlertHandler(this.props.id, message, this.props.depth + 1);
         this.replyHandler();
     };
 
-    getDate=(timestamp) => {
-        const date=new Date(timestamp * 1000);
+    getDate = (timestamp) => {
+        const date = new Date(timestamp * 1000);
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: '2-digit',
@@ -89,7 +89,7 @@ class Message extends Component {
         }).format(date);
     };
 
-    handleMessageDisplayLength=() => {
+    handleMessageDisplayLength = () => {
         this.state.fullyShown ? this.setState({
                 fullyShown: false,
                 shownText: this.props.text.substring(0, 500),
@@ -103,10 +103,10 @@ class Message extends Component {
     };
 
     render() {
-        let depthPixels=this.props.depth * 20;
-        let depthString=depthPixels.toString() + "px";
-        let verticalLines=[];
-        for (let i=0; i < this.props.depth + 1; i++) {
+        let depthPixels = this.props.depth * 20;
+        let depthString = depthPixels.toString() + "px";
+        let verticalLines = [];
+        for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div
                 className="vl" key={ i } style={ {
                 "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
@@ -160,7 +160,7 @@ class Message extends Component {
 }
 
 
-const mapStateToProps=state => {
+const mapStateToProps = state => {
     return {
         userType: state.userType,
     };

@@ -51,35 +51,6 @@ class UserStats extends Component {
         });
     };
 
-    getUserStats() {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            if (xhr.status === 401) {
-                this.props.onLogOut();
-            } else {
-                let stats = JSON.parse(xhr.responseText)["user_in_discussion_statistics"];
-                this.setState({
-                    commentsWritten: stats.num_of_comments,
-                    usersResponded: stats.num_of_commented_users,
-                    commentsReceived: stats.num_of_responses,
-                    repliedUsers: stats.responded_users,
-                    wordsWritten: stats.total_words,
-                })
-            }
-
-        });
-        xhr.open('POST', process.env.REACT_APP_API + '/api/getUserStatisticsInDiscussion');
-        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.setRequestHeader("Content-Type", "application/json");
-        if (this.props.currentUser) {
-            xhr.send(JSON.stringify({ username: this.props.currentUser, discussionId: this.props.discussionId }));
-            this.setState({ username: this.props.currentUser })
-        } else {
-            xhr.send(JSON.stringify({ username: this.props.currentUser, discussionId: this.props.discussionId }));
-            this.setState({ username: this.props.currentUser })
-        }
-    }
-
     render() {
         return (
             <div className="card card-stats" >

@@ -5,10 +5,10 @@ import io from "socket.io-client";
 class SettingsModal extends Component {
     constructor() {
         super();
-        this.socket=io(process.env.REACT_APP_API);
+        this.socket = io(process.env.REACT_APP_API);
     }
 
-    updateVisibility=(isOpen) => {
+    updateVisibility = (isOpen) => {
         this.props.updateVisibility(isOpen);
     };
 

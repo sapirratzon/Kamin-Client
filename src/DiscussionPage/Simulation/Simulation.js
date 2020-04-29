@@ -50,6 +50,8 @@ class Simulation extends Component {
                 this.handleNextClick(false);
             }
             this.props.handleFinishLoading();
+            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                response['visualConfig']['configuration']);
         });
         const data = {
             discussion_id: this.props.discussionId,

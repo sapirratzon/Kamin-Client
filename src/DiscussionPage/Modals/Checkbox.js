@@ -2,7 +2,7 @@ import React from 'react';
 import './Checkbox.css';
 
 
-const CheckBox=(props) => {
+const CheckBox = (props) => {
     return (
         <label className="configCheckBox" >
             { props.text }
