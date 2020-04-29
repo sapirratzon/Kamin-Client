@@ -55,7 +55,6 @@ class Simulation extends Component {
             discussion_id: this.props.discussionId,
             token: this.props.token
         };
-
         this.socket.emit('join', data);
         this.handleModeratorActions();
     }
@@ -288,6 +287,7 @@ class Simulation extends Component {
     };
 
     updateWidthAll() {
+
         const allMessagesNumber = this.shownLinks.map(link => link.name);
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {

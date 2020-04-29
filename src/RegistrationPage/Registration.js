@@ -20,7 +20,7 @@ class Registration extends Component {
         const { user } = this.state;
         this.setState( {
             user: {
-                ... user,
+                ...user,
                 [ name ]: value
             }
         } );

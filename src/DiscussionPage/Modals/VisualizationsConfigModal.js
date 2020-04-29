@@ -7,10 +7,11 @@ class VisualizationsModal extends Component {
     constructor( props ) {
         super( props );
         this.socket = props.socket;
-        this.allSettings = {};
         this.state = {
             configType: '',
             activeUsers: {},
+            updateAll: false,
+            updateUser: false,
             error: ''
         }
     }
@@ -24,17 +25,24 @@ class VisualizationsModal extends Component {
     loadActiveUsers() {
         const xhr = new XMLHttpRequest();
         xhr.addEventListener( 'load', ( response ) => {
-            const allUsers = {
-                'all': {
-                    showGraph: this.props.defaultConfig[ 'Graph' ],
-                    showAlerts: this.props.defaultConfig[ 'Alerts' ],
-                    showStat: this.props.defaultConfig[ 'statistics' ]
-                },
-                ... JSON.parse( xhr.responseText )[ 'config' ]
+            const configuration = JSON.parse( xhr.responseText )[ 'config' ];
+            const allUsersConfiguration = {};
+            allUsersConfiguration[ 'all' ] = {
+                showGraph: this.props.defaultConfig[ 'Graph' ],
+                showAlerts: this.props.defaultConfig[ 'Alerts' ],
+                showStat: this.props.defaultConfig[ 'statistics' ]
             };
-            this.setState( {
-                activeUsers: allUsers
+            Object.keys( configuration ).forEach( user => {
+                allUsersConfiguration[ user ] = {
+                    showGraph: configuration[ user ][ 'showGraph' ],
+                    showAlerts: configuration[ user ][ 'showAlerts' ],
+                    showStat: configuration[ user ][ 'showStat' ]
+                }
             } );
+            this.setState( {
+                activeUsers: allUsersConfiguration,
+            } );
+
         } );
         xhr.open( 'GET', process.env.REACT_APP_API + '/api/getActiveUsersConfigurations/' + this.props.discussionId );
         xhr.send();
@@ -42,76 +50,83 @@ class VisualizationsModal extends Component {
 
     updateVisibility = ( isOpen ) => {
         this.props.updateVisibility( isOpen );
+        this.setState( {
+            updateAll: false,
+            updateUser: false
+        } )
     };
 
     updateUserVisualizations = ( event ) => {
-        const username = this.allSettings[ event.target.name ];
-        const elementToUpdate = event.target.className;
-        if ( event.target.name === 'all' )
-            this.handleConfigAll( event );
-        else if ( username === undefined ) {
-            if ( this.allSettings[ 'all' ] !== undefined ) {
-                this.allSettings[ event.target.name ] = {};
-                this.handleConfigAll( event );
-            } else {
-                this.allSettings[ event.target.name ] = {
-                    showGraph: this.state.activeUsers[ event.target.name ][ 'graph' ],
-                    showAlerts: this.state.activeUsers[ event.target.name ][ 'alerts' ],
-                    showStat: this.state.activeUsers[ event.target.name ][ 'statistics' ],
-                };
-                this.allSettings[ event.target.name ][ elementToUpdate ] = event.target.checked;
-                let activeUsersSettings = this.state.activeUsers;
-                activeUsersSettings[ event.target.name ][ elementToUpdate ] = event.target.checked;
+        if ( event.target.name === 'all' ) {
+            Object.keys( this.state.activeUsers ).forEach( user => {
+                this.updateConfigInState( event, user );
+            } );
+            this.setState( {
+                updateAll: true
+            } );
+        } else {
+            if ( !event.target.checked ) {
+                let allSettings = this.state.activeUsers;
+                allSettings[ 'all' ][ event.target.className ] = event.target.checked;
                 this.setState( {
-                    activeUsers: activeUsersSettings
+                    activeUsers: allSettings
                 } );
             }
+            this.updateConfigInState( event, event.target.name );
+            this.setState( {
+                updateUser: true
+            } );
         }
     };
 
-    handleConfigAll = ( event ) => {
-        if ( Object.keys( this.allSettings ).length > 1 ) {
-            Object.keys( this.state.activeUsers ).forEach( user => {
-                if ( this.allSettings[ user ] === undefined || this.allSettings[ user ] === {} )
-                    this.allSettings[ user ] = this.state.activeUsers[ user ];
-                this.allSettings[ user ][ event.target.className ] = event.target.checked;
-                let activeUsersSettings = this.state.activeUsers;
-                activeUsersSettings[ event.target.name ][ event.target.className ] = event.target.checked;
-                this.setState( {
-                    activeUsers: activeUsersSettings
-                } );
-            } );
-        } else {
-            if ( this.allSettings[ 'all' ] === undefined )
-                this.allSettings[ 'all' ] = {};
-            this.allSettings[ 'all' ][ event.target.className ] = event.target.checked;
-            let activeUsersSettings = this.state.activeUsers;
-            activeUsersSettings[ event.target.name ][ event.target.className ] = event.target.checked;
-            this.setState( {
-                activeUsers: activeUsersSettings
-            } );
-        }
+    updateConfigInState = ( event, username ) => {
+        let allSettings = this.state.activeUsers;
+        allSettings[ username ][ event.target.className ] = event.target.checked;
+        this.setState( {
+            activeUsers: allSettings
+        } );
+
+        let elementToUpdate = event.target.className;
+        let value = event.target.checked;
+        this.setState( prevState => {
+            let activeUsersSettings = Object.assign( { [ username ]: { [ elementToUpdate ]: value } }, prevState.activeUsers );
+            activeUsersSettings[ username ][ elementToUpdate ] = value;
+            return { activeUsersSettings };
+        } );
     };
 
     updateConfig = () => {
-        if ( Object.keys( this.allSettings ).length > 0 ) {
-            let type = 'all';
-            if ( this.allSettings[ 'all' ] === undefined || Object.keys( this.allSettings ).length > 1 )
-                type = 'list';
-            const configComment = {
-                'discussionId': this.props.discussionId,
-                'extra_data': { recipients_type: type, users_list: this.allSettings }
-            };
-            if ( !this.props.isSimulation ) {
-                Object.assign( configComment, {
-                    'author': this.props.currentUser,
-                    'text': 'config',
-                    'parentId': this.props.lastMessage.parentId,
-                    'depth': this.props.lastMessage.depth
-                } )
+        let type = '';
+        let configComment = {};
+        if ( this.state.updateUser ) {
+            type = 'list';
+            let usersListSettings = {};
+            for ( let [ user, config ] of Object.entries( this.state.activeUsers ) ) {
+                if ( user !== 'all' ) {
+                    usersListSettings[ user ] = config
+                }
             }
-            this.socket.emit( 'change configuration', JSON.stringify( configComment ) );
+            configComment = {
+                'discussionId': this.props.discussionId,
+                'extra_data': { recipients_type: type, users_list: usersListSettings }
+            };
+        } else if ( this.state.updateAll ) {
+            type = 'all';
+            let allSettings = this.state.activeUsers[ 'all' ];
+            configComment = {
+                'discussionId': this.props.discussionId,
+                'extra_data': { recipients_type: type, users_list: allSettings }
+            };
         }
+        if ( !this.props.isSimulation ) {
+            Object.assign( configComment, {
+                'author': this.props.currentUser,
+                'text': 'config',
+                'parentId': this.props.lastMessage.parentId,
+                'depth': this.props.lastMessage.depth
+            } )
+        }
+        this.socket.emit( 'change configuration', JSON.stringify( configComment ) );
         this.updateVisibility( false );
     };
 
@@ -143,7 +158,7 @@ class VisualizationsModal extends Component {
                                             name = { id } type = "checkbox"
                                             id = { id + " showGraph" }
                                             className = "showGraph"
-                                            defaultChecked = { this.state.activeUsers[ id ][ 'showGraph' ] }
+                                            checked = { this.state.activeUsers[ id ][ 'showGraph' ] }
                                             onChange = { ( event ) => this.updateUserVisualizations( event ) }
                                         />
                                         <label htmlFor = { id + " showGraph" } />
@@ -153,7 +168,7 @@ class VisualizationsModal extends Component {
                                             name = { id } type = "checkbox"
                                             id = { id + " showStat" }
                                             className = "showStat"
-                                            defaultChecked = { this.state.activeUsers[ id ][ 'showStat' ] }
+                                            checked = { this.state.activeUsers[ id ][ 'showStat' ] }
                                             onChange = { ( event ) => this.updateUserVisualizations( event ) }
                                         />
                                         <label htmlFor = { id + " showStat" } />
@@ -163,7 +178,7 @@ class VisualizationsModal extends Component {
                                             name = { id } type = "checkbox"
                                             id = { id + " showAlerts" }
                                             className = "showAlerts"
-                                            defaultChecked = { this.state.activeUsers[ id ][ 'showAlerts' ] }
+                                            checked = { this.state.activeUsers[ id ][ 'showAlerts' ] }
                                             onChange = { ( event ) => this.updateUserVisualizations( event ) }
                                         />
                                         <label htmlFor = { id + " showAlerts" } />
