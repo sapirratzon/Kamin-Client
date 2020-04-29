@@ -196,6 +196,30 @@ class Discussion extends Component {
         this.setState({ isLoading: false });
     };
 
+    handleHideInsight = (insight) => {
+        if (insight === 'graph') {
+            this.setState({ showGraph: false });
+        }
+        else if (insight === 'alerts') {
+            this.setState({ showAlerts: false });
+        }
+        else if (insight === 'stat') {
+            this.setState({ showStat: false });
+        }
+    }
+
+    handleShowInsight = (insight) => {
+        if (insight === 'graph') {
+            this.setState({ showGraph: true });
+        }
+        else if (insight === 'alerts') {
+            this.setState({ showAlerts: true });
+        }
+        else if (insight === 'stat') {
+            this.setState({ showStat: true });
+        }
+    }
+
     render() {
         return (
             <div className="App">
@@ -270,7 +294,7 @@ class Discussion extends Component {
                         </div>
                         {!this.state.isLoading &&
                             <div className="discussion-col col-lg-6 col-md-12">
-                                <div className={(this.state.showGraph ? "show" : "") + " collapse graph row blue-border mb-1"} >
+                                <div id="presentGraph" className={(this.state.showGraph ? "show" : "") + " collapse graph row blue-border mb-1"} >
                                     {this.state.shownMessages.length > 0 &&
                                         <Graph
                                             nodes={this.state.shownNodes}
@@ -278,11 +302,14 @@ class Discussion extends Component {
                                             currentUser={this.props.currentUser}
                                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                                             rootId={this.state.shownMessages[0]["author"]}
+                                            handleHide={() => this.handleHideInsight('graph')}
+                                            allowHide={this.props.userType !== 'USER'}
                                         />
                                     }
                                 </div>
+                                {(!this.state.showGraph && this.props.userType !== 'USER') && <a href="#presentGraph" data-toggle="collapse" onClick={() => this.handleShowInsight('graph')}><h4><i className="fa fa-angle-up p-2" />Graph</h4></a>}
                                 <div className="row insights">
-                                    <div className={(this.state.showStat ? "show" : "") + " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
+                                    <div id="presentStat" className={(this.state.showStat ? "show" : "") + " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
                                         <UserStats
                                             className="stats"
                                             getSelectedUser={this.getSelectedUser.bind(this)}
@@ -290,6 +317,8 @@ class Discussion extends Component {
                                             getShownMessages={this.getShownMessages.bind(this)}
                                             getShownLinks={this.getShownLinks.bind(this)}
                                             getShownNodes={this.getShownNodes.bind(this)}
+                                            handleHide={() => this.handleHideInsight('stat')}
+                                            allowHide={this.props.userType !== 'USER'}
                                         />
                                         <DiscussionStats
                                             className="stats h-50"
@@ -299,9 +328,11 @@ class Discussion extends Component {
                                             getShownNodes={this.getShownNodes.bind(this)}
                                         />
                                     </div>
-                                    <div className={(this.state.showAlerts ? "show" : "") + " collapse col p-0 blue-border"}>
-                                        <AlertList alerts={this.state.shownAlerts} />
+                                    {(!this.state.showStat && this.props.userType !== 'USER') && <a href="#presentStat" data-toggle="collapse" onClick={() => this.handleShowInsight('stat')}><h4><i className="fa fa-angle-up p-2" />Statistics</h4></a>}
+                                    <div id="presentAlerts" className={(this.state.showAlerts ? "show" : "") + " collapse col p-0 blue-border"}>
+                                        <AlertList alerts={this.state.shownAlerts} handleHide={() => this.handleHideInsight('alerts')} allowHide={this.props.userType != 'USER'} />
                                     </div>
+                                    {(!this.state.showAlerts && this.props.userType !== 'USER') && <a href="#presentAlerts" data-toggle="collapse" onClick={() => this.handleShowInsight('alerts')}><h4><i className="fa fa-angle-up p-2" />Alerts</h4></a>}
                                 </div>
                             </div>
                         }
