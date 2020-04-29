@@ -46,12 +46,12 @@ class Simulation extends Component {
                 commentsReceived: 0
             });
             this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                response['visualConfig']['configuration']);
+            this.props.handleFinishLoading();
             while (this.currentMessageIndex < response["currentIndex"]) {
                 this.handleNextClick(false);
             }
-            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
-            response['visualConfig']['configuration']);
-            this.props.handleFinishLoading();
         });
         const data = {
             discussion_id: this.props.discussionId,
