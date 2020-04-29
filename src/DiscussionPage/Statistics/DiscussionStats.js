@@ -31,27 +31,6 @@ class DiscussionStats extends Component {
         });
     }
 
-    getDiscussionStats() {
-        const xhr=new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            if (xhr.status === 401) {
-                this.props.onLogOut();
-            } else {
-                let stats=JSON.parse(xhr.responseText)["discussion_statistics"];
-                this.setState({
-                    participants: stats.num_of_participants,
-                    comments: stats.total_comments_num,
-                    repliedMost: stats.max_commented_user,
-                    receivedMost: stats.max_responded_user
-                })
-            }
-        });
-        xhr.open('POST', process.env.REACT_APP_API + '/api/getDiscussionStatistics');
-        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(JSON.stringify({discussionId: this.props.discussionId}));
-    }
-
     render() {
         return (
             <div className="card card-stats" >

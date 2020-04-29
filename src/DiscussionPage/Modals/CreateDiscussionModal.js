@@ -18,7 +18,7 @@ class CreateDiscussionModal extends Component {
             alertsChecked: true,
         };
         this.configuration={
-            default_config: {"graph": true, "alerts": true, "statistics": true},
+            vis_config: {"graph": true, "alerts": true, "statistics": true},
             replyPosition: "None"
         }
     }
@@ -29,15 +29,15 @@ class CreateDiscussionModal extends Component {
     };
 
     vizConfigChange=(type) => {
-        this.configuration.default_config[type]= !this.configuration.default_config[type];
+        this.configuration.vis_config[type]= !this.configuration.vis_config[type];
         if (type === "graph") {
-            this.setState({graphChecked: this.configuration.default_config[type]})
+            this.setState({graphChecked: this.configuration.vis_config[type]})
         }
         if (type === "statistics") {
-            this.setState({statsChecked: this.configuration.default_config[type]})
+            this.setState({statsChecked: this.configuration.vis_config[type]})
         }
         if (type === "alerts") {
-            this.setState({alertsChecked: this.configuration.default_config[type]})
+            this.setState({alertsChecked: this.configuration.vis_config[type]})
         }
     };
 

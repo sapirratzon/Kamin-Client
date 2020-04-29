@@ -29,9 +29,9 @@ class Discussion extends Component {
             title: "",
             selectedUser: "",
             lastMessage: {},
-            showGraph: true,
-            showAlerts: true,
-            showStat: true,
+            graph: true,
+            alerts: true,
+            statistics: true,
             isLoading: false,
         };
     }
@@ -58,26 +58,21 @@ class Discussion extends Component {
         // });
         if (this.props.userType === "MODERATOR")
             this.setState({
-                showGraph: true,
-                showAlerts: true,
-                showStat: true,
+                graph: true,
+                alerts: true,
+                statistics: true,
             });
     }
 
-    setDefaultVisualConfig = (configuration) => {
-        // this.setState({
-        //     visualConfig: configuration,
-        // });
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            this.defaultConfig = JSON.parse(xhr.responseText)['discussion']['configuration']['default_config'
-            ];
-        });
-        xhr.open('GET', process.env.REACT_APP_API + '/api/getDiscussion/' + this.state.discussionId);
-        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-        xhr.setRequestHeader(
-            "Content-Type", "application/json");
-        xhr.send();
+    setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
+        if (this.props.userType === 'USER' && userVisualConfig) {
+            this.setState({
+                graph: userVisualConfig['graph'],
+                alerts: userVisualConfig['alerts'],
+                statistics: userVisualConfig['statistics'],
+                discussionVisualConfig: discussionVisualConfig,
+            });
+        }
     };
 
     setCurrentConfig = () => {
@@ -87,9 +82,9 @@ class Discussion extends Component {
                 this.props.currentUser
             ];
             this.setState({
-                showGraph: configuration["showGraph"],
-                showAlerts: configuration["showAlerts"],
-                showStat: configuration["showStat"],
+                graph: configuration["graph"],
+                alerts: configuration["alerts"],
+                statistics: configuration["statistics"],
             });
         });
         xhr.open(
@@ -172,9 +167,9 @@ class Discussion extends Component {
 
     handleVisualizationSettings = (settings) => {
         this.setState({
-            showGraph: settings.graph,
-            showAlerts: settings.alerts,
-            showStat: settings.statistics,
+            graph: settings.graph,
+            alerts: settings.alerts,
+            statistics: settings.statistics,
         });
     };
 
@@ -198,53 +193,63 @@ class Discussion extends Component {
 
     handleHideInsight = (insight) => {
         if (insight === 'graph') {
-            this.setState({ showGraph: false });
+            this.setState({ graph: false });
         }
         else if (insight === 'alerts') {
-            this.setState({ showAlerts: false });
+            this.setState({ alerts: false });
         }
         else if (insight === 'stat') {
-            this.setState({ showStat: false });
+            this.setState({ statistics: false });
         }
     }
 
     handleShowInsight = (insight) => {
         if (insight === 'graph') {
-            this.setState({ showGraph: true });
+            this.setState({ graph: true });
         }
         else if (insight === 'alerts') {
-            this.setState({ showAlerts: true });
+            this.setState({ alerts: true });
         }
         else if (insight === 'stat') {
-            this.setState({ showStat: true });
+            this.setState({ statistics: true });
         }
     }
 
     render() {
         return (
-            <div className="App">
+            <div className="App" >
                 {this.state.isLoading && (
                     <Loader className="mt-5 text-center" type="TailSpin" color="#007bff" height={300} width={300} />
                 )}
-                <React.Fragment>
-                    <div className="row text-center">
+                <React.Fragment >
+                    <div className="row text-center" >
                         {!this.state.isLoading &&
-                            <React.Fragment>
-                                <span className="col-4">
-                                    {this.props.isSimulation === "false" &&
-                                        <button type="button" className="btn btn-danger btn-sm" onClick={this.handleEndSession}>
+                            <React.Fragment >
+                                <span className="col-4" >
+                                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                                        this.props.isSimulation === "false" ?
+                                        <button
+                                            type="button" className="btn btn-danger btn-sm"
+                                            onClick={this.handleEndSession} >
                                             End Session
-                                        </button>
-                                    }
-                                </span>
-                                <span className="col-4">
-                                    <h3>
-                                        <b>{this.state.title}</b>
-                                        <i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!" data-event="click" />
-                                        <i className="fas fa-cog cursor-pointer" onClick={() => this.updateModalHandler(true)} />
-                                    </h3>
+                                            </button >
+                                        : null}
+                                </span >
+                                <span className="col-4" >
+                                    <h3 >
+                                        <b >{this.state.title}</b >
+                                        <i
+                                            className="fas fa-share-square text-primary pl-2 cursor-pointer"
+                                            data-tip="Copied!" data-event="click" />
+                                        {this.props.userType === "MODERATOR" ||
+                                            this.props.userType === "ROOT" ?
+                                            <i
+                                                className="fas fa-cog cursor-pointer"
+                                                onClick={() => this.updateModalHandler(true)} />
+                                            : null}
+                                    </h3 >
                                     <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
-                                    {this.props.userType === "MODERATOR" || this.props.userType === "ROOT" &&
+                                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
                                         <VisualizationsModal
                                             isOpen={this.state.showVisualizationSettingsModal}
                                             discussionId={this.state.discussionId}
@@ -253,12 +258,13 @@ class Discussion extends Component {
                                             lastMessage={this.state.lastMessage}
                                             defaultConfig={this.defaultConfig}
                                             socket={this.socket}
+                                            setModeratorSettings={() => this.setModeratorSettings.bind(this)}
                                         />
                                     }
-                                </span>
-                            </React.Fragment>
+                                </span >
+                            </React.Fragment >
                         }
-                        <span className="col-4">
+                        <span className="col-4" >
                             {this.props.isSimulation === "true" &&
                                 <Simulation
                                     messagesHandler={this.updateMessagesHandler.bind(this)}
@@ -271,13 +277,14 @@ class Discussion extends Component {
                                     updateLastMessage={this.updateLastMessage.bind(this)}
                                     isLoading={this.state.isLoading}
                                     handleFinishLoading={this.handleFinishLoading}
+                                    updateVisualConfig={this.setDefaultVisualConfig}
                                 />
                             }
-                        </span>
-                    </div>
+                        </span >
+                    </div >
                     {!this.state.isLoading && <hr />}
-                    <div className="row content mr-3 ml-1">
-                        <div className="discussion-col col-lg-6 col-md-12 px-1">
+                    <div className="row content mr-3 ml-1" >
+                        <div className="discussion-col col-lg-6 col-md-12 px-1" >
                             <Chat
                                 messages={this.state.shownMessages}
                                 isSimulation={this.props.isSimulation === "true"}
@@ -290,11 +297,14 @@ class Discussion extends Component {
                                 socket={this.socket}
                                 isLoading={this.state.isLoading}
                                 handleFinishLoading={this.handleFinishLoading}
+                                updateVisualConfig={this.setDefaultVisualConfig}
                             />
-                        </div>
+                        </div >
                         {!this.state.isLoading &&
-                            <div className="discussion-col col-lg-6 col-md-12">
-                                <div id="presentGraph" className={(this.state.showGraph ? "show" : "") + " collapse graph row blue-border mb-1"} >
+                            <div className="discussion-col col-lg-6 col-md-12" >
+                                <div
+                                    id="presentGraph"
+                                    className={(this.state.graph ? "show" : "") + " collapse graph row blue-border mb-1"} >
                                     {this.state.shownMessages.length > 0 &&
                                         <Graph
                                             nodes={this.state.shownNodes}
@@ -306,10 +316,15 @@ class Discussion extends Component {
                                             allowHide={this.props.userType !== 'USER'}
                                         />
                                     }
-                                </div>
-                                {(!this.state.showGraph && this.props.userType !== 'USER') && <a href="#presentGraph" data-toggle="collapse" onClick={() => this.handleShowInsight('graph')}><h4><i className="fa fa-angle-up p-2" />Graph</h4></a>}
-                                <div className="row insights">
-                                    <div id="presentStat" className={(this.state.showStat ? "show" : "") + " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"}>
+                                </div >
+                                {(!this.state.graph && this.props.userType !== 'USER') && <a
+                                    href="#presentGraph" data-toggle="collapse"
+                                    onClick={() => this.handleShowInsight('graph')} ><h4 ><i
+                                        className="fa fa-angle-up p-2" />Graph</h4 ></a >}
+                                <div className="row insights" >
+                                    <div
+                                        id="presentStat"
+                                        className={(this.state.statistics ? "show" : "") + " collapse col-lg-4 col-md-12 p-0 blue-border mr-1"} >
                                         <UserStats
                                             className="stats"
                                             getSelectedUser={this.getSelectedUser.bind(this)}
@@ -327,14 +342,25 @@ class Discussion extends Component {
                                             getShownLinks={this.getShownLinks.bind(this)}
                                             getShownNodes={this.getShownNodes.bind(this)}
                                         />
-                                    </div>
-                                    {(!this.state.showStat && this.props.userType !== 'USER') && <a href="#presentStat" data-toggle="collapse" onClick={() => this.handleShowInsight('stat')}><h4><i className="fa fa-angle-up p-2" />Statistics</h4></a>}
-                                    <div id="presentAlerts" className={(this.state.showAlerts ? "show" : "") + " collapse col p-0 blue-border"}>
-                                        <AlertList alerts={this.state.shownAlerts} handleHide={() => this.handleHideInsight('alerts')} allowHide={this.props.userType != 'USER'} />
-                                    </div>
-                                    {(!this.state.showAlerts && this.props.userType !== 'USER') && <a href="#presentAlerts" data-toggle="collapse" onClick={() => this.handleShowInsight('alerts')}><h4><i className="fa fa-angle-up p-2" />Alerts</h4></a>}
-                                </div>
-                            </div>
+                                    </div >
+                                    {(!this.state.statistics && this.props.userType !== 'USER') && <a
+                                        href="#presentStat" data-toggle="collapse"
+                                        onClick={() => this.handleShowInsight('stat')} ><h4 ><i
+                                            className="fa fa-angle-up p-2" />Statistics</h4 ></a >}
+                                    <div
+                                        id="presentAlerts"
+                                        className={(this.state.alerts ? "show" : "") + " collapse col p-0 blue-border"} >
+                                        <AlertList
+                                            alerts={this.state.shownAlerts}
+                                            handleHide={() => this.handleHideInsight('alerts')}
+                                            allowHide={this.props.userType != 'USER'} />
+                                    </div >
+                                    {(!this.state.alerts && this.props.userType !== 'USER') && <a
+                                        href="#presentAlerts" data-toggle="collapse"
+                                        onClick={() => this.handleShowInsight('alerts')} ><h4 ><i
+                                            className="fa fa-angle-up p-2" />Alerts</h4 ></a >}
+                                </div >
+                            </div >
                         }
                     </div>
                 </React.Fragment>

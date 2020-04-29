@@ -49,6 +49,8 @@ class Simulation extends Component {
             while (this.currentMessageIndex < response["currentIndex"]) {
                 this.handleNextClick(false);
             }
+            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+            response['visualConfig']['configuration']);
             this.props.handleFinishLoading();
         });
         const data = {

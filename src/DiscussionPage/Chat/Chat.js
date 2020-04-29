@@ -36,6 +36,8 @@ class Chat extends Component {
                 this.timestampMessages.sort(function (a, b) {
                     return b.timestamp - a.timestamp;
                 });
+                this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                response['visualConfig']['configuration']);
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, this.timestampMessages[0]);
                 this.props.handleFinishLoading();
             });
