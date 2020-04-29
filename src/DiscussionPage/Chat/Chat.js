@@ -37,6 +37,7 @@ class Chat extends Component {
                     return b.timestamp - a.timestamp;
                 });
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, this.timestampMessages[0]);
+                this.props.handleFinishLoading();
             });
             const data = {
                 discussion_id: this.props.discussionId,
