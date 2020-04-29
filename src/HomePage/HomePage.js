@@ -117,10 +117,9 @@ class HomePage extends Component {
                                 type="button" className="btn btn-info btn-sm"
                                 onClick={() => this.updateModalHandler(true)} >Create New Discussion
                             </button >
-                            {this.props.userType === 'ROOT' ? <button
-                                type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.changePath('/moderatorsManagement')} >Manage
-                                                                                                moderators</button > : null}
+                            {this.props.userType === 'ROOT' &&
+                                <Link to={'moderatorsManagement'}><button
+                                    type="button" className="btn btn-info btn-sm">Manage moderators</button ></Link>}
                             <CreateDiscussionModal
                                 isOpen={this.state.discussionModal}
                                 updateVisibility={this.updateModalHandler.bind(this)}
@@ -171,9 +170,7 @@ class HomePage extends Component {
                             type="button" className="btn btn-info btn-sm"
                         >Sign in</button ></Link>
                         <Link to={'registration'}>
-                            <button
-                                type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.changePath('/registration')} >Sign up
+                            <button type="button" className="btn btn-info btn-sm">Sign up
                     </button ></Link>
                     </div >
                 }
@@ -183,7 +180,7 @@ class HomePage extends Component {
 
 }
 
-const mapStateToProps=state => {
+const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
         userType: state.userType,
