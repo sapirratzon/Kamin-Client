@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import Switch from 'react-switch'
 import './Simulation.css';
 
-
 class Simulation extends Component {
 
     constructor(props) {
@@ -50,7 +49,7 @@ class Simulation extends Component {
                 response['visualConfig']['configuration']);
             this.props.handleFinishLoading();
             while (this.currentMessageIndex < response["currentIndex"]) {
-                this.handleNextClick(false);
+                this.handleNextClick(true);
             }
         });
         const data = {
@@ -83,7 +82,7 @@ class Simulation extends Component {
     };
 
     handleNavigationClickModerator = (type) => {
-        if (this.props.userType === "MODERATOR" || this.props.userType === "ROOT") {
+        if (this.props.userType !== 'USER') {
             const data = { "discussionId": this.props.discussionId };
             this.socket.emit(type, data);
         }
