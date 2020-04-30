@@ -18,7 +18,7 @@ class Chat extends Component {
         this.state = {
             root: null
         };
-        this.socket=props.socket;
+        this.socket = props.socket;
     }
 
     componentDidMount() {
@@ -37,7 +37,7 @@ class Chat extends Component {
                     return b.timestamp - a.timestamp;
                 });
                 this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
-                response['visualConfig']['configuration']);
+                    response['visualConfig']['configuration']);
                 this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, this.timestampMessages[0]);
                 this.props.handleFinishLoading();
             });
@@ -149,7 +149,7 @@ class Chat extends Component {
         if (commentNode == null) return;
         if (commentNode["node"]["comment_type"] === "alert") {
             this.props.alertsHandler(commentNode["node"])
-        } else {
+        } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
             this.shownMessages.push({
                 author: commentNode["node"]["author"],
@@ -179,9 +179,9 @@ class Chat extends Component {
                 };
                 this.nodesMap.set(commentNode["node"]["author"], node)
             }
-            else
-
+            else {
                 this.nodesMap.get(commentNode['node']['author'])['comments']++;
+            }
             const parentId = this.shownMessages.find(message =>
                 message.id === commentNode['node']['parentId']);
             if (parentId !== undefined) {
@@ -190,30 +190,32 @@ class Chat extends Component {
             }
         }
         commentNode["children"].forEach(childComment => {
-            if (childComment["node"]["author"] !== commentNode["node"]["author"]) {
-                const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
-                if (!this.linksMap.has(key)) {
-                    const link = {
-                        source: childComment["node"]["author"],
-                        target: commentNode["node"]["author"],
-                        timestamp: childComment["node"]["timestamp"],
-                        name: 1,
-                        width: 1,
-                        curvature: 0.2,
-                        color: rgb(32, 32, 32, 1),
-                        updateWidth: function (value) {
-                            this.width = value;
-                        },
-                        updateOpacity: function (value) {
-                            this.color = rgb(value[0], value[1], value[2], value[3]);
-                        },
-                    };
-                    this.linksMap.set(key, link);
-                } else {
-                    const link = this.linksMap.get(key);
-                    link.timestamp = childComment["node"]["timestamp"];
-                    link.name += 1;
-                    this.nodesMap.get(link.source).updateVal(0.05);
+            if (commentNode["node"]["comment_type"] === "comment" && childComment["node"]["comment_type"] === "comment") {
+                if (childComment["node"]["author"] !== commentNode["node"]["author"]) {
+                    const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
+                    if (!this.linksMap.has(key)) {
+                        const link = {
+                            source: childComment["node"]["author"],
+                            target: commentNode["node"]["author"],
+                            timestamp: childComment["node"]["timestamp"],
+                            name: 1,
+                            width: 1,
+                            curvature: 0.2,
+                            color: rgb(32, 32, 32, 1),
+                            updateWidth: function (value) {
+                                this.width = value;
+                            },
+                            updateOpacity: function (value) {
+                                this.color = rgb(value[0], value[1], value[2], value[3]);
+                            },
+                        };
+                        this.linksMap.set(key, link);
+                    } else {
+                        const link = this.linksMap.get(key);
+                        link.timestamp = childComment["node"]["timestamp"];
+                        link.name += 1;
+                        this.nodesMap.get(link.source).updateVal(0.05);
+                    }
                 }
             }
             this.loadDiscussion(childComment);
@@ -236,7 +238,7 @@ class Chat extends Component {
     }
 }
 
-const mapStateToProps=state => {
+const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
         token: state.token
