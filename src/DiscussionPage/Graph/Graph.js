@@ -18,7 +18,6 @@ class Graph extends Component {
 
     componentDidMount() {
         this.myRef.zoom(4, 0)
-        console.log(this.props.allowHide);
     }
 
     handleLinkHover(link) {

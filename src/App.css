@@ -21,3 +21,13 @@ html, body {
 .cursor-pointer {
     cursor: pointer;
 }
+
+.small-font{
+    font-size: 14px;
+}
+
+@media only screen and (min-height: 1000px) {
+    body {
+        overflow-y: hidden;
+    }
+}

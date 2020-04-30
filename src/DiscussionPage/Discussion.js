@@ -50,12 +50,11 @@ class Discussion extends Component {
         this.socket.on("error", (response) => {
             console.log({ response });
         });
+
         this.socket.on("new configuration", (response) => {
             this.handleNewConfig(response);
         });
-        // this.socket.on ('join room', () => {
-        //     this.setCurrentConfig();
-        // });
+
         if (this.props.userType === "MODERATOR")
             this.setState({
                 graph: true,
@@ -191,28 +190,29 @@ class Discussion extends Component {
         this.setState({ isLoading: false });
     };
 
-    handleHideInsight = (insight) => {
+    handleInsightVisibility = (insight, show) => {
         if (insight === 'graph') {
-            this.setState({ graph: false });
+            this.setState({ graph: show });
         }
         else if (insight === 'alerts') {
-            this.setState({ alerts: false });
+            this.setState({ alerts: show });
         }
         else if (insight === 'stat') {
-            this.setState({ statistics: false });
+            this.setState({ statistics: show });
         }
     }
 
-    handleShowInsight = (insight) => {
-        if (insight === 'graph') {
-            this.setState({ graph: true });
+    hashCode = (str) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
-        else if (insight === 'alerts') {
-            this.setState({ alerts: true });
-        }
-        else if (insight === 'stat') {
-            this.setState({ statistics: true });
-        }
+        return hash;
+    }
+
+    intToRGB = (i) => {
+        const c = (this.hashCode(i) & 0x00ffffff).toString(16).toUpperCase();
+        return "00000".substring(0, 6 - c.length) + c;
     }
 
     render() {
@@ -226,30 +226,24 @@ class Discussion extends Component {
                         {!this.state.isLoading &&
                             <React.Fragment >
                                 <span className="col-4" >
-                                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
-                                        this.props.isSimulation === "false" ?
+                                    {(this.props.userType !== "USER" && this.props.isSimulation === "false") &&
                                         <button
                                             type="button" className="btn btn-danger btn-sm"
                                             onClick={this.handleEndSession} >
                                             End Session
-                                            </button >
-                                        : null}
+                                        </button >
+                                    }
                                 </span >
                                 <span className="col-4" >
                                     <h3 >
                                         <b >{this.state.title}</b >
-                                        <i
-                                            className="fas fa-share-square text-primary pl-2 cursor-pointer"
-                                            data-tip="Copied!" data-event="click" />
-                                        {this.props.userType === "MODERATOR" ||
-                                            this.props.userType === "ROOT" ?
-                                            <i
-                                                className="fas fa-cog cursor-pointer"
-                                                onClick={() => this.updateModalHandler(true)} />
-                                            : null}
+                                        <i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!" data-event="click" />
+                                        {this.props.userType !== "USER" &&
+                                            <i className="fas fa-cog cursor-pointer" onClick={() => this.updateModalHandler(true)} />
+                                        }
                                     </h3 >
                                     <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
-                                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                                    {(this.props.userType !== "USER") &&
                                         <VisualizationsModal
                                             isOpen={this.state.showVisualizationSettingsModal}
                                             discussionId={this.state.discussionId}
@@ -272,7 +266,7 @@ class Discussion extends Component {
                                     discussionId={this.props.simulationCode}
                                     setTitle={this.setTitle}
                                     messagesOrder={"chronological"}
-                                    nodeColor={intToRGB}
+                                    nodeColor={this.intToRGB}
                                     socket={this.socket}
                                     updateLastMessage={this.updateLastMessage.bind(this)}
                                     isLoading={this.state.isLoading}
@@ -293,7 +287,7 @@ class Discussion extends Component {
                                 discussionId={this.props.simulationCode}
                                 updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                                 setTitle={this.setTitle}
-                                nodeColor={intToRGB}
+                                nodeColor={this.intToRGB}
                                 socket={this.socket}
                                 isLoading={this.state.isLoading}
                                 handleFinishLoading={this.handleFinishLoading}
@@ -312,14 +306,14 @@ class Discussion extends Component {
                                             currentUser={this.props.currentUser}
                                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                                             rootId={this.state.shownMessages[0]["author"]}
-                                            handleHide={() => this.handleHideInsight('graph')}
+                                            handleHide={() => this.handleInsightVisibility('graph', false)}
                                             allowHide={this.props.userType !== 'USER'}
                                         />
                                     }
                                 </div >
                                 {(!this.state.graph && this.props.userType !== 'USER') && <a
                                     href="#presentGraph" data-toggle="collapse"
-                                    onClick={() => this.handleShowInsight('graph')} ><h4 ><i
+                                    onClick={() => this.handleInsightVisibility('graph', true)} ><h4 ><i
                                         className="fa fa-angle-up p-2" />Graph</h4 ></a >}
                                 <div className="row insights" >
                                     <div
@@ -332,7 +326,7 @@ class Discussion extends Component {
                                             getShownMessages={this.getShownMessages.bind(this)}
                                             getShownLinks={this.getShownLinks.bind(this)}
                                             getShownNodes={this.getShownNodes.bind(this)}
-                                            handleHide={() => this.handleHideInsight('stat')}
+                                            handleHide={() => this.handleInsightVisibility('stat', false)}
                                             allowHide={this.props.userType !== 'USER'}
                                         />
                                         <DiscussionStats
@@ -345,19 +339,19 @@ class Discussion extends Component {
                                     </div >
                                     {(!this.state.statistics && this.props.userType !== 'USER') && <a
                                         href="#presentStat" data-toggle="collapse"
-                                        onClick={() => this.handleShowInsight('stat')} ><h4 ><i
+                                        onClick={() => this.handleInsightVisibility('stat', true)} ><h4 ><i
                                             className="fa fa-angle-up p-2" />Statistics</h4 ></a >}
                                     <div
                                         id="presentAlerts"
                                         className={(this.state.alerts ? "show" : "") + " collapse col p-0 alerts"} >
                                         <AlertList
                                             alerts={this.state.shownAlerts}
-                                            handleHide={() => this.handleHideInsight('alerts')}
-                                            allowHide={this.props.userType != 'USER'} />
+                                            handleHide={() => this.handleInsightVisibility('alerts', false)}
+                                            allowHide={this.props.userType !== 'USER'} />
                                     </div >
                                     {(!this.state.alerts && this.props.userType !== 'USER') && <a
                                         href="#presentAlerts" data-toggle="collapse"
-                                        onClick={() => this.handleShowInsight('alerts')} ><h4 ><i
+                                        onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
                                             className="fa fa-angle-up p-2" />Alerts</h4 ></a >}
                                 </div >
                             </div >
@@ -367,19 +361,6 @@ class Discussion extends Component {
             </div>
         );
     }
-}
-
-function hashCode(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-}
-
-function intToRGB(i) {
-    const c = (hashCode(i) & 0x00ffffff).toString(16).toUpperCase();
-    return "00000".substring(0, 6 - c.length) + c;
 }
 
 const mapStateToProps = (state) => {
