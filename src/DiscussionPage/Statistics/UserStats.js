@@ -53,7 +53,7 @@ class UserStats extends Component {
 
     render() {
         return (
-            <div className="card card-stats" >
+            <div className="card card-stats small-font" >
                 <div className="card-header p-1" >
                     {this.props.allowHide && <h4 className="Card-title" ><a href="#presentStat" data-toggle="collapse" onClick={this.props.handleHide}>
                         <i className="fa fa-angle-down" /></a>Statistics of {this.state.selectedUser} </h4 >}

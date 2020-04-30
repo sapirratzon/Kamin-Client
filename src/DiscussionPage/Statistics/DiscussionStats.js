@@ -33,7 +33,7 @@ class DiscussionStats extends Component {
 
     render() {
         return (
-            <div className="card card-stats" >
+            <div className="card card-stats small-font" >
                 <div className="card-header p-1" >
                     <h4 className="Card-title" >Discussion Statistics</h4 >
                 </div >
