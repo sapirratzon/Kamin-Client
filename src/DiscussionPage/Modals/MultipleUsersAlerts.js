@@ -8,11 +8,13 @@ class MultipleUsersAlerts extends Component {
         super(props);
         this.socket = this.props.socket;
         this.activeUsers = {};
+        this.noUsers= '';
         this.state = {
             activeUsers: {},
             alertedUsers: {},
             alertedAll: false,
             userAlerted: false,
+            alertText: '',
             error: ''
         }
     }
@@ -20,53 +22,37 @@ class MultipleUsersAlerts extends Component {
     componentDidMount() {
         this.socket.on("new user", (response) => {
             const allUsers = response;
-            this.activeUsers = {'all': false};
-            Object.keys(allUsers).forEach(user => {
-                this.activeUsers[allUsers[user]]= false;
-            });
-            // this.setState({
-            //     activeUsers: activeUsers,
-            // });
-            console.log(this.activeUsers);
-            // this.loadActiveUsers();
+            if (Object.keys(allUsers).length > 0) {
+                    this.noUsers = 'Choose Users:';
+                this.activeUsers = {'all': false};
+                Object.keys(allUsers).forEach(user => {
+                    this.activeUsers[allUsers[user]]= false;
+                });
+            }
+            else {
+                this.noUsers = 'There are no users in discussion';
+            }
         })
-    }
-
-    loadActiveUsers() {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener('load', () => {
-            const allUsers = JSON.parse(xhr.responseText)['active_users'];
-            let activeUsers = {'all': false};
-            Object.keys(allUsers).forEach(user => {
-                activeUsers[allUsers[user]]= false;
-            });
-            this.setState({
-                activeUsers: activeUsers,
-            });
-
-        });
-        xhr.open('GET', process.env.REACT_APP_API + '/api/getActiveDiscussionUsers/' + this.props.discussionId);
-        xhr.send();
     }
 
     updateVisibility = (isOpen) => {
         this.props.updateVisibility(isOpen);
+        this.setState({ error: ''});
         this.setState({
             userAlerted: false,
-            alertedAll: false
+            alertedAll: false,
         })
     };
 
     handleWriteAlert = (event) => {
         const alertText = event.target.value;
+        this.setState({ error: ''});
         this.setState({
-            error: '',
-            alert: alertText
+            alertText: alertText
         });
     };
 
     updateIsUserAlerted = (event) => {
-        // let allUsers = this.state.activeUsers;
         let allUsers = this.activeUsers;
         if (event.target.name === 'all') {
             Object.keys(allUsers).forEach(user => {
@@ -90,12 +76,24 @@ class MultipleUsersAlerts extends Component {
         }
     };
 
-    sendAlert = () => {
-        if (! (this.state.userAlerted || this.state.alertedAll) && this.state.alert.length === 0){
-            this.setState({
-                error: 'Description is required'
-            })
+    validateFields = () => {
+        if (! (this.state.userAlerted || this.state.alertedAll)){
+                this.setState({
+                    error: 'You must select users from the list.'
+                });
+            return false;
         }
+        if (this.state.alertText.length === 0) {
+            this.setState({
+                error: 'Alert is required'
+            });
+            return false;
+        }
+        return true;
+    };
+
+    sendAlert = () => {
+        if (!this.validateFields()) return;
         let type = '';
         let alertComment = {};
         if (this.state.userAlerted) {
@@ -126,6 +124,9 @@ class MultipleUsersAlerts extends Component {
         if (this.state.userAlerted || this.state.alertedAll) {
             this.socket.emit('add alert', JSON.stringify(alertComment));
         }
+        this.setState({
+            alertText: ''
+        });
         this.updateVisibility(false);
     };
 
@@ -136,7 +137,7 @@ class MultipleUsersAlerts extends Component {
                     <h5 className="modal-title" >Send Alert</h5 >
                 </div >
                 <div className="modal-body modal-body-alerts" >
-                    <p><b> Choose Users: </b></p>
+                    <p><b> {this.noUsers} </b></p>
                         <table className="table-alerts w-50" >
                             <tbody >
                             {Object.keys(this.activeUsers).map((id) =>

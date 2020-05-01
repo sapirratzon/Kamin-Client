@@ -8,28 +8,33 @@ import CheckBox from './Checkbox';
 class CreateDiscussionModal extends Component {
     constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             description: '',
+            descriptionError: '',
             title: '',
-            submitted: false,
+            titleError: '',
             replyPosition: "None",
             graphChecked: true,
             statsChecked: true,
             alertsChecked: true,
         };
-        this.configuration={
+        this.configuration = {
             vis_config: {"graph": true, "alerts": true, "statistics": true},
             replyPosition: "None"
         }
     }
 
-    handleChange=(e) => {
-        const {name, value}=e.target;
+    handleChange = (e) => {
+        this.setState({
+            titleError: '',
+            descriptionError: ''
+        });
+        const {name, value} = e.target;
         this.setState({[name]: value});
     };
 
-    vizConfigChange=(type) => {
-        this.configuration.vis_config[type]= !this.configuration.vis_config[type];
+    vizConfigChange = (type) => {
+        this.configuration.vis_config[type] = !this.configuration.vis_config[type];
         if (type === "graph") {
             this.setState({graphChecked: this.configuration.vis_config[type]})
         }
@@ -41,61 +46,66 @@ class CreateDiscussionModal extends Component {
         }
     };
 
-    replyConfigChange=(type) => {
+    replyConfigChange = (type) => {
         this.setState({replyPosition: type});
-        this.configuration.replyPosition=type;
+        this.configuration.replyPosition = type;
     };
 
-    changePath=(path) => {
+    changePath = (path) => {
         this.props.path.push(path);
     };
 
-    createDiscussion=() => {
-        this.setState({submitted: true});
-        const {description, title}=this.state;
-        if (description && title) {
-            const xhr=new XMLHttpRequest();
-            xhr.addEventListener('load', () => {
-                if (xhr.status === 401) {
-                    this.props.onLogOut();
-                } else {
-                    let discussion_id=JSON.parse(xhr.responseText)["discussion_id"];
-                    this.changePath('/Discussion/false/' + discussion_id);
-                    this.updateVisibility(false)
-                }
+    createDiscussion = () => {
+        const {description, title} = this.state;
+        if (!title) {
+            this.setState({
+                titleError: 'Title is required'
             });
-            xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
-            xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
-            xhr.setRequestHeader("Content-Type", "application/json");
-            const comment={
-                "author": this.props.currentUser,
-                "text": description,
-                "parentId": null,
-                "discussionId": "",
-                "extra_data": null,
-                "timestamp": null,
-                "depth": 0
-            };
-            xhr.send(JSON.stringify({
-                title: title,
-                categories: [],
-                root_comment_dict: comment,
-                configuration: this.configuration
-            }));
+            return;
         }
+        if (!description) {
+            this.setState({
+                descriptionError: 'Description is required'
+            });
+            return;
+        }
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', () => {
+            if (xhr.status === 401) {
+                this.props.onLogOut();
+            } else {
+                let discussion_id = JSON.parse(xhr.responseText)["discussion_id"];
+                this.changePath('/Discussion/false/' + discussion_id);
+            }
+        });
+        xhr.open('POST', process.env.REACT_APP_API + '/api/createDiscussion');
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        const comment = {
+            "author": this.props.currentUser,
+            "text": description,
+            "parentId": null,
+            "discussionId": "",
+            "extra_data": null,
+            "timestamp": null,
+            "depth": 0
+        };
+        xhr.send(JSON.stringify({
+            title: title,
+            categories: [],
+            root_comment_dict: comment,
+            configuration: this.configuration
+        }));
     };
 
 
-    updateVisibility=(isOpen) => {
+    updateVisibility = (isOpen) => {
         this.props.updateVisibility(isOpen);
     };
 
     render() {
-        const {description, title, submitted}=this.state;
         return (
             <Modal visible={ this.props.isOpen } >
-
-                {/* onClickBackdrop={this.modalBackdropClicked}> */ }
                 <div className="modal-header" >
                     <h5 className="modal-title" >Create New Discussion</h5 >
                 </div >
@@ -105,9 +115,7 @@ class CreateDiscussionModal extends Component {
                         <input
                             type="text" className="title-input" value={ this.state.title } name="title"
                             placeholder="Enter Title" onChange={ this.handleChange.bind(this) } />
-                        { submitted && !title &&
-                        <div className="help-block text-danger" >Title is required</div >
-                        }
+                        <p > { this.state.titleError } </p >
                     </div >
                     <div >
                         <p className="description" >Description:</p >
@@ -115,9 +123,7 @@ class CreateDiscussionModal extends Component {
                             className="description-input" name="description" value={ this.state.description }
                             placeholder={ "Write Something" } onChange={ this.handleChange.bind(this) }
                         />
-                        { submitted && !description &&
-                        <div className="help-block text-danger" >Description is required</div >
-                        }
+                        <p> {this.state.descriptionError} </p>
                     </div >
                     <div >
                         <label className="config" >Visualization Config:</label >
@@ -161,7 +167,7 @@ class CreateDiscussionModal extends Component {
                     </button >
                     <button
                         className="btn btn-info"
-                        onClick={ () => this.createDiscussion(description, title) } >Create
+                        onClick={ this.createDiscussion } >Create
                     </button >
                 </div >
             </Modal >
@@ -169,14 +175,14 @@ class CreateDiscussionModal extends Component {
     }
 }
 
-const mapStateToProps=state => {
+const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
         token: state.token
     };
 };
 
-const mapDispatchToProps=(dispatch) => {
+const mapDispatchToProps = (dispatch) => {
     return {
         onLogOut: () => dispatch({type: 'LOGOUT'})
     };

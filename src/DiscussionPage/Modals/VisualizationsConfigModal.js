@@ -13,7 +13,6 @@ class VisualizationsModal extends Component {
             activeUsers: {},
             updateAll: false,
             updateUser: false,
-            error: ''
         }
     }
 
