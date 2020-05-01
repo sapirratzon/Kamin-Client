@@ -2,8 +2,7 @@ import React from "react";
 import Message from './Message';
 
 
-const Messages=(props) => {
-
+const Messages = (props) => {
 
     return (
         <ul className="Messages-list" >
