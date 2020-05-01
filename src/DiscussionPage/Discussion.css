@@ -40,3 +40,12 @@
 hr {
     margin-top: auto;
 }
+
+.multipleAlerts {
+    background-color: transparent;
+}
+
+.endSession, .multipleAlerts {
+    height: 44px;
+    font-size: 14px;
+}

@@ -1,0 +1,9 @@
+.btn-primary {
+    border-radius: 25px;
+    color: #fff;
+    background-color: #3dc6d4 !important;
+}
+
+.login-btn {
+    text-align-last: center;
+}

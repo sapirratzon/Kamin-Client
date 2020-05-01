@@ -122,13 +122,13 @@ class CreateDiscussionModal extends Component {
                     <div >
                         <label className="config" >Visualization Config:</label >
                         <CheckBox
-                            changeHandler={ this.vizConfigChange } text="graph"
+                            changeHandler={ this.vizConfigChange } type="graph" text="graph"
                             checked={ this.state.graphChecked } />
                         <CheckBox
-                            changeHandler={ this.vizConfigChange } text="statistics"
+                            changeHandler={ this.vizConfigChange } type="statistics" text="statistics"
                             checked={ this.state.statsChecked } />
                         <CheckBox
-                            changeHandler={ this.vizConfigChange } text="alerts"
+                            changeHandler={ this.vizConfigChange } type="alerts" text="alerts"
                             checked={ this.state.alertsChecked } />
                         <div className="dropdown" >
                             <label >Default reply position: </label >
