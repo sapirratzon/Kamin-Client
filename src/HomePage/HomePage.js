@@ -8,17 +8,17 @@ import Loader from 'react-loader-spinner'
 class HomePage extends Component {
     constructor(props) {
         super(props);
-        this.realTimeDiscussions = {};
-        this.simulationDiscussions = {};
-        this.isLoading = false;
         this.state = {
             isSimulation: "false",
             discussionModal: false,
             simulationCodeModal: false,
+            simulationDiscussions: {},
+            realTimeDiscussions: {},
             selectedRealTimeDiscussion: '',
             selectedSimulationDiscussion: '',
             typedId: '',
             error: '',
+            isLoading: false
         };
     }
 
@@ -29,7 +29,10 @@ class HomePage extends Component {
                 if (xhrRealTime.status === 401) {
                     this.props.onLogOut();
                 } else {
-                    this.realTimeDiscussions = JSON.parse(xhrRealTime.responseText)["discussions"];
+                    const realTimeDiscussions = JSON.parse(xhrRealTime.responseText)["discussions"];
+                    this.setState({
+                        realTimeDiscussions: realTimeDiscussions,
+                    });
                 }
             });
             xhrRealTime.open('GET', process.env.REACT_APP_API + '/api/getDiscussions/False');
@@ -40,11 +43,14 @@ class HomePage extends Component {
                 if (xhrSimulation.status === 401) {
                     this.props.onLogOut();
                 } else {
-                    this.simulationDiscussions = JSON.parse(xhrSimulation.responseText)["discussions"];
+                    const simulationDiscussions = JSON.parse(xhrSimulation.responseText)["discussions"];
+                    this.setState({
+                        simulationDiscussions: simulationDiscussions,
+                    });
                 }
-                this.isLoading = false;
+                this.setState({isLoading: false});
             });
-            this.isLoading = true;
+            this.setState({ isLoading: true });
             xhrSimulation.open('GET', process.env.REACT_APP_API + '/api/getDiscussions/True');
             xhrSimulation.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
             xhrSimulation.send();
@@ -77,7 +83,7 @@ class HomePage extends Component {
 
     handleTypedId = (event) => {
         let id = event.target.value;
-        let isSimulation = Object.keys(this.simulationDiscussions).includes(id);
+        let isSimulation = Object.keys(this.state.simulationDiscussions).includes(id);
         this.setState({
             isSimulation: isSimulation,
             selectedSimulationDiscussion: '',
@@ -89,7 +95,7 @@ class HomePage extends Component {
     handleJoinClick = (event) => {
         event.preventDefault();
         if ((!this.state.selectedRealTimeDiscussion && !this.state.selectedSimulationDiscussion && !this.state.typedId) ||
-            (this.state.typedId && !Object.keys(this.simulationDiscussions).includes(this.state.typedId) && !Object.keys(this.realTimeDiscussions).includes(this.state.typedId))) {
+            (this.state.typedId && !Object.keys(this.state.simulationDiscussions).includes(this.state.typedId) && !Object.keys(this.state.realTimeDiscussions).includes(this.state.typedId))) {
             this.setState({
                 error: 'Invalid discussion id'
             });
@@ -123,7 +129,7 @@ class HomePage extends Component {
                         isOpen={ this.state.discussionModal }
                         updateVisibility={ this.updateModalHandler.bind(this) }
                         path={ this.props.history } />
-                    { !this.isLoading ?
+                    { !this.state.isLoading ?
                         this.props.userType !== 'ROOT' &&
                         <form onSubmit={ this.handleJoinClick } >
                             <h3 >Join existing discussions:</h3 >
@@ -134,10 +140,10 @@ class HomePage extends Component {
                                     className="discussions" value={ this.state.selectedSimulationDiscussion }
                                     onChange={ (e) => { this.handleSelectedDiscussion(e, true) } } >
                                     <option value="" >Select Discussion</option >
-                                    { Object.keys(this.simulationDiscussions).map((id) =>
+                                    { Object.keys(this.state.simulationDiscussions).map((id) =>
                                         <option
                                             key={ id }
-                                            value={ id } >{ this.simulationDiscussions[id] }, { id }</option >) }
+                                            value={ id } >{ this.state.simulationDiscussions[id] }, { id }</option >) }
                                 </select >
                             </span >
                                 <span className="col-6" >
@@ -146,10 +152,10 @@ class HomePage extends Component {
                                     className="discussions" value={ this.state.selectedRealTimeDiscussion }
                                     onChange={ (e) => { this.handleSelectedDiscussion(e, false) } } >
                                     <option value="" >Select Discussion</option >
-                                    { Object.keys(this.realTimeDiscussions).map((id) =>
+                                    { Object.keys(this.state.realTimeDiscussions).map((id) =>
                                         <option
                                             key={ id }
-                                            value={ id } >{ this.realTimeDiscussions[id] }, { id }</option >) }
+                                            value={ id } >{ this.state.realTimeDiscussions[id] }, { id }</option >) }
                                 </select >
                             </span >
                             </div >
