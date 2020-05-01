@@ -134,7 +134,8 @@ class Chat extends Component {
                     id: messageId,
                     text: message,
                     timestamp: timestamp,
-                    children: []
+                    children: [],
+                    comment_type: "comment"
                 },
                 children: []
             });
