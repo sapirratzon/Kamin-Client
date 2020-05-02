@@ -134,8 +134,7 @@ class Message extends Component {
                             {this.state.shownText}
                             {this.state.longMessage && <b
                                 className="text-primary message-buttons"
-                                onClick={this.handleMessageDisplayLength} > {this.state.textLengthMessage} </b >}
-
+                            > {this.state.textLengthMessage} </b >}
                         </div >
                         {!this.props.isSimulation ?
                             <React.Fragment >
