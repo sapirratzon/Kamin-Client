@@ -62,28 +62,30 @@ class UserStats extends Component {
                     }
                 </div >
                 <div className="card-body p-1" >
-                    <div className="container" >
-                        <div className="row xs-2" >
-                            <div className="col-8" >Comments Written:</div >
-                            <div className="col" >{this.state.commentsWritten}</div >
-                        </div >
-                        <div className="row xs-2" >
-                            <div className="col-8" >Responded Users:</div >
-                            <div className="col" >{this.state.usersResponded}</div >
-                        </div >
-                        <div className="row xs-2" >
-                            <div className="col-8" >Comments Received:</div >
-                            <div className="col" >{this.state.commentsReceived}</div >
-                        </div >
-                        <div className="row xs-2" >
-                            <div className="col-8" >Users Replied:</div >
-                            <div className="col" >{this.state.repliedUsers}</div >
-                        </div >
-                        <div className="row xs-2" >
-                            <div className="col-8" >Words Written:</div >
-                            <div className="col" >{this.state.wordsWritten}</div >
-                        </div >
-                    </div >
+                    <table className="mx-auto table-sm table-striped h-100" >
+                        < tbody>
+                            <tr className="row xs-2" >
+                                <th className="col-8" >Comments Written:</th >
+                                <th className="col " >{this.state.commentsWritten}</th >
+                            </tr >
+                            <tr className="row xs-2" >
+                                <th className="col-8" >Responded Users:</th >
+                                <th className="col" >{this.state.usersResponded}</th >
+                            </tr >
+                            <tr className="row xs-2" >
+                                <th className="col-8" >Comments Received:</th >
+                                <th className="col" >{this.state.commentsReceived}</th >
+                            </tr >
+                            <tr className="row xs-2" >
+                                <th className="col-8" >Users Replied:</th >
+                                <th className="col" >{this.state.repliedUsers}</th >
+                            </tr >
+                            <tr className="row xs-2" >
+                                <th className="col-8" >Words Written:</th >
+                                <th className="col" >{this.state.wordsWritten}</th >
+                            </tr >
+                        </ tbody>
+                    </table >
                 </div >
             </div >
         );
