@@ -48,7 +48,7 @@ class HomePage extends Component {
                         simulationDiscussions: simulationDiscussions,
                     });
                 }
-                this.setState({isLoading: false});
+                this.setState({ isLoading: false });
             });
             this.setState({ isLoading: true });
             xhrSimulation.open('GET', process.env.REACT_APP_API + '/api/getDiscussions/True');
@@ -109,81 +109,81 @@ class HomePage extends Component {
         return (
             <div className="HomePage" >
                 <div className="headline" />
-                { this.props.currentUser ? <div className="container" >
-                    { this.props.userType === 'MODERATOR' &&
-                    <React.Fragment >
-                        <p >Moderation tools:</p >
-                        <button
-                            type="button" className="btn btn-info btn-sm"
-                            onClick={ () => this.updateModalHandler(true) } >Create New Discussion
+                {this.props.currentUser ? <div className="container" >
+                    {this.props.userType !== 'USER' &&
+                        <React.Fragment >
+                            <p >Moderation tools:</p >
+                            <button
+                                type="button" className="btn btn-info btn-sm"
+                                onClick={() => this.updateModalHandler(true)} >Create New Discussion
                         </button >
-                    </React.Fragment >
+                        </React.Fragment >
                     }
-                    { this.props.userType === 'ROOT' &&
-                    <Link to={ '/moderatorsManagement' } >
-                        <button
-                            type="button" className="btn btn-info btn-sm" >Manage moderators
+                    {this.props.userType === 'ROOT' &&
+                        <Link to={'/moderatorsManagement'} >
+                            <button
+                                type="button" className="btn btn-info btn-sm" >Manage moderators
                         </button >
-                    </Link > }
+                        </Link >}
                     <CreateDiscussionModal
-                        isOpen={ this.state.discussionModal }
-                        updateVisibility={ this.updateModalHandler.bind(this) }
-                        path={ this.props.history } />
-                    { !this.state.isLoading ?
-                        this.props.userType !== 'ROOT' &&
-                        <form onSubmit={ this.handleJoinClick } >
+                        isOpen={this.state.discussionModal}
+                        updateVisibility={this.updateModalHandler.bind(this)}
+                        path={this.props.history} />
+                    {!this.state.isLoading ?
+                        <form onSubmit={this.handleJoinClick} >
                             <h3 >Join existing discussions:</h3 >
                             <div className="row text-center" >
-                            <span className="col-6" >
-                                <p >Simulations:</p >
-                                <select
-                                    className="discussions" value={ this.state.selectedSimulationDiscussion }
-                                    onChange={ (e) => { this.handleSelectedDiscussion(e, true) } } >
-                                    <option value="" >Select Discussion</option >
-                                    { Object.keys(this.state.simulationDiscussions).map((id) =>
-                                        <option
-                                            key={ id }
-                                            value={ id } >{ this.state.simulationDiscussions[id] }, { id }</option >) }
-                                </select >
-                            </span >
                                 <span className="col-6" >
-                                <p >Real time:</p >
-                                <select
-                                    className="discussions" value={ this.state.selectedRealTimeDiscussion }
-                                    onChange={ (e) => { this.handleSelectedDiscussion(e, false) } } >
-                                    <option value="" >Select Discussion</option >
-                                    { Object.keys(this.state.realTimeDiscussions).map((id) =>
-                                        <option
-                                            key={ id }
-                                            value={ id } >{ this.state.realTimeDiscussions[id] }, { id }</option >) }
-                                </select >
-                            </span >
+                                    <p >Simulations:</p >
+                                    <select
+                                        className="discussions" value={this.state.selectedSimulationDiscussion}
+                                        onChange={(e) => { this.handleSelectedDiscussion(e, true) }} >
+                                        <option value="" >Select Discussion</option >
+                                        {Object.keys(this.state.simulationDiscussions).map((id) =>
+                                            <option
+                                                key={id}
+                                                value={id} >{this.state.simulationDiscussions[id]}, {id}</option >)}
+                                    </select >
+                                </span >
+                                <span className="col-6" >
+                                    <p >Real time:</p >
+                                    <select
+                                        className="discussions" value={this.state.selectedRealTimeDiscussion}
+                                        onChange={(e) => { this.handleSelectedDiscussion(e, false) }} >
+                                        <option value="" >Select Discussion</option >
+                                        {Object.keys(this.state.realTimeDiscussions).map((id) =>
+                                            <option
+                                                key={id}
+                                                value={id} >{this.state.realTimeDiscussions[id]}, {id}</option >)}
+                                    </select >
+                                </span >
                             </div >
                             <span className="font-size-xxl" >Or</span >
                             <input
                                 type="text" className="codeInput form-control" name="unique"
-                                placeholder="Enter code" onChange={ this.handleTypedId }
-                                value={ this.state.typedId } />
-                            <p className="text-danger" >{ this.state.error }</p >
+                                placeholder="Enter code" onChange={this.handleTypedId}
+                                value={this.state.typedId} />
+                            <p className="text-danger" >{this.state.error}</p >
                             <button className="btn btn-info btn-sm" >Join</button >
                         </form > :
-                        <Loader className="mt-3" type="TailSpin" color="#007bff" height={ 80 } width={ 80 } /> }
+                        <Loader className="mt-3" type="TailSpin" color="#007bff" height={80} width={80} />
+                    }
 
                 </div > : <div >
-                    <h1 >Hi and welcome to Kamin!</h1 >
-                    <h3 >In order to use the application you need to create an account or sign in if you already have
+                        <h1 >Hi and welcome to Kamin!</h1 >
+                        <h3 >In order to use the application you need to create an account or sign in if you already have
                          one.</h3 >
-                    <Link to={ '/login' } >
-                        <button
-                            type="button" className="btn btn-info btn-sm"
-                        >Sign in
+                        <Link to={'/login'} >
+                            <button
+                                type="button" className="btn btn-info btn-sm"
+                            >Sign in
                         </button >
-                    </Link >
-                    <Link to={ '/registration' } >
-                        <button type="button" className="btn btn-info btn-sm" >Sign up
+                        </Link >
+                        <Link to={'/registration'} >
+                            <button type="button" className="btn btn-info btn-sm" >Sign up
                         </button >
-                    </Link >
-                </div >
+                        </Link >
+                    </div >
                 }
             </div >
         );
@@ -201,7 +201,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogOut: () => dispatch({type: 'LOGOUT'})
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
     };
 };
 
