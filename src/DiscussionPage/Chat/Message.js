@@ -73,7 +73,7 @@ class Message extends Component {
     sendMessageHandler = (message) => {
         if (message.length === 0) return;
         if (this.state.showReplyInput) {
-            this.props.newCommentHandler(this.props.id, "Guy", message, this.props.depth + 1);
+            this.props.newCommentHandler(this.props.id, message, this.props.depth + 1);
             this.replyHandler();
         } else {
             this.props.newAlertHandler(this.props.id, message, this.props.depth + 1);

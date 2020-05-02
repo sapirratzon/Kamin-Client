@@ -13,7 +13,7 @@ class Simulation extends Component {
         this.allMessages = [];
         this.regularMessages = [];
         this.chronologicMessages = [];
-        this.allAlerts = [];
+        this.shownAlerts = [];
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
@@ -29,7 +29,7 @@ class Simulation extends Component {
     componentDidMount() {
         this.socket.on('join room', (response) => {
             this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-            this.getMessagesNodesLinks(response["discussionDict"]["tree"]);
+            this.loadMessages(response["discussionDict"]["tree"]);
             this.chronologicMessages.sort(function (a, b) {
                 return a.timestamp - b.timestamp;
             });
@@ -44,7 +44,7 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
-            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, []);
+            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownLinks);
             this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
                 response['visualConfig']['configuration']);
             this.props.handleFinishLoading();
@@ -60,16 +60,14 @@ class Simulation extends Component {
         this.handleModeratorActions();
     }
 
-    getMessagesNodesLinks = (node) => {
+    loadMessages = (node) => {
         if (node == null) return;
-        if (node["node"]["isAlerted"])
-            this.props.alertsHandler({ "position": this.messagesCounter, "text": node["node"]["actions"][0] });
         this.messagesCounter++;
         node["node"].color = "#" + this.props.nodeColor(node["node"]["author"]);
         this.regularMessages.push(node["node"]);
         this.chronologicMessages.push(node["node"]);
         node["children"].forEach(child => {
-            this.getMessagesNodesLinks(child);
+            this.loadMessages(child);
         });
     };
 
@@ -91,6 +89,11 @@ class Simulation extends Component {
     handleNextClick = (toUpdateState) => {
         if (this.currentMessageIndex === this.allMessages.length) return;
         const nextMessage = this.allMessages[this.currentMessageIndex];
+        if (nextMessage["comment_type"] !== "comment" ) {
+            this.shownAlerts.push(nextMessage)
+            this.update(1, true);
+            return;
+        }
         const userName = nextMessage.author;
         const parentId = nextMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
@@ -111,6 +114,11 @@ class Simulation extends Component {
         if (this.currentMessageIndex === 1) return;
         const messageIndex = this.currentMessageIndex - 1;
         let deletedMessage = this.allMessages[messageIndex];
+        if (deletedMessage["comment_type"] !== "comment" ) {
+            this.shownAlerts.pop();
+            this.update(-1, true);
+            return;
+        }
         const userName = deletedMessage.author;
         const parentId = deletedMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
@@ -245,14 +253,14 @@ class Simulation extends Component {
         while (this.currentMessageIndex < this.allMessages.length) {
             this.handleNextClick(false);
         }
-        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks,[]);
+        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
     };
 
     handleResetClick = () => {
         while (this.currentMessageIndex !== 1) {
             this.handleBackClick(false);
         }
-        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, []);
+        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
     };
 
     handleOrderSettings = () => {
@@ -273,7 +281,7 @@ class Simulation extends Component {
     update(dif, toUpdateState) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
         if (toUpdateState) {
-            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, []);
+            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
         }
     };
 

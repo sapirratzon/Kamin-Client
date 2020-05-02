@@ -38,7 +38,7 @@ class Chat extends Component {
                     return b.timestamp - a.timestamp;
                 });
                 this.shownAlerts.sort(function (a, b) {
-                    return b.timestamp - a.timestamp;
+                    return a.timestamp - b.timestamp;
                 });
                 this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
                     response['visualConfig']['configuration']);
@@ -75,12 +75,11 @@ class Chat extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
-        this.shownAlerts = [];
         this.loadDiscussion(this.state.root);
         this.updateGraph();
     }
 
-    sendComment(targetId, author, message, depth) {
+    sendComment(targetId, message, depth) {
         const comment = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
