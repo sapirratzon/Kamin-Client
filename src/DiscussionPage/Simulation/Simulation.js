@@ -60,6 +60,7 @@ class Simulation extends Component {
         this.handleModeratorActions();
     }
 
+
     loadMessages = (node) => {
         if (node == null) return;
         this.messagesCounter++;

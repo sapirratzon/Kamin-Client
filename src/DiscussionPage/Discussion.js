@@ -28,7 +28,7 @@ class Discussion extends Component {
             showVisualizationSettingsModal: false,
             showSentMultipleAlertsModal: false,
             title: "",
-            selectedUser: null,
+            selectedUser: "",
             lastMessage: {},
             graph: true,
             alerts: true,
@@ -62,7 +62,9 @@ class Discussion extends Component {
             });
     }
 
-    component
+    componentWillUnmount(){
+        this.socket.emit('leave');
+    }
 
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
         console.log('discussionVisualConfig');

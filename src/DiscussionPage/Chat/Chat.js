@@ -57,6 +57,7 @@ class Chat extends Component {
         }
     };
 
+
     updateGraph() {
         this.shownLinks = Array.from(this.linksMap.values());
         this.shownNodes = Array.from(this.nodesMap.values());
