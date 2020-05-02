@@ -111,11 +111,11 @@ class VisualizationsModal extends Component {
         if (!this.props.isSimulation) {
             let text = '';
             for (const [user, actions] of Object.entries(usersList)) {
-                text += `User:${user}, Action:${JSON.stringify(actions)}`;
+                text += `User : ${user}, Action : ${JSON.stringify(actions)}`;
             }
             Object.assign(configComment, {
                 'author': this.props.currentUser,
-                'text': `Config-${text}`,
+                'text': text,
                 'parentId': this.props.lastMessage.id,
                 'depth': this.props.lastMessage.depth
             })

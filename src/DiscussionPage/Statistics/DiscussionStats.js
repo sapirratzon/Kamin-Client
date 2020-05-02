@@ -40,24 +40,24 @@ class DiscussionStats extends Component {
                 <div className="card-header p-1" >
                     <h4 className="Card-title" >Discussion Statistics</h4 >
                 </div >
-                <div className="card-body p-1" >
-                    <table className="mx-auto table-sm table-striped h-100" >
+                <div className="card-body p-1 table-wrap" >
+                    <table className="mx-auto table-sm table " >
                         < tbody>
-                            <tr className="row xs-2" >
-                                <th className="col-8" >Participants:</th >
-                                <th className="col" >{this.state.participants}</th  >
+                            <tr className="row xs-2 mb-0 pb-0" >
+                                <td className="col-8" >Participants:</td >
+                                <td className="col" >{this.state.participants}</td  >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Comments:</th >
-                                <th className="col" >{this.state.comments}</th >
+                                <td className="col-8" >Comments:</td >
+                                <td className="col" >{this.state.comments}</td >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Replied Most Comments:</th >
-                                <th className="col" >{this.state.repliedMost}</th >
+                                <td className="col-8" >Replied Most Comments:</td >
+                                <td className="col" >{this.state.repliedMost}</td >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Received Most Comments:</th >
-                                <th className="col" >{this.state.receivedMost}</th >
+                                <td className="col-8" >Received Most Comments:</td >
+                                <td className="col" >{this.state.receivedMost}</td >
                             </tr >
                         </tbody>
                     </table >
