@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './RegisterPage.css'
 
 class Registration extends Component {
     constructor(props) {
@@ -55,43 +56,47 @@ class Registration extends Component {
                     <h2 >Register</h2 >
                     <form name="form" onSubmit={ this.handleSubmit } >
                         <div className={ 'form-group' + (submitted && !user.username ? ' has-error' : '') } >
-                            <label htmlFor="username" >Username</label >
+                            {/*<label htmlFor="username" >Username</label >*/}
                             <input
                                 type="text" className="form-control" name="username" value={ user.username }
+                                placeholder="Username"
                                 onChange={ this.handleChange } />
                             { submitted && !user.username &&
                             <div className="help-block text-danger" >Username is required</div >
                             }
                         </div >
                         <div className={ 'form-group' + (submitted && !user.password ? ' has-error' : '') } >
-                            <label htmlFor="password" >Password</label >
+                            {/*<label htmlFor="password" >Password</label >*/}
                             <input
                                 type="password" className="form-control" name="password" value={ user.password }
+                                placeholder="Password"
                                 onChange={ this.handleChange } />
                             { submitted && !user.password &&
                             <div className="help-block text-danger" >Password is required</div >
                             }
                         </div >
                         <div className={ 'form-group' + (submitted && !user.firstName ? ' has-error' : '') } >
-                            <label htmlFor="firstName" >First Name</label >
+                            {/*<label htmlFor="firstName" >First Name</label >*/}
                             <input
                                 type="text" className="form-control" name="firstName" value={ user.firstName }
+                                placeholder="First Name"
                                 onChange={ this.handleChange } />
                             { submitted && !user.firstName &&
                             <div className="help-block text-danger" >First Name is required</div >
                             }
                         </div >
                         <div className={ 'form-group' + (submitted && !user.lastName ? ' has-error' : '') } >
-                            <label htmlFor="lastName" >Last Name</label >
+                            {/*<label htmlFor="lastName" >Last Name</label >*/}
                             <input
                                 type="text" className="form-control" name="lastName" value={ user.lastName }
+                                placeholder="Last Name"
                                 onChange={ this.handleChange } />
                             { submitted && !user.lastName &&
                             <div className="help-block text-danger" >Last Name is required</div >
                             }
                         </div >
 
-                        <div className="form-group" >
+                        <div className="form-group register-btn" >
                             <button className="btn btn-primary" >Register</button >
                         </div >
                     </form >

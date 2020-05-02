@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import './Login.css';
 
 class Login extends Component {
     constructor(props) {
@@ -67,25 +68,27 @@ class Login extends Component {
                     <h2 >Login</h2 >
                     <form name="form" onSubmit={ this.handleSubmit } >
                         <div >
-                            <label htmlFor="username" >Username</label >
+                            {/*<label htmlFor="username" >Username</label >*/}
                             <input
-                                type="text" className="form-control" name="username" value={ username }
-                                onChange={ this.handleChange } />
+                                type="text" className="form-control mb-3" name="username" value={ username }
+                                onChange={ this.handleChange }
+                                placeholder="Username" />
                             { submitted && !username &&
                             <div className="help-block text-danger" >Username is required</div >
                             }
                         </div >
                         <div >
-                            <label htmlFor="password" >Password</label >
+                            {/*<label htmlFor="password" >Password</label >*/}
                             <input
-                                type="password" className="form-control" name="password" value={ password }
-                                onChange={ this.handleChange } />
+                                type="password" className="form-control mb-3" name="password" value={ password }
+                                onChange={ this.handleChange }
+                                placeholder="Password" />
                             { submitted && !password &&
                             <div className="help-block text-danger" >Password is required</div >
                             }
                         </div >
-                        <div className="form-group" >
-                            <button className="btn btn-primary" >Login</button >
+                        <div className="form-group login-btn" >
+                            <button className="btn btn-primary " >Login</button >
                         </div >
                     </form >
                 </div >

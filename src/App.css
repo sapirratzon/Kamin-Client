@@ -4,6 +4,14 @@ html, body {
     overflow-x: hidden;
 }
 
+input[name='username'], input[name='password'],
+input[name='firstName'], input[name='lastName'] {
+    border-radius: 31px;
+    border-bottom-width: thick;
+    height: 67px;
+    width: 380px;
+}
+
 #root {
     height: 100%;
     width: 100%;

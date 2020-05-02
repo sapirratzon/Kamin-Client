@@ -27,6 +27,7 @@
 
 .statistics, .alerts {
     border: 2px solid #42d3f4;
+    height: 100%;
 }
 
 .insights {
@@ -39,4 +40,13 @@
 
 hr {
     margin-top: auto;
+}
+
+.multipleAlerts {
+    background-color: transparent;
+}
+
+.endSession, .multipleAlerts {
+    height: 44px;
+    font-size: 14px;
 }

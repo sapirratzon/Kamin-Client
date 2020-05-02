@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import io from "socket.io-client";
 import VisualizationsModal from "./Modals/VisualizationsConfigModal";
 import Loader from "react-loader-spinner";
+import MultipleUsersAlerts from "./Modals/MultipleUsersAlerts";
 
 class Discussion extends Component {
     constructor(props) {
@@ -23,9 +24,9 @@ class Discussion extends Component {
             shownNodes: [],
             shownLinks: [],
             shownAlerts: [],
-            allAlerts: [],
             discussionId: this.props.simulationCode,
             showVisualizationSettingsModal: false,
+            showSentMultipleAlertsModal: false,
             title: "",
             selectedUser: "",
             lastMessage: {},
@@ -50,11 +51,9 @@ class Discussion extends Component {
         this.socket.on("error", (response) => {
             console.log({ response });
         });
-
         this.socket.on("new configuration", (response) => {
             this.handleNewConfig(response);
         });
-
         if (this.props.userType === "MODERATOR")
             this.setState({
                 graph: true,
@@ -63,14 +62,33 @@ class Discussion extends Component {
             });
     }
 
+    componentWillUnmount() {
+        const data = {
+            discussionId: this.state.discussionId,
+            username: this.props.currentUser
+        }
+        this.socket.emit('leave', data);
+    }
+
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
-        if (this.props.userType === 'USER' && userVisualConfig) {
-            this.setState({
-                graph: userVisualConfig['graph'],
-                alerts: userVisualConfig['alerts'],
-                statistics: userVisualConfig['statistics'],
-                discussionVisualConfig: discussionVisualConfig,
-            });
+        console.log('discussionVisualConfig');
+        console.log(discussionVisualConfig);
+        this.defaultConfig = discussionVisualConfig;
+        if (this.props.userType === 'USER') {
+            if (userVisualConfig) {
+                this.setState({
+                    graph: userVisualConfig['graph'],
+                    alerts: userVisualConfig['alerts'],
+                    statistics: userVisualConfig['statistics']
+                });
+            }
+            else {
+                this.setState({
+                    graph: discussionVisualConfig['graph'],
+                    alerts: discussionVisualConfig['alerts'],
+                    statistics: discussionVisualConfig['statistics']
+                });
+            }
         }
     };
 
@@ -105,11 +123,7 @@ class Discussion extends Component {
         this.lastMessage = message;
     };
 
-    updateMessagesHandler(newMessages, newNodes, newLinks, lastMessage) {
-        const newAlerts = [];
-        this.state.allAlerts.forEach((a) => {
-            newAlerts.push(a);
-        });
+    updateShownState(newMessages, newNodes, newLinks, newAlerts, lastMessage) {
         this.setState({
             shownMessages: newMessages,
             shownNodes: newNodes,
@@ -119,9 +133,6 @@ class Discussion extends Component {
         });
     }
 
-    updateAlertsHandler(newAlert) {
-        this.state.allAlerts.push(newAlert);
-    }
 
     updateSelectedUserHandler(username) {
         this.setState({ selectedUser: username });
@@ -158,19 +169,18 @@ class Discussion extends Component {
         return this.state.shownNodes;
     }
 
-    updateModalHandler = (isOpen) => {
+    updateVisualConfigModalHandler = (isOpen) => {
         this.setState({
             showVisualizationSettingsModal: isOpen,
         });
     };
 
-    handleVisualizationSettings = (settings) => {
+    updateSentMultipleAlertsModalHandler = (isOpen) => {
         this.setState({
-            graph: settings.graph,
-            alerts: settings.alerts,
-            statistics: settings.statistics,
+            showSentMultipleAlertsModal: isOpen,
         });
     };
+
 
     handleEndSession = () => {
         const data = {
@@ -193,14 +203,12 @@ class Discussion extends Component {
     handleInsightVisibility = (insight, show) => {
         if (insight === 'graph') {
             this.setState({ graph: show });
-        }
-        else if (insight === 'alerts') {
+        } else if (insight === 'alerts') {
             this.setState({ alerts: show });
-        }
-        else if (insight === 'stat') {
+        } else if (insight === 'stat') {
             this.setState({ statistics: show });
         }
-    }
+    };
 
     hashCode = (str) => {
         let hash = 0;
@@ -208,12 +216,12 @@ class Discussion extends Component {
             hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
         return hash;
-    }
+    };
 
     intToRGB = (i) => {
         const c = (this.hashCode(i) & 0x00ffffff).toString(16).toUpperCase();
         return "00000".substring(0, 6 - c.length) + c;
-    }
+    };
 
     render() {
         return (
@@ -227,42 +235,63 @@ class Discussion extends Component {
                             <React.Fragment >
                                 <span className="col-4" >
                                     {(this.props.userType !== "USER" && this.props.isSimulation === "false") &&
-                                        <button
-                                            type="button" className="btn btn-danger btn-sm"
-                                            onClick={this.handleEndSession} >
-                                            End Session
+                                        <React.Fragment >
+                                            <button
+                                                type="button" className="btn btn-danger endSession"
+                                                onClick={this.handleEndSession} >
+                                                End Session
                                         </button >
+                                            <button
+                                                className="btn multipleAlerts"
+                                                onClick={() => this.updateSentMultipleAlertsModalHandler(true)} >
+                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> Alert
+                                                                                                              Users
+                                        </button >
+                                        </React.Fragment >
                                     }
                                 </span >
                                 <span className="col-4" >
                                     <h3 >
                                         <b >{this.state.title}</b >
-                                        <i className="fas fa-share-square text-primary pl-2 cursor-pointer" data-tip="Copied!" data-event="click" />
+                                        <i
+                                            className="fas fa-share-square text-primary pl-2 cursor-pointer"
+                                            data-tip="Copied!" data-event="click" />
                                         {this.props.userType !== "USER" &&
-                                            <i className="fas fa-cog cursor-pointer" onClick={() => this.updateModalHandler(true)} />
+                                            <i
+                                                className="fas fa-cog cursor-pointer"
+                                                onClick={() => this.updateVisualConfigModalHandler(true)} />
                                         }
                                     </h3 >
                                     <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
-                                    {(this.props.userType !== "USER") &&
-                                        <VisualizationsModal
-                                            isOpen={this.state.showVisualizationSettingsModal}
-                                            discussionId={this.state.discussionId}
-                                            updateVisibility={this.updateModalHandler.bind(this)}
-                                            isSimulation={this.props.isSimulation === "true"}
-                                            lastMessage={this.state.lastMessage}
-                                            defaultConfig={this.defaultConfig}
-                                            socket={this.socket}
-                                            setModeratorSettings={() => this.setModeratorSettings.bind(this)}
-                                        />
-                                    }
                                 </span >
+                                {(this.props.userType !== "USER") &&
+                                    <VisualizationsModal
+                                        isOpen={this.state.showVisualizationSettingsModal}
+                                        discussionId={this.state.discussionId}
+                                        updateVisibility={this.updateVisualConfigModalHandler.bind(this)}
+                                        isSimulation={this.props.isSimulation === "true"}
+                                        lastMessage={this.state.lastMessage}
+                                        defaultConfig={this.defaultConfig}
+                                        socket={this.socket}
+                                        setModeratorSettings={() => this.setModeratorSettings.bind(this)}
+                                    />
+                                }
+                                {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                                    <MultipleUsersAlerts
+                                        isOpen={this.state.showSentMultipleAlertsModal}
+                                        discussionId={this.state.discussionId}
+                                        updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
+                                        lastMessage={this.state.lastMessage}
+                                        socket={this.socket}
+                                    />
+                                }
                             </React.Fragment >
                         }
                         <span className="col-4" >
                             {this.props.isSimulation === "true" &&
                                 <Simulation
-                                    messagesHandler={this.updateMessagesHandler.bind(this)}
-                                    alertsHandler={this.updateAlertsHandler.bind(this)}
+                                    updateShownState={this.updateShownState.bind(this)}
+                                    // alertsHandler={ this.updateAlertsHandler.bind(this) }
                                     discussionId={this.props.simulationCode}
                                     setTitle={this.setTitle}
                                     messagesOrder={"chronological"}
@@ -282,8 +311,7 @@ class Discussion extends Component {
                             <Chat
                                 messages={this.state.shownMessages}
                                 isSimulation={this.props.isSimulation === "true"}
-                                messagesHandler={this.updateMessagesHandler.bind(this)}
-                                alertsHandler={this.updateAlertsHandler.bind(this)}
+                                updateShownState={this.updateShownState.bind(this)}
                                 discussionId={this.props.simulationCode}
                                 updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
                                 setTitle={this.setTitle}
@@ -356,9 +384,9 @@ class Discussion extends Component {
                                 </div >
                             </div >
                         }
-                    </div>
-                </React.Fragment>
-            </div>
+                    </div >
+                </React.Fragment >
+            </div >
         );
     }
 }

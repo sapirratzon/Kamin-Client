@@ -11,8 +11,11 @@ class DiscussionStats extends Component {
             receivedMost: ""
         }
     }
+    componentDidMount(){
+        this.calcDiscussionStats();
+    }
 
-    UNSAFE_componentWillReceiveProps() {
+    UNSAFE_componentWillReceiveProps(){
         this.calcDiscussionStats();
     }
 
