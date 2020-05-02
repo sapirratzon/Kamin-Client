@@ -28,7 +28,7 @@ class Discussion extends Component {
             showVisualizationSettingsModal: false,
             showSentMultipleAlertsModal: false,
             title: "",
-            selectedUser: this.props.currentUser,
+            selectedUser: null,
             lastMessage: {},
             graph: true,
             alerts: true,
@@ -61,6 +61,8 @@ class Discussion extends Component {
                 statistics: true,
             });
     }
+
+    component
 
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
         console.log('discussionVisualConfig');
