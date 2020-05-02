@@ -17,8 +17,8 @@ const AlertList = (props) => {
             </CardHeader >
             <CardBody className="p-1" >
                 <Container >
-                    <ul id="alerts-list" className="mt-2" >
-                        {props.alerts.map((a) => <Alert key={a.id} text={a.text} />)}
+                    <ul id="alerts-list" >
+                        {props.alerts.map((a) => <Alert key={a.id} alert={a} />)}
                     </ul >
                 </Container >
             </CardBody >

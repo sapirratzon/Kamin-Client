@@ -45,8 +45,12 @@ hr {
 .multipleAlerts {
     background-color: transparent;
 }
-.table-striped{
+.table{
     width:95%;
+}
+.table-wrap{
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .endSession, .multipleAlerts {

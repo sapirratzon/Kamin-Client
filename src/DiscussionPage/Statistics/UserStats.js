@@ -61,28 +61,28 @@ class UserStats extends Component {
                         <h4 className="Card-title" > Statistics of {this.state.selectedUser} </h4 >
                     }
                 </div >
-                <div className="card-body p-1" >
-                    <table className="mx-auto table-sm table-striped h-100" >
+                <div className="card-body p-1 table-wrap" >
+                    <table className="mx-auto table table-sm" >
                         < tbody>
                             <tr className="row xs-2" >
-                                <th className="col-8" >Comments Written:</th >
-                                <th className="col " >{this.state.commentsWritten}</th >
+                                <td className="col-8" >Comments Written:</td >
+                                <td className="col " >{this.state.commentsWritten}</td >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Responded Users:</th >
-                                <th className="col" >{this.state.usersResponded}</th >
+                                <td className="col-8" >Responded Users:</td >
+                                <td className="col" >{this.state.usersResponded}</td >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Comments Received:</th >
-                                <th className="col" >{this.state.commentsReceived}</th >
+                                <td className="col-8" >Comments Received:</td >
+                                <td className="col" >{this.state.commentsReceived}</td >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Users Replied:</th >
-                                <th className="col" >{this.state.repliedUsers}</th >
+                                <td className="col-8" >Users Replied:</td >
+                                <td className="col" >{this.state.repliedUsers}</td >
                             </tr >
                             <tr className="row xs-2" >
-                                <th className="col-8" >Words Written:</th >
-                                <th className="col" >{this.state.wordsWritten}</th >
+                                <td className="col-8" >Words Written:</td >
+                                <td className="col" >{this.state.wordsWritten}</td >
                             </tr >
                         </ tbody>
                     </table >
