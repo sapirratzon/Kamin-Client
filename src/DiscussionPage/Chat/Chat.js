@@ -74,6 +74,7 @@ class Chat extends Component {
         this.shownMessages = [];
         this.shownNodes = [];
         this.shownLinks = [];
+        this.shownAlerts = [];
         this.loadDiscussion(this.state.root);
         this.updateGraph();
     }
@@ -89,14 +90,14 @@ class Chat extends Component {
         this.socket.emit('add comment', comment)
     };
 
-    sendAlert(targetId, message, depth) {
+    sendAlert(targetId, message, depth, username) {
         const alert = JSON.stringify({
             "author": this.props.currentUser,
             "text": message,
             "parentId": targetId,
             "discussionId": this.props.discussionId,
             "depth": depth,
-            "extra_data": { "recipients_type": "all" }
+            "extra_data": { "recipients_type": "parent", users_list: {[username]: true} }
         });
         this.socket.emit('add alert', alert);
     };
@@ -158,7 +159,9 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["comment_type"] === "alert") {
-            this.shownAlerts.push(commentNode["node"]);
+            if ( commentNode["node"]["extra_data"]["recipients_type"] === 'all' ||
+                this.props.currentUser in commentNode["node"]["extra_data"]["users_list"])
+                this.shownAlerts.push(commentNode["node"]);
         } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
             this.shownMessages.push({

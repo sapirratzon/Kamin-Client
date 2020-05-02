@@ -10,7 +10,6 @@ class MultipleUsersAlerts extends Component {
         this.activeUsers = {};
         this.noUsers= '';
         this.state = {
-            activeUsers: {},
             alertedUsers: {},
             alertedAll: false,
             userAlerted: false,
@@ -100,7 +99,7 @@ class MultipleUsersAlerts extends Component {
             type = 'list';
             let usersListSettings = {};
             for (let [user, toAlert] of Object.entries(this.activeUsers)) {
-                if (user !== 'all') {
+                if (user !== 'all' && toAlert === true) {
                     usersListSettings[user] = toAlert
                 }
             }
@@ -127,8 +126,7 @@ class MultipleUsersAlerts extends Component {
         this.setState({
             alertText: ''
         });
-        Object.keys(this.activeUsers).map(user =>
-            this.activeUsers[user] = false);
+        Object.keys(this.activeUsers).map(user => this.activeUsers[user] = false);
         this.updateVisibility(false);
     };
 

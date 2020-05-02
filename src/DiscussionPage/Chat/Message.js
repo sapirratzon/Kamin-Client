@@ -76,7 +76,7 @@ class Message extends Component {
             this.props.newCommentHandler(this.props.id, message, this.props.depth + 1);
             this.replyHandler();
         } else {
-            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1);
+            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1, this.props.username);
             this.alertHandler();
         }
     };
