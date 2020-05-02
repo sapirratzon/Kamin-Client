@@ -49,8 +49,9 @@ class Simulation extends Component {
                 response['visualConfig']['configuration']);
             this.props.handleFinishLoading();
             while (this.currentMessageIndex < response["currentIndex"]) {
-                this.handleNextClick(true);
+                this.handleNextClick(false);
             }
+            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
         });
         const data = {
             discussion_id: this.props.discussionId,
@@ -92,7 +93,7 @@ class Simulation extends Component {
         const nextMessage = this.allMessages[this.currentMessageIndex];
         if (nextMessage["comment_type"] !== "comment") {
             this.shownAlerts.push(nextMessage)
-            this.update(1, true);
+            this.update(1, toUpdateState);
             return;
         }
         const userName = nextMessage.author;
@@ -107,7 +108,7 @@ class Simulation extends Component {
             this.shownMessages = this.shownMessages.filter(msg => msg["comment_type"] === "comment");
         }
         if (selfMessage) {
-            this.update(1, true);
+            this.update(1, toUpdateState);
             return;
         }
         this.updateNodesNext(userName, parentUserName);
@@ -121,7 +122,7 @@ class Simulation extends Component {
         let deletedMessage = this.allMessages[messageIndex];
         if (deletedMessage["comment_type"] !== "comment") {
             this.shownAlerts.pop();
-            this.update(-1, true);
+            this.update(-1, toUpdateState);
             return;
         }
         const userName = deletedMessage.author;
@@ -135,7 +136,7 @@ class Simulation extends Component {
             this.shownMessages = this.shownMessages.filter(msg => msg["comment_type"] === "comment");
         }
         if (selfMessage) {
-            this.update(-1, true);
+            this.update(-1, toUpdateState);
             return;
         }
         this.updateLinksBack(userName, parentUserName);
