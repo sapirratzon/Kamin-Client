@@ -111,7 +111,7 @@ class VisualizationsModal extends Component {
             Object.assign(configComment, {
                 'author': this.props.currentUser,
                 'text': 'config',
-                'parentId': this.props.lastMessage.parentId,
+                'parentId': this.props.lastMessage.id,
                 'depth': this.props.lastMessage.depth
             })
         }

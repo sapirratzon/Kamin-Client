@@ -12,10 +12,10 @@ class Chat extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.shownAlerts = [];
-        this.timestampMessages = [];
         this.linksMap = new Map();
         this.nodesMap = new Map();
         this.messagesCounter = 0;
+        this.lastMessage = null;
         this.state = {
             root: null
         };
@@ -34,15 +34,13 @@ class Chat extends Component {
                 this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
-                this.timestampMessages.sort(function (a, b) {
-                    return b.timestamp - a.timestamp;
-                });
+                this.lastMessage = this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0];
                 this.shownAlerts.sort(function (a, b) {
                     return a.timestamp - b.timestamp;
                 });
                 this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
                     response['visualConfig']['configuration']);
-                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.timestampMessages[0]);
+                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
                 this.props.handleFinishLoading();
             });
             const data = {
@@ -105,12 +103,13 @@ class Chat extends Component {
     addComment(message) {
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
+        this.lastMessage = message;
         this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, message);
     };
 
     addAlert(alert) {
         this.shownAlerts.push(alert);
-        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.timestampMessages[0]);
+        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
     };
 
     updateLinksOpacity() {
@@ -158,7 +157,7 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["comment_type"] === "alert") {
-            this.shownAlerts.push(commentNode["node"]);            
+            this.shownAlerts.push(commentNode["node"]);
         } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
             this.shownMessages.push({
@@ -166,11 +165,6 @@ class Chat extends Component {
                 id: commentNode["node"]["id"],
                 color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
                 text: commentNode["node"]["text"],
-                depth: commentNode["node"]["depth"],
-                timestamp: commentNode["node"]["timestamp"]
-            });
-            this.timestampMessages.push({
-                parentId: commentNode["node"]["parentId"],
                 depth: commentNode["node"]["depth"],
                 timestamp: commentNode["node"]["timestamp"]
             });
