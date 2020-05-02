@@ -66,13 +66,11 @@ class Discussion extends Component {
         const data = {
             discussionId: this.state.discussionId,
             username: this.props.currentUser
-        }
+        };
         this.socket.emit('leave', data);
     }
 
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
-        console.log('discussionVisualConfig');
-        console.log(discussionVisualConfig);
         this.defaultConfig = discussionVisualConfig;
         if (this.props.userType === 'USER') {
             if (userVisualConfig) {

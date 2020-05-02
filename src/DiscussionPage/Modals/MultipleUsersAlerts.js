@@ -23,7 +23,7 @@ class MultipleUsersAlerts extends Component {
         this.socket.on("new user", (response) => {
             const allUsers = response;
             if (Object.keys(allUsers).length > 0) {
-                    this.noUsers = 'Choose Users:';
+                this.noUsers = 'Choose Users:';
                 this.activeUsers = {'all': false};
                 Object.keys(allUsers).forEach(user => {
                     this.activeUsers[allUsers[user]]= false;
@@ -78,9 +78,9 @@ class MultipleUsersAlerts extends Component {
 
     validateFields = () => {
         if (! (this.state.userAlerted || this.state.alertedAll)){
-                this.setState({
-                    error: 'You must select users from the list.'
-                });
+            this.setState({
+                error: 'You must select users from the list.'
+            });
             return false;
         }
         if (this.state.alertText.length === 0) {
@@ -99,9 +99,9 @@ class MultipleUsersAlerts extends Component {
         if (this.state.userAlerted) {
             type = 'list';
             let usersListSettings = {};
-            for (let [user, config] of Object.entries(this.state.activeUsers)) {
+            for (let [user, toAlert] of Object.entries(this.activeUsers)) {
                 if (user !== 'all') {
-                    usersListSettings[user] = config
+                    usersListSettings[user] = toAlert
                 }
             }
             alertComment = {
@@ -109,7 +109,7 @@ class MultipleUsersAlerts extends Component {
             };
         } else if (this.state.alertedAll) {
             type = 'all';
-            let allSettings = { all: this.state.activeUsers['all'] };
+            let allSettings = { all: this.activeUsers['all'] };
             alertComment = {
                 'extra_data': { recipients_type: type, users_list: allSettings }
             };
@@ -127,6 +127,8 @@ class MultipleUsersAlerts extends Component {
         this.setState({
             alertText: ''
         });
+        Object.keys(this.activeUsers).map(user =>
+            this.activeUsers[user] = false);
         this.updateVisibility(false);
     };
 
@@ -138,25 +140,25 @@ class MultipleUsersAlerts extends Component {
                 </div >
                 <div className="modal-body modal-body-alerts" >
                     <p><b> {this.noUsers} </b></p>
-                        <table className="table-alerts w-50" >
-                            <tbody >
-                            {Object.keys(this.activeUsers).map((id) =>
-                                <tr id={id} key={id} >
-                                    <td >
-                                        <input
-                                            name={id} type="checkbox"
-                                            id={id + " alert"}
-                                            className="alertUser"
-                                            checked={this.activeUsers[id]}
-                                            onChange={(event) => this.updateIsUserAlerted(event)}
-                                        />
-                                        <label htmlFor={id + " alert"} />
-                                    </td >
-                                    <td >{id}</td >
-                                </tr >
-                            )}
-                            </tbody >
-                        </table >
+                    <table className="table-alerts w-50" >
+                        <tbody >
+                        {Object.keys(this.activeUsers).map((id) =>
+                            <tr id={id} key={id} >
+                                <td >
+                                    <input
+                                        name={id} type="checkbox"
+                                        id={id + " alert"}
+                                        className="alertUser"
+                                        checked={this.activeUsers[id]}
+                                        onChange={(event) => this.updateIsUserAlerted(event)}
+                                    />
+                                    <label htmlFor={id + " alert"} />
+                                </td >
+                                <td >{id}</td >
+                            </tr >
+                        )}
+                        </tbody >
+                    </table >
                     <div >
                         <p className="pt-3"><b> And write you Alert here: </b></p>
                         <textarea
