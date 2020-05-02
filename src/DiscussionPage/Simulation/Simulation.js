@@ -44,7 +44,7 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
-            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, []);
             this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
                 response['visualConfig']['configuration']);
             this.props.handleFinishLoading();
@@ -245,14 +245,14 @@ class Simulation extends Component {
         while (this.currentMessageIndex < this.allMessages.length) {
             this.handleNextClick(false);
         }
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks,[]);
     };
 
     handleResetClick = () => {
         while (this.currentMessageIndex !== 1) {
             this.handleBackClick(false);
         }
-        this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks);
+        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, []);
     };
 
     handleOrderSettings = () => {
@@ -273,7 +273,7 @@ class Simulation extends Component {
     update(dif, toUpdateState) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
         if (toUpdateState) {
-            this.props.messagesHandler(this.shownMessages, this.shownNodes, this.shownLinks, null);
+            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, []);
         }
     };
 
