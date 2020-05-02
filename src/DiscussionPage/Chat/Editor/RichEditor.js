@@ -1,7 +1,8 @@
-import { Editor, EditorState, RichUtils } from 'draft-js';
+import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import React, { Component } from "react";
 import ReactDOM from "react-dom"
 import './RichEditor.css';
+import {stateToHTML} from "draft-js-export-html"
 
 class RichEditor extends Component {
     constructor(props) {
@@ -10,10 +11,11 @@ class RichEditor extends Component {
         this.focus = () => this.refs.editor.focus();
         this.onChange = (editorState) => this.setState({ editorState });
         this.onSubmit = () => {
-            var editor = this.refs.editor;
-            var draftDom = ReactDOM.findDOMNode(editor);
-            var html = draftDom.querySelector("div[data-block] div[data-offset-key]").innerHTML;
-            this.props.onSendMessage(html);
+            // var editor = this.refs.editor;
+            // var draftDom = ReactDOM.findDOMNode(editor);
+            // var html = draftDom.querySelector("div[data-block] div[data-offset-key]").innerHTML;
+            var html = stateToHTML(this.state.editorState.getCurrentContent());
+            this.props.onSendMessage(html.toString());
         };
         this.handleKeyCommand = (command) => this._handleKeyCommand(command);
         this.onTab = (e) => this._onTab(e);
