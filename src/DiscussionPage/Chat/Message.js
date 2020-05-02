@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import Input from "./Input";
 import { connect } from 'react-redux'
-
-
+import RichEditor from "./Editor/RichEditor";
 class Message extends Component {
 
     constructor(props) {
@@ -70,13 +69,13 @@ class Message extends Component {
         }
     };
 
-    sendMessageHandler = (message) => {
-        if (message.length === 0) return;
+    sendMessageHandler = (htmlText) => {
+        if (htmlText.length === 0) return;
         if (this.state.showReplyInput) {
-            this.props.newCommentHandler(this.props.id, message, this.props.depth + 1);
+            this.props.newCommentHandler(this.props.id, htmlText, this.props.depth + 1);
             this.replyHandler();
         } else {
-            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1);
+            this.props.newAlertHandler(this.props.id, htmlText, this.props.depth + 1);
             this.alertHandler();
         }
     };
@@ -131,7 +130,8 @@ class Message extends Component {
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
                         <div className="text ml-2" >
-                            {this.state.shownText}
+                            < div  dangerouslySetInnerHTML={{__html: this.state.shownText}}></div>
+                            {/* {this.state.shownText} */}
                             {this.state.longMessage && <b
                                 className="text-primary message-buttons"
                             > {this.state.textLengthMessage} </b >}
@@ -150,13 +150,16 @@ class Message extends Component {
                             </React.Fragment >
                             : null
                         }
-                        {this.state.showReplyInput || this.state.showAlertInput ?
-                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
-                            : null
-                        }
+
                         {this.props.depth === 0}
                     </div >
                 </li >
+                <li>
+                    {(this.state.showReplyInput || this.state.showAlertInput) &&
+                        // <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
+                        <RichEditor onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText}></RichEditor>
+                    }
+                </li>
             </React.Fragment >
         );
     }
