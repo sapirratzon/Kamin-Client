@@ -62,8 +62,12 @@ class Discussion extends Component {
             });
     }
 
-    componentWillUnmount(){
-        this.socket.emit('leave');
+    componentWillUnmount() {
+        const data = {
+            discussionId: this.state.discussionId,
+            username: this.props.currentUser
+        }
+        this.socket.emit('leave', data);
     }
 
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
