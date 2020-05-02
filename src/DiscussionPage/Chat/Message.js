@@ -76,7 +76,7 @@ class Message extends Component {
             this.props.newCommentHandler(this.props.id, message, this.props.depth + 1);
             this.replyHandler();
         } else {
-            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1);
+            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1, this.props.username);
             this.alertHandler();
         }
     };
@@ -134,8 +134,7 @@ class Message extends Component {
                             {this.state.shownText}
                             {this.state.longMessage && <b
                                 className="text-primary message-buttons"
-                                onClick={this.handleMessageDisplayLength} > {this.state.textLengthMessage} </b >}
-
+                            > {this.state.textLengthMessage} </b >}
                         </div >
                         {!this.props.isSimulation ?
                             <React.Fragment >

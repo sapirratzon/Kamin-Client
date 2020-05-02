@@ -87,30 +87,35 @@ class VisualizationsModal extends Component {
     updateConfig = () => {
         let type = '';
         let configComment = {};
+        let usersList;
         if (this.state.updateUser) {
             type = 'list';
-            let usersListSettings = {};
+            usersList = {};
             for (let [user, config] of Object.entries(this.activeUsers)) {
                 if (user !== 'all') {
-                    usersListSettings[user] = config
+                    usersList[user] = config
                 }
             }
             configComment = {
-                'discussionId': this.props.discussionId,
-                'extra_data': {recipients_type: type, users_list: usersListSettings}
+                discussionId: this.props.discussionId,
+                extra_data: { recipients_type: type, users_list: usersList }
             };
         } else if (this.state.updateAll) {
             type = 'all';
-            let allSettings = {all: this.activeUsers['all']};
+            usersList = { all: this.activeUsers['all'] };
             configComment = {
-                'discussionId': this.props.discussionId,
-                'extra_data': {recipients_type: type, users_list: allSettings}
+                discussionId: this.props.discussionId,
+                extra_data: { recipients_type: type, users_list: usersList }
             };
         }
         if (!this.props.isSimulation) {
+            let text = '';
+            for (const [user, actions] of Object.entries(usersList)) {
+                text += `User:${user}, Action:${JSON.stringify(actions)}`;
+            }
             Object.assign(configComment, {
                 'author': this.props.currentUser,
-                'text': 'config',
+                'text': `Config-${text}`,
                 'parentId': this.props.lastMessage.id,
                 'depth': this.props.lastMessage.depth
             })
@@ -123,67 +128,67 @@ class VisualizationsModal extends Component {
 
     render() {
         return (
-            <Modal className="visualModal align-items-start" visible={ this.props.isOpen } >
+            <Modal className="visualModal align-items-start" visible={this.props.isOpen} >
                 <div className="modal-header" >
                     <h5 className="modal-title" >Visualization Management</h5 >
                 </div >
                 <div className="modal-body" >
-                    { Object.keys(this.activeUsers).length > 0 &&
-                    <table className="table" >
-                        <thead >
-                        <tr >
-                            <th >username</th >
-                            <th >Graph</th >
-                            <th >Statistics</th >
-                            <th >Alerts</th >
-                        </tr >
-                        </thead >
-                        <tbody >
-                        { Object.keys(this.activeUsers).map((id) =>
-                            <tr id={ id } key={ id } >
-                                <td >{ id }</td >
-                                <td >
-                                    <input
-                                        name={ id } type="checkbox"
-                                        id={ id + " graph" }
-                                        className="visModalGraph"
-                                        checked={ this.activeUsers[id]['graph'] }
-                                        onChange={ (event) => this.updateUserVisualizations(event, 'graph') }
-                                    />
-                                    <label htmlFor={ id + " graph" } />
-                                </td >
-                                <td >
-                                    <input
-                                        name={ id } type="checkbox"
-                                        id={ id + " statistics" }
-                                        className="visModalStats"
-                                        checked={ this.activeUsers[id]['statistics'] }
-                                        onChange={ (event) => this.updateUserVisualizations(event, 'statistics') }
-                                    />
-                                    <label htmlFor={ id + " statistics" } />
-                                </td >
-                                <td >
-                                    <input
-                                        name={ id } type="checkbox"
-                                        id={ id + " alerts" }
-                                        className="visModalAlerts"
-                                        checked={ this.activeUsers[id]['alerts'] }
-                                        onChange={ (event) => this.updateUserVisualizations(event, 'alerts') }
-                                    />
-                                    <label htmlFor={ id + " alerts" } />
-                                </td >
-                            </tr >
-                        ) }
-                        </tbody >
-                    </table >
+                    {Object.keys(this.activeUsers).length > 0 &&
+                        <table className="table" >
+                            <thead >
+                                <tr >
+                                    <th >username</th >
+                                    <th >Graph</th >
+                                    <th >Statistics</th >
+                                    <th >Alerts</th >
+                                </tr >
+                            </thead >
+                            <tbody >
+                                {Object.keys(this.activeUsers).map((id) =>
+                                    <tr id={id} key={id} >
+                                        <td >{id}</td >
+                                        <td >
+                                            <input
+                                                name={id} type="checkbox"
+                                                id={id + " graph"}
+                                                className="visModalGraph"
+                                                checked={this.activeUsers[id]['graph']}
+                                                onChange={(event) => this.updateUserVisualizations(event, 'graph')}
+                                            />
+                                            <label htmlFor={id + " graph"} />
+                                        </td >
+                                        <td >
+                                            <input
+                                                name={id} type="checkbox"
+                                                id={id + " statistics"}
+                                                className="visModalStats"
+                                                checked={this.activeUsers[id]['statistics']}
+                                                onChange={(event) => this.updateUserVisualizations(event, 'statistics')}
+                                            />
+                                            <label htmlFor={id + " statistics"} />
+                                        </td >
+                                        <td >
+                                            <input
+                                                name={id} type="checkbox"
+                                                id={id + " alerts"}
+                                                className="visModalAlerts"
+                                                checked={this.activeUsers[id]['alerts']}
+                                                onChange={(event) => this.updateUserVisualizations(event, 'alerts')}
+                                            />
+                                            <label htmlFor={id + " alerts"} />
+                                        </td >
+                                    </tr >
+                                )}
+                            </tbody >
+                        </table >
                     }
                 </div >
                 <div className="modal-footer" >
                     <button
                         type="button" className="btn btn-grey"
-                        onClick={ () => this.updateVisibility(false) } >Cancel
+                        onClick={() => this.updateVisibility(false)} >Cancel
                     </button >
-                    <button className="btn btn-info" onClick={ this.updateConfig } >OK</button >
+                    <button className="btn btn-info" onClick={this.updateConfig} >OK</button >
                 </div >
             </Modal >
         );

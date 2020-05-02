@@ -66,13 +66,11 @@ class Discussion extends Component {
         const data = {
             discussionId: this.state.discussionId,
             username: this.props.currentUser
-        }
+        };
         this.socket.emit('leave', data);
     }
 
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
-        console.log('discussionVisualConfig');
-        console.log(discussionVisualConfig);
         this.defaultConfig = discussionVisualConfig;
         if (this.props.userType === 'USER') {
             if (userVisualConfig) {
@@ -90,27 +88,6 @@ class Discussion extends Component {
                 });
             }
         }
-    };
-
-    setCurrentConfig = () => {
-        const xhr = new XMLHttpRequest();
-        xhr.addEventListener("load", (response) => {
-            const configuration = JSON.parse(xhr.responseText)["config"][
-                this.props.currentUser
-            ];
-            this.setState({
-                graph: configuration["graph"],
-                alerts: configuration["alerts"],
-                statistics: configuration["statistics"],
-            });
-        });
-        xhr.open(
-            "GET",
-            process.env.REACT_APP_API +
-            "/api/getActiveUsersConfigurations/" +
-            this.state.discussionId
-        );
-        xhr.send();
     };
 
     setModeratorSettings = (element, toShow) => {
@@ -132,7 +109,6 @@ class Discussion extends Component {
             lastMessage: lastMessage,
         });
     }
-
 
     updateSelectedUserHandler(username) {
         this.setState({ selectedUser: username });
