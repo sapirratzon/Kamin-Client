@@ -97,7 +97,7 @@ class Chat extends Component {
             "parentId": targetId,
             "discussionId": this.props.discussionId,
             "depth": depth,
-            "extra_data": { "recipients_type": "parent", users_list: {[username]: true} }
+            "extra_data": { "recipients_type": "parent", users_list: { [username]: true } }
         });
         this.socket.emit('add alert', alert);
     };
@@ -159,8 +159,9 @@ class Chat extends Component {
     loadDiscussion = (commentNode) => {
         if (commentNode == null) return;
         if (commentNode["node"]["comment_type"] === "alert") {
-            if ( commentNode["node"]["extra_data"]["recipients_type"] === 'all' ||
-                this.props.currentUser in commentNode["node"]["extra_data"]["users_list"])
+            if (commentNode["node"]["extra_data"]["recipients_type"] === 'all' ||
+                this.props.currentUser in commentNode["node"]["extra_data"]["users_list"] ||
+                this.props.userType !== "USER")
                 this.shownAlerts.push(commentNode["node"]);
         } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
@@ -249,7 +250,8 @@ class Chat extends Component {
 const mapStateToProps = state => {
     return {
         currentUser: state.currentUser,
-        token: state.token
+        token: state.token,
+        userType: state.userType,
     };
 };
 
