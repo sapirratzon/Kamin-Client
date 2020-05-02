@@ -45,6 +45,9 @@ hr {
 .multipleAlerts {
     background-color: transparent;
 }
+.table-striped{
+    width:95%;
+}
 
 .endSession, .multipleAlerts {
     height: 44px;
