@@ -112,7 +112,7 @@ class HomePage extends Component {
                 {this.props.currentUser ? <div className="container" >
                     {this.props.userType !== 'USER' &&
                         <React.Fragment >
-                            <p >Moderation tools:</p >
+                            <p >Moderation Tools:</p >
                             <button
                                 type="button" className="btn btn-info btn-sm"
                                 onClick={() => this.updateModalHandler(true)} >Create New Discussion
@@ -122,7 +122,7 @@ class HomePage extends Component {
                     {this.props.userType === 'ROOT' &&
                         <Link to={'/moderatorsManagement'} >
                             <button
-                                type="button" className="btn btn-info btn-sm" >Manage moderators
+                                type="button" className="btn btn-info btn-sm" >Manage Moderators
                         </button >
                         </Link >}
                     <CreateDiscussionModal
@@ -131,7 +131,7 @@ class HomePage extends Component {
                         path={this.props.history} />
                     {!this.state.isLoading ?
                         <form onSubmit={this.handleJoinClick} >
-                            <h3 >Join existing discussions:</h3 >
+                            <h3 >Join Existing Discussions:</h3 >
                             <div className="row text-center" >
                                 <span className="col-6" >
                                     <p >Simulations:</p >
