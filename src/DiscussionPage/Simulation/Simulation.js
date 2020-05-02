@@ -89,7 +89,7 @@ class Simulation extends Component {
     handleNextClick = (toUpdateState) => {
         if (this.currentMessageIndex === this.allMessages.length) return;
         const nextMessage = this.allMessages[this.currentMessageIndex];
-        if (nextMessage["comment_type"] !== "comment" ) {
+        if (nextMessage["comment_type"] !== "comment") {
             this.shownAlerts.push(nextMessage)
             this.update(1, true);
             return;
@@ -98,9 +98,13 @@ class Simulation extends Component {
         const parentId = nextMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
         const selfMessage = (userName === parentUserName);
-        this.state.isChronological ?
+        if (this.state.isChronological) {
             this.nextByTimestamp(nextMessage, selfMessage)
-            : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
+        }
+        else {
+            this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex + 1);
+            this.shownMessages = this.shownMessages.filter(msg => msg["comment_type"] === "comment");
+        }
         if (selfMessage) {
             this.update(1, true);
             return;
@@ -114,7 +118,7 @@ class Simulation extends Component {
         if (this.currentMessageIndex === 1) return;
         const messageIndex = this.currentMessageIndex - 1;
         let deletedMessage = this.allMessages[messageIndex];
-        if (deletedMessage["comment_type"] !== "comment" ) {
+        if (deletedMessage["comment_type"] !== "comment") {
             this.shownAlerts.pop();
             this.update(-1, true);
             return;
@@ -123,9 +127,12 @@ class Simulation extends Component {
         const parentId = deletedMessage.parentId;
         const parentUserName = this.shownMessages.find(message => message.id === parentId).author;
         const selfMessage = (userName === parentUserName);
-        this.state.isChronological ?
+        if (this.state.isChronological) {
             this.backByTimestamp(messageIndex, selfMessage)
-            : this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
+        } else {
+            this.shownMessages = this.allMessages.slice(0, this.currentMessageIndex - 1);
+            this.shownMessages = this.shownMessages.filter(msg => msg["comment_type"] === "comment");
+        }
         if (selfMessage) {
             this.update(-1, true);
             return;
