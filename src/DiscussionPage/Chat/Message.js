@@ -150,13 +150,16 @@ class Message extends Component {
                             </React.Fragment >
                             : null
                         }
-                        {this.state.showReplyInput || this.state.showAlertInput ?
-                            <Input onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
-                            : null
-                        }
+
                         {this.props.depth === 0}
                     </div >
                 </li >
+                <div>
+                    {this.state.showReplyInput || this.state.showAlertInput ?
+                        <Input depth={depthString} onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
+                        : null
+                    }
+                </div>
             </React.Fragment >
         );
     }
