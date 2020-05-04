@@ -132,9 +132,7 @@ class Message extends Component {
                         </div >
                         <div className="text ml-2" >
                             {this.state.shownText}
-                            {this.state.longMessage && <b
-                                className="text-primary message-buttons"
-                            > {this.state.textLengthMessage} </b >}
+                            {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
                         {!this.props.isSimulation ?
                             <React.Fragment >
@@ -142,7 +140,7 @@ class Message extends Component {
                                     <i
                                         className="far fa-comment-dots mr-2 mb-2 message-buttons"
                                         onClick={this.replyHandler} >{this.state.replyText}</i >
-                                    {this.props.userType === 'MODERATOR' || this.props.userType === 'ROOT' ?
+                                    {this.props.userType !== 'USER' ?
                                         <i
                                             className="far fa-bell message-buttons"
                                             onClick={this.alertHandler} >{this.state.alertText}</i > : null}
