@@ -35,6 +35,7 @@ class Chat extends Component {
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.lastMessage = this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0];
+                this.props.updateAlertedMessage(this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0]);
                 this.shownAlerts.sort(function (a, b) {
                     return a.timestamp - b.timestamp;
                 });
@@ -240,6 +241,8 @@ class Chat extends Component {
                         messages={this.props.messages} isSimulation={this.props.isSimulation}
                         newCommentHandler={this.sendComment.bind(this)}
                         newAlertHandler={this.sendAlert.bind(this)}
+                        updateAlertedMessage={this.props.updateAlertedMessage}
+                        updateVisibility={this.props.updateVisibility}
                     />
                 </div > : null}
             </React.Fragment>
