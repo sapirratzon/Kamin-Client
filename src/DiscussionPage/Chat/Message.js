@@ -16,7 +16,7 @@ class Message extends Component {
             fullyShown: true,
             shownText: "",
             textLengthMessage: "",
-            longMessage: false
+            longMessage: false,
         };
     }
 
@@ -106,6 +106,11 @@ class Message extends Component {
             });
     };
 
+
+    getDirection = () => {
+        return this.props.language === "English" ? 'ltr' : 'rtl';
+    }
+
     render() {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
@@ -118,7 +123,7 @@ class Message extends Component {
         }
         return (
             <React.Fragment >
-                <li className="Messages-message" style={{ "marginLeft": depthString }} >
+                <li className="Messages-message mr-1" style={{ "marginLeft": depthString, "direction": this.getDirection }} >
                     {verticalLines}
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
@@ -126,27 +131,26 @@ class Message extends Component {
                             "backgroundColor": this.props.color,
                         }}
                     /></a >
-                    <div id="messageCollapse" className="show collapse card Message-content" >
-                        <div className="card-header p-1 username" >
+                    <div id="messageCollapse" className={"show collapse card Message-content " + this.props.directionClass} >
+                        <div className="card-header p-1 username leftToRight" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
-                        <div className="text ml-2" >
+                        <div className={"mr-1 ml-1 " + this.props.directionClass} >
                             {this.state.shownText}
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
-                        {!this.props.isSimulation ?
+                        {!this.props.isSimulation &&
                             <React.Fragment >
-                                <div className="reply ml-2" >
+                                <div className={"reply " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")} >
                                     <i
-                                        className="far fa-comment-dots mr-2 mb-2 message-buttons"
+                                        className="far fa-comment-dots message-buttons mb-1"
                                         onClick={this.replyHandler} >{this.state.replyText}</i >
                                     {this.props.userType !== 'USER' ?
                                         <i
-                                            className="far fa-bell message-buttons"
+                                            className={"far fa-bell message-buttons " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")}
                                             onClick={this.alertHandler} >{this.state.alertText}</i > : null}
                                 </div >
                             </React.Fragment >
-                            : null
                         }
 
                         {this.props.depth === 0}

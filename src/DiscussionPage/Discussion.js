@@ -34,6 +34,8 @@ class Discussion extends Component {
             alerts: true,
             statistics: true,
             isLoading: false,
+            language: "English",
+            directionClass: "leftToRight"
         };
     }
 
@@ -128,6 +130,20 @@ class Discussion extends Component {
         document.execCommand("copy");
         document.body.removeChild(dummy);
     };
+
+    updateLanguage = (lang) => {
+        if (lang === "English") {
+            this.setState({
+                language: lang,
+                directionClass: 'leftToRight'
+            });
+        } else {
+            this.setState({
+                language: lang,
+                directionClass: 'rightToLeft'
+            });
+        }
+    }
 
     getSelectedUser() {
         return this.state.selectedUser;
@@ -273,10 +289,13 @@ class Discussion extends Component {
                                     messagesOrder={"chronological"}
                                     nodeColor={this.intToRGB}
                                     socket={this.socket}
+                                    language={this.state.language}
+                                    directionClass={this.state.directionClass}
                                     updateLastMessage={this.updateLastMessage.bind(this)}
                                     isLoading={this.state.isLoading}
                                     handleFinishLoading={this.handleFinishLoading}
                                     updateVisualConfig={this.setDefaultVisualConfig}
+                                    updateLanguage={this.updateLanguage}
                                 />
                             }
                         </span >
@@ -293,9 +312,12 @@ class Discussion extends Component {
                                 setTitle={this.setTitle}
                                 nodeColor={this.intToRGB}
                                 socket={this.socket}
+                                language={this.state.language}
+                                directionClass={this.state.directionClass}
                                 isLoading={this.state.isLoading}
                                 handleFinishLoading={this.handleFinishLoading}
                                 updateVisualConfig={this.setDefaultVisualConfig}
+                                updateLanguage={this.updateLanguage}
                             />
                         </div >
                         {!this.state.isLoading &&
@@ -349,7 +371,7 @@ class Discussion extends Component {
                                         id="presentAlerts"
                                         className={(this.state.alerts ? "show" : "") + " collapse col p-0 alerts"} >
                                         <AlertList
-                                            alerts={this.state.shownAlerts}
+                                            alerts={this.state.shownAlerts} directionClass={this.state.directionClass}
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
                                             allowHide={this.props.userType !== 'USER'} />
                                     </div >

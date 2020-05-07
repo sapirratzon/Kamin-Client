@@ -40,6 +40,11 @@ class Chat extends Component {
                 });
                 this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
                     response['visualConfig']['configuration']);
+                const language = response.discussionDict.discussion.configuration.language;
+                if (language) {
+                    this.props.updateLanguage(language);
+                }
+
                 this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
                 this.props.handleFinishLoading();
             });
@@ -237,7 +242,7 @@ class Chat extends Component {
             <React.Fragment>
                 {!this.props.isLoading ? <div className="chat" >
                     <Messages
-                        messages={this.props.messages} isSimulation={this.props.isSimulation}
+                        messages={this.props.messages} isSimulation={this.props.isSimulation} directionClass={this.props.directionClass}
                         newCommentHandler={this.sendComment.bind(this)}
                         newAlertHandler={this.sendAlert.bind(this)}
                     />

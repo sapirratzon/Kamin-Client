@@ -17,10 +17,15 @@ class CreateDiscussionModal extends Component {
             graphChecked: true,
             statsChecked: true,
             alertsChecked: true,
+            language: 'English',
+            directionClass: "leftToRight",
         };
         this.configuration = {
-            vis_config: {"graph": true, "alerts": true, "statistics": true},
-            replyPosition: "None"
+            vis_config: { "graph": true, "alerts": true, "statistics": true },
+            extra_config: {
+                replyPosition: "None",
+                language: "English"
+            }
         }
     }
 
@@ -29,26 +34,36 @@ class CreateDiscussionModal extends Component {
             titleError: '',
             descriptionError: ''
         });
-        const {name, value} = e.target;
-        this.setState({[name]: value});
+        const { name, value } = e.target;
+        this.setState({ [name]: value });
     };
 
     vizConfigChange = (type) => {
         this.configuration.vis_config[type] = !this.configuration.vis_config[type];
         if (type === "graph") {
-            this.setState({graphChecked: this.configuration.vis_config[type]})
+            this.setState({ graphChecked: this.configuration.vis_config[type] })
         }
         if (type === "statistics") {
-            this.setState({statsChecked: this.configuration.vis_config[type]})
+            this.setState({ statsChecked: this.configuration.vis_config[type] })
         }
         if (type === "alerts") {
-            this.setState({alertsChecked: this.configuration.vis_config[type]})
+            this.setState({ alertsChecked: this.configuration.vis_config[type] })
         }
     };
 
-    replyConfigChange = (type) => {
-        this.setState({replyPosition: type});
-        this.configuration.replyPosition = type;
+    languageChange = (lang) => {
+        if (lang === "English") {
+            this.setState({
+                language: lang,
+                directionClass: 'leftToRight'
+            });
+        } else {
+            this.setState({
+                language: lang,
+                directionClass: 'rightToLeft'
+            });
+        }
+        this.configuration.language = lang;
     };
 
     changePath = (path) => {
@@ -56,7 +71,7 @@ class CreateDiscussionModal extends Component {
     };
 
     createDiscussion = () => {
-        const {description, title} = this.state;
+        const { description, title } = this.state;
         if (!title) {
             this.setState({
                 titleError: 'Title is required'
@@ -103,57 +118,55 @@ class CreateDiscussionModal extends Component {
         this.props.updateVisibility(isOpen);
     };
 
+
     render() {
         return (
-            <Modal visible={ this.props.isOpen } >
+            <Modal visible={this.props.isOpen}>
                 <div className="modal-header" >
                     <h5 className="modal-title" >Create New Discussion</h5 >
                 </div >
-                <div className="modal-body" >
+                <div className="modal-body">
                     <div >
                         <p className="title" >Title:</p >
                         <input
-                            type="text" className="title-input" value={ this.state.title } name="title"
-                            placeholder="Enter Title" onChange={ this.handleChange.bind(this) } />
-                        <p > { this.state.titleError } </p >
+                            type="text" className={"title-input " + this.state.directionClass} value={this.state.title} name="title"
+                            placeholder="Enter Title" onChange={this.handleChange.bind(this)} />
+                        <p > {this.state.titleError} </p >
                     </div >
                     <div >
                         <p className="description" >Description:</p >
                         <textarea
-                            className="description-input" name="description" value={ this.state.description }
-                            placeholder={ "Write Something" } onChange={ this.handleChange.bind(this) }
+                            className={"description-input " + this.state.directionClass} name="description" value={this.state.description}
+                            placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
                         />
                         <p> {this.state.descriptionError} </p>
                     </div >
                     <div >
                         <label className="config" >Visualization Config:</label >
                         <CheckBox
-                            changeHandler={ this.vizConfigChange } type="graph" text="graph"
-                            checked={ this.state.graphChecked } />
+                            changeHandler={this.vizConfigChange} type="graph" text="graph"
+                            checked={this.state.graphChecked} />
                         <CheckBox
-                            changeHandler={ this.vizConfigChange } type="statistics" text="statistics"
-                            checked={ this.state.statsChecked } />
+                            changeHandler={this.vizConfigChange} type="statistics" text="statistics"
+                            checked={this.state.statsChecked} />
                         <CheckBox
-                            changeHandler={ this.vizConfigChange } type="alerts" text="alerts"
-                            checked={ this.state.alertsChecked } />
-                        <div className="dropdown" >
-                            <label >Default reply position: </label >
+                            changeHandler={this.vizConfigChange} type="alerts" text="alerts"
+                            checked={this.state.alertsChecked} />
+                        <div className="dropdown mt-2" >
+                            <label >Language: </label >
                             <button
                                 className="btn btn-sm btn-primary dropdown-toggle" type="button"
                                 id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false" >
-                                { this.state.replyPosition }
+                                {this.state.language}
                             </button >
                             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton" >
                                 <a
-                                    href='/#' onClick={ () => { this.replyConfigChange("None") } }
-                                    className="dropdown-item" >None</a >
+                                    href='/#' onClick={() => { this.languageChange("English") }}
+                                    className="dropdown-item" >English</a >
                                 <a
-                                    href='/#' onClick={ () => { this.replyConfigChange("Root") } }
-                                    className="dropdown-item" >Root</a >
-                                <a
-                                    href='/#' onClick={ () => { this.replyConfigChange("Last") } }
-                                    className="dropdown-item" >Last</a >
+                                    href='/#' onClick={() => { this.languageChange("Hebrew") }}
+                                    className="dropdown-item" >Hebrew</a >
                             </div >
                         </div >
                     </div >
@@ -162,12 +175,12 @@ class CreateDiscussionModal extends Component {
                 </div >
                 <div className="modal-footer" >
                     <button
-                        type="button" onClick={ () => this.updateVisibility(false) }
+                        type="button" onClick={() => this.updateVisibility(false)}
                         className="btn btn-grey" >Cancel
                     </button >
                     <button
                         className="btn btn-info"
-                        onClick={ this.createDiscussion } >Create
+                        onClick={this.createDiscussion} >Create
                     </button >
                 </div >
             </Modal >
@@ -184,7 +197,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogOut: () => dispatch({type: 'LOGOUT'})
+        onLogOut: () => dispatch({ type: 'LOGOUT' })
     };
 };
 
