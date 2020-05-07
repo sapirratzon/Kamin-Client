@@ -102,7 +102,7 @@ class Message extends Component {
                             "backgroundColor": this.props.color,
                         }}
                     /></a >
-                    <div id="messageCollapse" className={(this.props.selected ? 'border-primary' : '') + " show collapse card Message-content cursor-pointer"} >
+                    <div id="messageCollapse" className={(this.props.selected ? 'border-warning ' : '') + " show collapse card Message-content cursor-pointer"} >
                         <div className="card-header p-1 username" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >

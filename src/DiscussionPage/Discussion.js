@@ -205,7 +205,12 @@ class Discussion extends Component {
     };
 
     handleAlertClick = (messageId) => {
-        this.setState({ selectedMessageId: messageId });
+        if (this.state.selectedMessageId === messageId) {
+            this.setState({ selectedMessageId: null })
+        }
+        else {
+            this.setState({ selectedMessageId: messageId });
+        }
     }
 
     hashCode = (str) => {
