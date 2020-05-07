@@ -71,6 +71,11 @@ class Message extends Component {
         }
     };
 
+    alertsModalHandler = () => {
+        this.props.updateAlertedMessage({id: this.props.id, depth: this.props.depth + 1});
+        this.props.updateVisibility(true);
+    };
+
     sendMessageHandler = () => {
         if (this.state.inputContent.length === 0) return;
         if (this.state.showReplyInput) {
@@ -96,10 +101,10 @@ class Message extends Component {
 
     handleMessageDisplayLength = () => {
         this.state.fullyShown ? this.setState({
-            fullyShown: false,
-            shownText: this.props.text.substring(0, 500),
-            textLengthMessage: " Show more"
-        })
+                fullyShown: false,
+                shownText: this.props.text.substring(0, 500),
+                textLengthMessage: " Show more"
+            })
             : this.setState({
                 fullyShown: true,
                 shownText: this.props.text,
@@ -117,44 +122,44 @@ class Message extends Component {
         let verticalLines = [];
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div
-                className="vl" key={i} style={{
-                    "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
-                }} />)
+                className="vl" key={ i } style={ {
+                "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
+            } } />)
         }
         return (
             <React.Fragment >
-                <li className="Messages-message" style={{ "marginLeft": depthString }} >
-                    {verticalLines}
+                <li className="Messages-message" style={ {"marginLeft": depthString} } >
+                    { verticalLines }
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
-                        style={{
+                        style={ {
                             "backgroundColor": this.props.color,
-                        }}
+                        } }
                     /></a >
                     <div id="messageCollapse" className="show collapse card Message-content" >
                         <div className="card-header p-1 username" >
-                            {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
+                            { this.props.username }{ "  " }{ this.getDate(this.props.timestamp) }
                         </div >
                         <div className="text ml-2" >
                             < div dangerouslySetInnerHTML={{ __html: this.state.shownText }}></div>
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
-                        {!this.props.isSimulation ?
+                        { !this.props.isSimulation ?
                             <React.Fragment >
                                 <div className="reply ml-2" >
                                     <i
                                         className="far fa-comment-dots mr-2 mb-2 message-buttons"
-                                        onClick={this.replyHandler} >{this.state.replyText}</i >
-                                    {this.props.userType !== 'USER' ?
-                                        <i
-                                            className="far fa-bell message-buttons"
-                                            onClick={this.alertHandler} >{this.state.alertText}</i > : null}
+                                        onClick={ this.replyHandler } >{ this.state.replyText }</i >
+                                    { this.props.userType !== 'USER' ?
+                                            <i className="far fa-bell message-buttons"
+                                                onClick={ this.alertsModalHandler } >Alert</i >
+                                        : null }
                                 </div >
                             </React.Fragment >
                             : null
                         }
 
-                        {this.props.depth === 0}
+                        { this.props.depth === 0 }
                     </div >
                 </li >
                 <div className="mx-auto input mt-2">
@@ -182,7 +187,7 @@ class Message extends Component {
                             </button >
                         </React.Fragment>
                     }
-                </div>
+                </div >
             </React.Fragment >
         );
     }
