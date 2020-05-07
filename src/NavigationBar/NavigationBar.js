@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { Link } from "react-router-dom";
 import './NavigationBar.css';
+import bguLogo from '../bgulogo.png';
 
 class NavigationBar extends Component {
 
@@ -9,6 +10,7 @@ class NavigationBar extends Component {
         return (
             <nav className="navbar navbar-expand-lg navbar-dark bg-primary py-1 sticky-top" >
                 <div className="container-fluid px-5" >
+                    <img className="mr-3" src={bguLogo} alt="bgulogo" width={30} height={30} />
                     <Link className="navbar-brand" to={'/'} ><i className="fas fa-dungeon pr-2" />Kamin</Link >
                     <button
                         className="navbar-toggler" type="button" data-toggle="collapse"

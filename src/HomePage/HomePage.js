@@ -4,6 +4,7 @@ import './HomePage.css';
 import { Link } from "react-router-dom";
 import CreateDiscussionModal from "../DiscussionPage/Modals/CreateDiscussionModal";
 import Loader from 'react-loader-spinner'
+import bguLogo from '../bgulogo.png';
 
 class HomePage extends Component {
     constructor(props) {
@@ -185,6 +186,7 @@ class HomePage extends Component {
                         </Link >
                     </div >
                 }
+                <img src={bguLogo} alt="bgulogo" />
             </div >
         );
     }
