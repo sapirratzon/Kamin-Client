@@ -10,8 +10,6 @@ class Message extends Component {
         this.state = {
             showReplyInput: false,
             replyText: "Reply",
-            showAlertInput: false,
-            alertText: "Alert",
             inputText: "",
             fullyShown: true,
             shownText: "",
@@ -38,37 +36,10 @@ class Message extends Component {
     };
 
     replyHandler = () => {
-        if (this.state.showReplyInput) {
             this.setState({
                 showReplyInput: false,
                 replyText: "Reply"
             });
-        } else {
-            this.setState({
-                showReplyInput: true,
-                showAlertInput: false,
-                replyText: "Hide",
-                alertText: "Alert",
-                inputText: "What do you think?"
-            });
-        }
-    };
-
-    alertHandler = () => {
-        if (this.state.showAlertInput) {
-            this.setState({
-                showAlertInput: false,
-                alertText: "Alert"
-            });
-        } else {
-            this.setState({
-                showAlertInput: true,
-                showReplyInput: false,
-                alertText: "Hide",
-                replyText: "Reply",
-                inputText: "Alert text..."
-            });
-        }
     };
 
     alertsModalHandler = () => {
@@ -78,13 +49,8 @@ class Message extends Component {
 
     sendMessageHandler = () => {
         if (this.state.inputContent.length === 0) return;
-        if (this.state.showReplyInput) {
             this.props.newCommentHandler(this.props.id, this.state.inputContent, this.props.depth + 1);
             this.replyHandler();
-        } else {
-            this.props.newAlertHandler(this.props.id, this.state.inputContent, this.props.depth + 1, this.props.username);
-            this.alertHandler();
-        }
     };
 
     getDate = (timestamp) => {
@@ -163,7 +129,7 @@ class Message extends Component {
                     </div >
                 </li >
                 <div className="mx-auto input mt-2">
-                    {(this.state.showReplyInput || this.state.showAlertInput) &&
+                    {(this.state.showReplyInput) &&
                         <React.Fragment>
                             <Editor
                                 init={{
