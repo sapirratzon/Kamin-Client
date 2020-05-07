@@ -41,11 +41,11 @@
 .Message-content > .username {
     display: block;
     color: gray;
-    font-size: 14px;
+    font-size: 10px;
 }
 
 .Message-content > .text {
-    font-size: 18px;
+    font-size: 14px;
     border-radius: 12px;
     color: black;
     display: inline-block;

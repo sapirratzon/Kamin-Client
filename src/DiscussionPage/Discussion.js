@@ -27,7 +27,8 @@ class Discussion extends Component {
             discussionId: this.props.simulationCode,
             showVisualizationSettingsModal: false,
             showSentMultipleAlertsModal: false,
-            title: "",
+            shownTitle: "",
+            fullTitle: "",
             selectedUser: "",
             lastMessage: {},
             graph: true,
@@ -115,8 +116,13 @@ class Discussion extends Component {
     }
 
     setTitle = (title) => {
+        let dots = ''
+        if (title.length > 45) {
+            dots = '...';
+        }
         this.setState({
-            title: title,
+            fullTitle: title,
+            shownTitle: `${title.slice(0, 45)} ${dots}`
         });
     };
 
@@ -226,9 +232,9 @@ class Discussion extends Component {
                                         </React.Fragment >
                                     }
                                 </span >
-                                <span className="col-4" >
-                                    <h3 >
-                                        <b >{this.state.title}</b >
+                                <span className="col-4 my-auto" >
+                                    <h4>
+                                        <b data-tip={this.state.fullTitle}>{this.state.shownTitle}</b >
                                         <i
                                             className="fas fa-share-square text-primary pl-2 cursor-pointer"
                                             data-tip="Copied!" data-event="click" />
@@ -237,7 +243,7 @@ class Discussion extends Component {
                                                 className="fas fa-cog cursor-pointer"
                                                 onClick={() => this.updateVisualConfigModalHandler(true)} />
                                         }
-                                    </h3 >
+                                    </h4 >
                                     <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
                                 </span >
                                 {(this.props.userType !== "USER") &&

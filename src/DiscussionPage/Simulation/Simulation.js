@@ -248,7 +248,6 @@ class Simulation extends Component {
     };
 
     backByTimestamp = (messageIndex, selfMessage) => {
-        // this.nodesChildren.delete(this.allMessages[messageIndex].id);
         const parentId = this.allMessages[messageIndex].parentId;
         let children = this.nodesChildren.get(parentId);
         children.splice(children.length - 1, 1);
