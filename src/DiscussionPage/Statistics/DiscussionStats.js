@@ -43,7 +43,7 @@ class DiscussionStats extends Component {
                 <div className="card-body p-1 table-wrap" >
                     <table className="mx-auto table-sm table " >
                         < tbody>
-                            <tr className="row xs-2 mb-0 pb-0" >
+                            <tr className="row xs-2" >
                                 <td className="col-8" >Participants:</td >
                                 <td className="col" >{this.state.participants}</td  >
                             </tr >
