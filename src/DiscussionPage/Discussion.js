@@ -82,8 +82,7 @@ class Discussion extends Component {
                     alerts: userVisualConfig['alerts'],
                     statistics: userVisualConfig['statistics']
                 });
-            }
-            else {
+            } else {
                 this.setState({
                     graph: discussionVisualConfig['graph'],
                     alerts: discussionVisualConfig['alerts'],
@@ -99,11 +98,6 @@ class Discussion extends Component {
         });
     };
 
-    updateLastMessage = (message) => {
-        this.setState({
-            lastMessage: message
-        })
-    };
 
     updateAlertedMessage = (message) => {
         this.setState({
@@ -126,7 +120,7 @@ class Discussion extends Component {
     }
 
     setTitle = (title) => {
-        let dots = ''
+        let dots = '';
         if (title.length > 45) {
             dots = '...';
         }
@@ -242,15 +236,16 @@ class Discussion extends Component {
                                         </button >
                                             <button
                                                 className="btn multipleAlerts"
-                                                onClick={() => this.updateSentMultipleAlertsModalHandler(true)}>
-                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> Alert Users
+                                                onClick={() => this.updateSentMultipleAlertsModalHandler(true)} >
+                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> Alert
+                                                                                                              Users
                                         </button >
                                         </React.Fragment >
                                     }
                                 </span >
                                 <span className="col-4 my-auto" >
-                                    <h4>
-                                        <b data-tip={this.state.fullTitle}>{this.state.shownTitle}</b >
+                                    <h4 >
+                                        <b data-tip={this.state.fullTitle} >{this.state.shownTitle}</b >
                                         <i
                                             className="fas fa-share-square text-primary pl-2 cursor-pointer"
                                             data-tip="Copied!" data-event="click" />
@@ -290,13 +285,11 @@ class Discussion extends Component {
                             {this.props.isSimulation === "true" &&
                                 <Simulation
                                     updateShownState={this.updateShownState.bind(this)}
-                                    // alertsHandler={ this.updateAlertsHandler.bind(this) }
                                     discussionId={this.props.simulationCode}
                                     setTitle={this.setTitle}
                                     messagesOrder={"chronological"}
                                     nodeColor={this.intToRGB}
                                     socket={this.socket}
-                                    updateLastMessage={this.updateLastMessage.bind(this)}
                                     isLoading={this.state.isLoading}
                                     handleFinishLoading={this.handleFinishLoading}
                                     updateVisualConfig={this.setDefaultVisualConfig}
@@ -385,6 +378,10 @@ class Discussion extends Component {
                                         href="#presentStatDiscussion" data-toggle="collapse"
                                         onClick={() => this.handleInsightVisibility('statDiscussion', true)} ><h4 ><i
                                             className="fa fa-angle-up p-2" />Discussion Statistics</h4 ></a >}
+                                    {(!this.state.alerts && this.props.userType !== 'USER') && <a
+                                        href="#presentAlerts" data-toggle="collapse"
+                                        onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
+                                            className="fa fa-angle-up p-2" />Alerts</h4 ></a >}
                                     <div
                                         id="presentAlerts"
                                         className={(this.state.alerts ? "show" : "") + " collapse col p-0 alerts"} >
@@ -393,11 +390,8 @@ class Discussion extends Component {
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
                                             allowHide={this.props.userType !== 'USER'} />
                                     </div >
-                                    {(!this.state.alerts && this.props.userType !== 'USER') && <a
-                                        href="#presentAlerts" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />Alerts</h4 ></a >}
                                 </div >
+
                             </div >
                         }
                     </div >
