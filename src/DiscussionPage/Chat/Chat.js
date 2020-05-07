@@ -63,8 +63,9 @@ class Chat extends Component {
         this.shownLinks = Array.from(this.linksMap.values());
         this.shownNodes = Array.from(this.nodesMap.values());
         this.shownLinks.sort(function (a, b) {
-            return b.timestamp - a.timestamp;
+            return a.timestamp - b.timestamp;
         });
+        debugger
         this.updateLinksOpacity();
         this.updateLinksWidth();
     }
