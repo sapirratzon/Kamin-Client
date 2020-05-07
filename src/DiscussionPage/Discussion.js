@@ -281,7 +281,6 @@ class Discussion extends Component {
                             {this.props.isSimulation === "true" &&
                                 <Simulation
                                     updateShownState={this.updateShownState.bind(this)}
-                                    // alertsHandler={ this.updateAlertsHandler.bind(this) }
                                     discussionId={this.props.simulationCode}
                                     setTitle={this.setTitle}
                                     messagesOrder={"chronological"}
@@ -367,7 +366,7 @@ class Discussion extends Component {
                                         <AlertList
                                             alerts={this.state.shownAlerts}
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
-                                            allowHide={this.props.userType !== 'USER'} />
+                                            allowHide={this.props.userType !== 'USER'}/>
                                     </div >
                                     {(!this.state.alerts && this.props.userType !== 'USER') && <a
                                         href="#presentAlerts" data-toggle="collapse"

@@ -220,7 +220,6 @@ class Chat extends Component {
         }
     };
 
-
     render() {
         return (
             <React.Fragment>
