@@ -19,6 +19,6 @@
 }
 
 .modal-body {
-    height: auto;
-    max-height: 750px;
+    height: auto !important;
+    max-height: 750px !important;
 }
