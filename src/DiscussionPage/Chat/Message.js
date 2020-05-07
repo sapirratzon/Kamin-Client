@@ -1,22 +1,21 @@
 import React, { Component } from "react";
-import Input from "./Input";
 import { connect } from 'react-redux'
-
+import { Editor } from '@tinymce/tinymce-react';
 
 class Message extends Component {
+
 
     constructor(props) {
         super(props);
         this.state = {
             showReplyInput: false,
             replyText: "Reply",
-            showAlertInput: false,
-            alertText: "Alert",
             inputText: "",
             fullyShown: true,
             shownText: "",
             textLengthMessage: "",
             longMessage: false,
+            inputContent: ''
         };
     }
 
@@ -37,48 +36,21 @@ class Message extends Component {
     };
 
     replyHandler = () => {
-        if (this.state.showReplyInput) {
             this.setState({
                 showReplyInput: false,
                 replyText: "Reply"
             });
-        } else {
-            this.setState({
-                showReplyInput: true,
-                showAlertInput: false,
-                replyText: "Hide",
-                alertText: "Alert",
-                inputText: "What do you think?"
-            });
-        }
     };
 
-    alertHandler = () => {
-        if (this.state.showAlertInput) {
-            this.setState({
-                showAlertInput: false,
-                alertText: "Alert"
-            });
-        } else {
-            this.setState({
-                showAlertInput: true,
-                showReplyInput: false,
-                alertText: "Hide",
-                replyText: "Reply",
-                inputText: "Alert text..."
-            });
-        }
+    alertsModalHandler = () => {
+        this.props.updateAlertedMessage({id: this.props.id, depth: this.props.depth + 1});
+        this.props.updateVisibility(true);
     };
 
-    sendMessageHandler = (message) => {
-        if (message.length === 0) return;
-        if (this.state.showReplyInput) {
-            this.props.newCommentHandler(this.props.id, message, this.props.depth + 1);
+    sendMessageHandler = () => {
+        if (this.state.inputContent.length === 0) return;
+            this.props.newCommentHandler(this.props.id, this.state.inputContent, this.props.depth + 1);
             this.replyHandler();
-        } else {
-            this.props.newAlertHandler(this.props.id, message, this.props.depth + 1, this.props.username);
-            this.alertHandler();
-        }
     };
 
     getDate = (timestamp) => {
@@ -95,10 +67,10 @@ class Message extends Component {
 
     handleMessageDisplayLength = () => {
         this.state.fullyShown ? this.setState({
-            fullyShown: false,
-            shownText: this.props.text.substring(0, 500),
-            textLengthMessage: " Show more"
-        })
+                fullyShown: false,
+                shownText: this.props.text.substring(0, 500),
+                textLengthMessage: " Show more"
+            })
             : this.setState({
                 fullyShown: true,
                 shownText: this.props.text,
@@ -110,6 +82,9 @@ class Message extends Component {
     getDirection = () => {
         return this.props.language === "English" ? 'ltr' : 'rtl';
     }
+    handleEditorChange = (content, editor) => {
+        this.setState({ inputContent: content });
+    }
 
     render() {
         let depthPixels = this.props.depth * 20;
@@ -117,9 +92,9 @@ class Message extends Component {
         let verticalLines = [];
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div
-                className="vl" key={i} style={{
-                    "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
-                }} />)
+                className="vl" key={ i } style={ {
+                "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
+            } } />)
         }
         return (
             <React.Fragment >
@@ -127,16 +102,16 @@ class Message extends Component {
                     {verticalLines}
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
-                        style={{
+                        style={ {
                             "backgroundColor": this.props.color,
-                        }}
+                        } }
                     /></a >
                     <div id="messageCollapse" className={"show collapse card Message-content " + this.props.directionClass} >
                         <div className="card-header p-1 username leftToRight" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
                         <div className={"mr-1 ml-1 " + this.props.directionClass} >
-                            {this.state.shownText}
+                            < div dangerouslySetInnerHTML={{ __html: this.state.shownText }}/>
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
                         {!this.props.isSimulation &&
@@ -148,20 +123,40 @@ class Message extends Component {
                                     {this.props.userType !== 'USER' ?
                                         <i
                                             className={"far fa-bell message-buttons " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")}
-                                            onClick={this.alertHandler} >{this.state.alertText}</i > : null}
+                                            onClick={ this.alertsModalHandler } >{this.state.alertText}</i > : null}
                                 </div >
                             </React.Fragment >
                         }
 
-                        {this.props.depth === 0}
+                        { this.props.depth === 0 }
                     </div >
                 </li >
-                <div>
-                    {this.state.showReplyInput || this.state.showAlertInput ?
-                        <Input depth={depthString} onSendMessage={this.sendMessageHandler} placeHolder={this.state.inputText} />
-                        : null
+                <div className="mx-auto input mt-2">
+                    {(this.state.showReplyInput) &&
+                        <React.Fragment>
+                            <Editor
+                                init={{
+                                    height: 500,
+                                    menubar: false,
+                                    plugins: [
+                                        'advlist autolink lists link image charmap print preview anchor',
+                                        'searchreplace visualblocks code fullscreen',
+                                        'insertdatetime media table paste code help wordcount'
+                                    ],
+                                    toolbar:
+                                        'undo redo | formatselect | bold italic backcolor | \
+           alignleft aligncenter alignright alignjustify | \
+           bullist numlist outdent indent | removeformat | help'
+                                }}
+                                onEditorChange={this.handleEditorChange}
+                            />
+                            <button
+                                type="button" className="btn btn-outline-primary waves-effect btn-sm"
+                                onClick={this.sendMessageHandler} >Send
+                            </button >
+                        </React.Fragment>
                     }
-                </div>
+                </div >
             </React.Fragment >
         );
     }

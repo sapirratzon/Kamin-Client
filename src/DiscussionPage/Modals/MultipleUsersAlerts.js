@@ -117,8 +117,8 @@ class MultipleUsersAlerts extends Component {
             'discussionId': this.props.discussionId,
             'author': this.props.currentUser,
             'text': this.state.alertText,
-            'parentId': this.props.lastMessage.id,
-            'depth': this.props.lastMessage.depth
+            'parentId': this.props.alertedMessage.id,
+            'depth': this.props.alertedMessage.depth
         });
         if (this.state.userAlerted || this.state.alertedAll) {
             this.socket.emit('add alert', JSON.stringify(alertComment));

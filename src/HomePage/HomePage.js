@@ -142,7 +142,7 @@ class HomePage extends Component {
                                         {Object.keys(this.state.simulationDiscussions).map((id) =>
                                             <option
                                                 key={id}
-                                                value={id} >{this.state.simulationDiscussions[id]}, {id}</option >)}
+                                                value={id} >{this.state.simulationDiscussions[id]}</option >)}
                                     </select >
                                 </span >
                                 <span className="col-6" >
@@ -154,7 +154,7 @@ class HomePage extends Component {
                                         {Object.keys(this.state.realTimeDiscussions).map((id) =>
                                             <option
                                                 key={id}
-                                                value={id} >{this.state.realTimeDiscussions[id]}, {id}</option >)}
+                                                value={id} >{this.state.realTimeDiscussions[id]}</option >)}
                                     </select >
                                 </span >
                             </div >

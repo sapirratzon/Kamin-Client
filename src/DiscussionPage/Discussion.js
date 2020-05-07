@@ -17,7 +17,6 @@ class Discussion extends Component {
     constructor(props) {
         super(props);
         this.socket = io(process.env.REACT_APP_API);
-        this.lastMessage = {};
         this.defaultConfig = {};
         this.state = {
             shownMessages: [],
@@ -27,9 +26,11 @@ class Discussion extends Component {
             discussionId: this.props.simulationCode,
             showVisualizationSettingsModal: false,
             showSentMultipleAlertsModal: false,
-            title: "",
-            selectedUser: "",
+            shownTitle: '',
+            fullTitle: '',
+            selectedUser: '',
             lastMessage: {},
+            alertedMessage: {},
             graph: true,
             alerts: true,
             statistics: true,
@@ -99,7 +100,15 @@ class Discussion extends Component {
     };
 
     updateLastMessage = (message) => {
-        this.lastMessage = message;
+        this.setState({
+            lastMessage: message
+        })
+    };
+
+    updateAlertedMessage = (message) => {
+        this.setState({
+            alertedMessage: message
+        });
     };
 
     updateShownState(newMessages, newNodes, newLinks, newAlerts, lastMessage) {
@@ -117,8 +126,13 @@ class Discussion extends Component {
     }
 
     setTitle = (title) => {
+        let dots = ''
+        if (title.length > 45) {
+            dots = '...';
+        }
         this.setState({
-            title: title,
+            fullTitle: title,
+            shownTitle: `${title.slice(0, 45)} ${dots}`
         });
     };
 
@@ -235,16 +249,15 @@ class Discussion extends Component {
                                         </button >
                                             <button
                                                 className="btn multipleAlerts"
-                                                onClick={() => this.updateSentMultipleAlertsModalHandler(true)} >
-                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> Alert
-                                                                                                              Users
+                                                onClick={() => this.updateSentMultipleAlertsModalHandler(true)}>
+                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> Alert Users
                                         </button >
                                         </React.Fragment >
                                     }
                                 </span >
-                                <span className="col-4" >
-                                    <h3 >
-                                        <b >{this.state.title}</b >
+                                <span className="col-4 my-auto" >
+                                    <h4>
+                                        <b data-tip={this.state.fullTitle}>{this.state.shownTitle}</b >
                                         <i
                                             className="fas fa-share-square text-primary pl-2 cursor-pointer"
                                             data-tip="Copied!" data-event="click" />
@@ -253,7 +266,7 @@ class Discussion extends Component {
                                                 className="fas fa-cog cursor-pointer"
                                                 onClick={() => this.updateVisualConfigModalHandler(true)} />
                                         }
-                                    </h3 >
+                                    </h4 >
                                     <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
                                 </span >
                                 {(this.props.userType !== "USER") &&
@@ -274,6 +287,7 @@ class Discussion extends Component {
                                         discussionId={this.state.discussionId}
                                         updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
                                         lastMessage={this.state.lastMessage}
+                                        alertedMessage={this.state.alertedMessage}
                                         socket={this.socket}
                                     />
                                 }
@@ -318,6 +332,8 @@ class Discussion extends Component {
                                 handleFinishLoading={this.handleFinishLoading}
                                 updateVisualConfig={this.setDefaultVisualConfig}
                                 updateLanguage={this.updateLanguage}
+                                updateAlertedMessage={this.updateAlertedMessage.bind(this)}
+                                updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
                             />
                         </div >
                         {!this.state.isLoading &&

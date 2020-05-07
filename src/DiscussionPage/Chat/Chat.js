@@ -35,6 +35,7 @@ class Chat extends Component {
                 this.loadDiscussion(this.state.root);
                 this.updateGraph();
                 this.lastMessage = this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0];
+                this.props.updateAlertedMessage(this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0]);
                 this.shownAlerts.sort(function (a, b) {
                     return a.timestamp - b.timestamp;
                 });
@@ -67,7 +68,7 @@ class Chat extends Component {
         this.shownLinks = Array.from(this.linksMap.values());
         this.shownNodes = Array.from(this.nodesMap.values());
         this.shownLinks.sort(function (a, b) {
-            return b.timestamp - a.timestamp;
+            return a.timestamp - b.timestamp;
         });
         this.updateLinksOpacity();
         this.updateLinksWidth();
@@ -93,18 +94,6 @@ class Chat extends Component {
             "depth": depth
         });
         this.socket.emit('add comment', comment)
-    };
-
-    sendAlert(targetId, message, depth, username) {
-        const alert = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": message,
-            "parentId": targetId,
-            "discussionId": this.props.discussionId,
-            "depth": depth,
-            "extra_data": { "recipients_type": "parent", users_list: { [username]: true } }
-        });
-        this.socket.emit('add alert', alert);
     };
 
     addComment(message) {
@@ -244,7 +233,8 @@ class Chat extends Component {
                     <Messages
                         messages={this.props.messages} isSimulation={this.props.isSimulation} directionClass={this.props.directionClass}
                         newCommentHandler={this.sendComment.bind(this)}
-                        newAlertHandler={this.sendAlert.bind(this)}
+                        updateAlertedMessage={this.props.updateAlertedMessage}
+                        updateVisibility={this.props.updateVisibility}
                     />
                 </div > : null}
             </React.Fragment>
