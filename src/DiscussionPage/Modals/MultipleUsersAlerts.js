@@ -158,9 +158,9 @@ class MultipleUsersAlerts extends Component {
                         </tbody >
                     </table >
                     <div >
-                        <p className="pt-3"><b> And write you Alert here: </b></p>
+                        <p className="pt-3"><b> Write your alert here: </b></p>
                         <textarea
-                            className="description-input" name="description" value={ this.state.alertText }
+                            className={"description-input " + this.props.directionClass} name="description" value={ this.state.alertText }
                             placeholder={ "Write Something" } onChange={this.handleWriteAlert.bind(this) }
                         />
                         <div className="help-block text-danger" >{this.state.error}</div >

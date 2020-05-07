@@ -24,7 +24,6 @@ class VisualizationsModal extends Component {
 
     loadActiveUsers(configuration) {
         const allUsersConfiguration = {};
-        debugger
         allUsersConfiguration['all'] = {
             graph: this.props.defaultConfig['graph'],
             alerts: this.props.defaultConfig['alerts'],

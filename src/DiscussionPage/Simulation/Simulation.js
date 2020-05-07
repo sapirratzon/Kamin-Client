@@ -44,6 +44,10 @@ class Simulation extends Component {
                 comments: 1,
                 commentsReceived: 0
             });
+            const language = response.discussionDict.discussion.configuration.language;
+            if (language) {
+                this.props.updateLanguage(language);
+            }
             this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownLinks);
             this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
                 response['visualConfig']['configuration']);

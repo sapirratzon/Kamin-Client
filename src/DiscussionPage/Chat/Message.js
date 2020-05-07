@@ -111,7 +111,7 @@ class Message extends Component {
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
                         <div className={"mr-1 ml-1 " + this.props.directionClass} >
-                            < div dangerouslySetInnerHTML={{ __html: this.state.shownText }}/>
+                            < div dangerouslySetInnerHTML={{ __html: this.state.shownText }} />
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
                         {!this.props.isSimulation &&
@@ -123,7 +123,7 @@ class Message extends Component {
                                     {this.props.userType !== 'USER' ?
                                         <i
                                             className={"far fa-bell message-buttons " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")}
-                                            onClick={ this.alertsModalHandler } >{this.state.alertText}</i > : null}
+                                            onClick={this.alertsModalHandler} >Alert</i > : null}
                                 </div >
                             </React.Fragment >
                         }
@@ -136,7 +136,7 @@ class Message extends Component {
                         <React.Fragment>
                             <Editor
                                 init={{
-                                    height: 500,
+                                    height: 300,
                                     menubar: false,
                                     plugins: [
                                         'advlist autolink lists link image charmap print preview anchor',
@@ -145,13 +145,15 @@ class Message extends Component {
                                     ],
                                     toolbar:
                                         'undo redo | formatselect | bold italic backcolor | \
-           alignleft aligncenter alignright alignjustify | \
-           bullist numlist outdent indent | removeformat | help'
+                                        alignleft aligncenter alignright alignjustify | \
+                                        bullist numlist outdent indent | removeformat | help',
+                                    directionality: (this.directionClass==="leftToRight" ? 'ltr' : 'rtl')
+
                                 }}
                                 onEditorChange={this.handleEditorChange}
                             />
                             <button
-                                type="button" className="btn btn-outline-primary waves-effect btn-sm"
+                                type="button" className={"btn btn-outline-primary waves-effect btn-sm " +this.directionClass}
                                 onClick={this.sendMessageHandler} >Send
                             </button >
                         </React.Fragment>

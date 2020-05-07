@@ -293,6 +293,7 @@ class Discussion extends Component {
                                         lastMessage={this.state.lastMessage}
                                         alertedMessage={this.state.alertedMessage}
                                         socket={this.socket}
+                                        directionClass={this.state.directionClass}
                                     />
                                 }
                             </React.Fragment >
@@ -308,7 +309,6 @@ class Discussion extends Component {
                                     socket={this.socket}
                                     language={this.state.language}
                                     directionClass={this.state.directionClass}
-                                    updateLastMessage={this.updateLastMessage.bind(this)}
                                     isLoading={this.state.isLoading}
                                     handleFinishLoading={this.handleFinishLoading}
                                     updateVisualConfig={this.setDefaultVisualConfig}
@@ -411,7 +411,9 @@ class Discussion extends Component {
                                         <AlertList
                                             alerts={this.state.shownAlerts} directionClass={this.state.directionClass}
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
-                                            allowHide={this.props.userType !== 'USER'} />
+                                            allowHide={this.props.userType !== 'USER'}
+                                            directionClass={this.state.directionClass}
+                                        />
                                     </div >
                                 </div >
 
