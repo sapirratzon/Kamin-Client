@@ -369,15 +369,18 @@ class Discussion extends Component {
                                                 />
                                             </span>
                                         </div >
+                                        
                                     }
-                                    {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
-                                        href="#presentStatUser" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('statUser', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />User Statistics</h4 ></a >}
-                                    {(!this.state.statisticsDiscussion && this.props.userType !== 'USER') && <a
-                                        href="#presentStatDiscussion" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('statDiscussion', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />Discussion Statistics</h4 ></a >}
+                                    <div>
+                                        {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
+                                            href="#presentStatUser" data-toggle="collapse"
+                                            onClick={() => this.handleInsightVisibility('statUser', true)} ><h4 ><i
+                                                className="fa fa-angle-up p-2" />User Statistics</h4 ></a >}
+                                        {(!this.state.statisticsDiscussion && this.props.userType !== 'USER') && <a
+                                            href="#presentStatDiscussion" data-toggle="collapse"
+                                            onClick={() => this.handleInsightVisibility('statDiscussion', true)} ><h4 ><i
+                                                className="fa fa-angle-up p-2" />Discussion Statistics</h4 ></a >}
+                                    </div>
                                     {(!this.state.alerts && this.props.userType !== 'USER') && <a
                                         href="#presentAlerts" data-toggle="collapse"
                                         onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
