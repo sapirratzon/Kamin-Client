@@ -24,7 +24,6 @@ class VisualizationsModal extends Component {
 
     loadActiveUsers(configuration) {
         const allUsersConfiguration = {};
-        debugger
         allUsersConfiguration['all'] = {
             graph: this.props.defaultConfig['graph'],
             alerts: this.props.defaultConfig['alerts'],
@@ -59,7 +58,6 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = (event, type) => {
-        debugger
         if (event.target.name === 'all') {
             Object.keys(this.activeUsers).forEach(user => {
                 this.updateConfigInState(event, user, type);

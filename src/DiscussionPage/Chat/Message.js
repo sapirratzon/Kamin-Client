@@ -94,7 +94,7 @@ class Message extends Component {
         }
         return (
             <React.Fragment >
-                <li className="Messages-message" style={{ "marginLeft": depthString }} >
+                <li className=" Messages-message" style={{ "marginLeft": depthString }} >
                     {verticalLines}
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
@@ -102,17 +102,17 @@ class Message extends Component {
                             "backgroundColor": this.props.color,
                         }}
                     /></a >
-                    <div id="messageCollapse" className="show collapse card Message-content" >
+                    <div id="messageCollapse" className={(this.props.selected ? 'border-primary' : '') + " show collapse card Message-content cursor-pointer"} >
                         <div className="card-header p-1 username" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
-                        <div className="text ml-2" >
+                        <div className="text ml-2 cursor-pointer" >
                             < div dangerouslySetInnerHTML={{ __html: this.state.shownText }} />
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
                         {!this.props.isSimulation ?
                             <React.Fragment >
-                                <div className="reply ml-2" >
+                                <div className="reply ml-2 cursor-pointer" >
                                     <i
                                         className="far fa-comment-dots mr-2 mb-2 message-buttons"
                                         onClick={this.replyHandler} >{this.state.replyText}</i >

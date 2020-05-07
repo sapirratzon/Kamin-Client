@@ -37,6 +37,7 @@ class Discussion extends Component {
             statisticsUser: true,
             statisticsDiscussion: true,
             isLoading: false,
+            selectedMessageId: null
         };
     }
 
@@ -203,6 +204,10 @@ class Discussion extends Component {
         }
     };
 
+    handleAlertClick = (messageId) => {
+        this.setState({ selectedMessageId: messageId });
+    }
+
     hashCode = (str) => {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -314,6 +319,7 @@ class Discussion extends Component {
                                 updateVisualConfig={this.setDefaultVisualConfig}
                                 updateAlertedMessage={this.updateAlertedMessage.bind(this)}
                                 updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
+                                selectedMessage={this.state.selectedMessageId}
                             />
                         </div >
                         {!this.state.isLoading &&
@@ -369,7 +375,7 @@ class Discussion extends Component {
                                                 />
                                             </span>
                                         </div >
-                                        
+
                                     }
                                     <div>
                                         {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
@@ -391,7 +397,9 @@ class Discussion extends Component {
                                         <AlertList
                                             alerts={this.state.shownAlerts}
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
-                                            allowHide={this.props.userType !== 'USER'} />
+                                            allowHide={this.props.userType !== 'USER'}
+                                            handleClick={this.handleAlertClick}
+                                        />
                                     </div >
                                 </div >
 
