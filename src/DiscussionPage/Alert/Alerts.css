@@ -7,3 +7,15 @@
     height: 100%;
     overflow: auto;
 }
+
+.bg-alert-user {
+    background-color: #f5d2fb !important;
+}
+
+.bg-alert-list {
+    background-color: #c4f9c3 !important;
+}
+
+.bg-alert-all {
+    background-color: #f5e7b6 !important;
+}

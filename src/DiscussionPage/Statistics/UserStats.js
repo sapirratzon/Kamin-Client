@@ -38,7 +38,8 @@ class UserStats extends Component {
         this.props.getShownMessages().forEach(message => {
             if (message.author === selectedUser) {
                 commentsWritten++;
-                wordsNumber += message.text.split(' ').length;
+                console.log(message.text.replace(/<(?<=<)(.*?)(?=>)>/g, ' ').split(' ').filter(word => word.length > 1))
+                wordsNumber += message.text.replace(/<(?<=<)(.*?)(?=>)>/g, ' ').replace('&nbsp;', '').split(' ').filter(word => word.length > 1).length;
             }
         });
         this.setState({
@@ -53,12 +54,10 @@ class UserStats extends Component {
 
     render() {
         return (
-            <div className="card card-stats small-font" >
+            <div className={(this.props.isFull ? "card-stats-full" : "card-stats-share") + " card small-font"} >
                 <div className="card-header p-1" >
-                    {this.props.allowHide ? <h4 className="Card-title" ><a href="#presentStat" data-toggle="collapse" onClick={this.props.handleHide}>
-                        <i className="fa fa-angle-down" /></a>Statistics of {this.state.selectedUser} </h4 >
-                        :
-                        <h4 className="Card-title" > Statistics of {this.state.selectedUser} </h4 >
+                    {this.props.allowHide ? <h4 className="Card-title" ><a href="#presentStatUser" data-toggle="collapse" onClick={this.props.handleHide}>
+                        <i className="fa fa-angle-down" /></a>Statistics of {this.state.selectedUser} </h4 > : <h4 className="Card-title" > Statistics of {this.state.selectedUser} </h4 >
                     }
                 </div >
                 <div className="card-body p-1 table-wrap" >

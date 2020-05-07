@@ -12,12 +12,12 @@ import io from "socket.io-client";
 import VisualizationsModal from "./Modals/VisualizationsConfigModal";
 import Loader from "react-loader-spinner";
 import MultipleUsersAlerts from "./Modals/MultipleUsersAlerts";
+import { thresholdScott } from "d3";
 
 class Discussion extends Component {
     constructor(props) {
         super(props);
         this.socket = io(process.env.REACT_APP_API);
-        this.lastMessage = {};
         this.defaultConfig = {};
         this.state = {
             shownMessages: [],
@@ -27,13 +27,17 @@ class Discussion extends Component {
             discussionId: this.props.simulationCode,
             showVisualizationSettingsModal: false,
             showSentMultipleAlertsModal: false,
-            title: "",
-            selectedUser: "",
+            shownTitle: '',
+            fullTitle: '',
+            selectedUser: '',
             lastMessage: {},
+            alertedMessage: {},
             graph: true,
             alerts: true,
-            statistics: true,
+            statisticsUser: true,
+            statisticsDiscussion: true,
             isLoading: false,
+            selectedMessageId: null
         };
     }
 
@@ -79,8 +83,7 @@ class Discussion extends Component {
                     alerts: userVisualConfig['alerts'],
                     statistics: userVisualConfig['statistics']
                 });
-            }
-            else {
+            } else {
                 this.setState({
                     graph: discussionVisualConfig['graph'],
                     alerts: discussionVisualConfig['alerts'],
@@ -96,8 +99,11 @@ class Discussion extends Component {
         });
     };
 
-    updateLastMessage = (message) => {
-        this.lastMessage = message;
+
+    updateAlertedMessage = (message) => {
+        this.setState({
+            alertedMessage: message
+        });
     };
 
     updateShownState(newMessages, newNodes, newLinks, newAlerts, lastMessage) {
@@ -115,8 +121,13 @@ class Discussion extends Component {
     }
 
     setTitle = (title) => {
+        let dots = '';
+        if (title.length > 45) {
+            dots = '...';
+        }
         this.setState({
-            title: title,
+            fullTitle: title,
+            shownTitle: `${title.slice(0, 45)} ${dots}`
         });
     };
 
@@ -177,14 +188,30 @@ class Discussion extends Component {
     };
 
     handleInsightVisibility = (insight, show) => {
-        if (insight === 'graph') {
-            this.setState({ graph: show });
-        } else if (insight === 'alerts') {
-            this.setState({ alerts: show });
-        } else if (insight === 'stat') {
-            this.setState({ statistics: show });
+        switch (insight) {
+            case 'graph':
+                this.setState({ graph: show });
+                break;
+            case 'alerts':
+                this.setState({ alerts: show });
+                break;
+            case 'statUser':
+                this.setState({ statisticsUser: show });
+                break;
+            case 'statDiscussion':
+                this.setState({ statisticsDiscussion: show });
+                break;
         }
     };
+
+    handleAlertClick = (messageId) => {
+        if (this.state.selectedMessageId === messageId) {
+            this.setState({ selectedMessageId: null })
+        }
+        else {
+            this.setState({ selectedMessageId: messageId });
+        }
+    }
 
     hashCode = (str) => {
         let hash = 0;
@@ -226,9 +253,9 @@ class Discussion extends Component {
                                         </React.Fragment >
                                     }
                                 </span >
-                                <span className="col-4" >
-                                    <h3 >
-                                        <b >{this.state.title}</b >
+                                <span className="col-4 my-auto" >
+                                    <h4 >
+                                        <b data-tip={this.state.fullTitle} >{this.state.shownTitle}</b >
                                         <i
                                             className="fas fa-share-square text-primary pl-2 cursor-pointer"
                                             data-tip="Copied!" data-event="click" />
@@ -237,7 +264,7 @@ class Discussion extends Component {
                                                 className="fas fa-cog cursor-pointer"
                                                 onClick={() => this.updateVisualConfigModalHandler(true)} />
                                         }
-                                    </h3 >
+                                    </h4 >
                                     <ReactTooltip eventOff="mousemove" afterShow={this.handleShareClick} />
                                 </span >
                                 {(this.props.userType !== "USER") &&
@@ -258,6 +285,7 @@ class Discussion extends Component {
                                         discussionId={this.state.discussionId}
                                         updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
                                         lastMessage={this.state.lastMessage}
+                                        alertedMessage={this.state.alertedMessage}
                                         socket={this.socket}
                                     />
                                 }
@@ -267,13 +295,11 @@ class Discussion extends Component {
                             {this.props.isSimulation === "true" &&
                                 <Simulation
                                     updateShownState={this.updateShownState.bind(this)}
-                                    // alertsHandler={ this.updateAlertsHandler.bind(this) }
                                     discussionId={this.props.simulationCode}
                                     setTitle={this.setTitle}
                                     messagesOrder={"chronological"}
                                     nodeColor={this.intToRGB}
                                     socket={this.socket}
-                                    updateLastMessage={this.updateLastMessage.bind(this)}
                                     isLoading={this.state.isLoading}
                                     handleFinishLoading={this.handleFinishLoading}
                                     updateVisualConfig={this.setDefaultVisualConfig}
@@ -296,6 +322,9 @@ class Discussion extends Component {
                                 isLoading={this.state.isLoading}
                                 handleFinishLoading={this.handleFinishLoading}
                                 updateVisualConfig={this.setDefaultVisualConfig}
+                                updateAlertedMessage={this.updateAlertedMessage.bind(this)}
+                                updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
+                                selectedMessage={this.state.selectedMessageId}
                             />
                         </div >
                         {!this.state.isLoading &&
@@ -320,44 +349,65 @@ class Discussion extends Component {
                                     onClick={() => this.handleInsightVisibility('graph', true)} ><h4 ><i
                                         className="fa fa-angle-up p-2" />Graph</h4 ></a >}
                                 <div className="row insights" >
-                                    <div
-                                        id="presentStat"
-                                        className={(this.state.statistics ? "show" : "") + " collapse statistics col-lg-4 col-md-12 p-0 mr-1"} >
-                                        <UserStats
-                                            className="stats"
-                                            getSelectedUser={this.getSelectedUser.bind(this)}
-                                            discussionId={this.state.discussionId}
-                                            getShownMessages={this.getShownMessages.bind(this)}
-                                            getShownLinks={this.getShownLinks.bind(this)}
-                                            getShownNodes={this.getShownNodes.bind(this)}
-                                            handleHide={() => this.handleInsightVisibility('stat', false)}
-                                            allowHide={this.props.userType !== 'USER'}
-                                        />
-                                        <DiscussionStats
-                                            className="stats h-50"
-                                            discussionId={this.state.discussionId}
-                                            getShownMessages={this.getShownMessages.bind(this)}
-                                            getShownLinks={this.getShownLinks.bind(this)}
-                                            getShownNodes={this.getShownNodes.bind(this)}
-                                        />
-                                    </div >
-                                    {(!this.state.statistics && this.props.userType !== 'USER') && <a
-                                        href="#presentStat" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('stat', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />Statistics</h4 ></a >}
+                                    {(this.state.statisticsUser || this.state.statisticsDiscussion) &&
+                                        <div
+                                            className="statistics col-lg-4 col-md-12 p-0 mr-1" >
+                                            <span className={(this.state.statisticsUser ? "show" : "") + "collapse"}>
+                                                <UserStats
+                                                    className="stats"
+                                                    id="presentStatUser"
+                                                    getSelectedUser={this.getSelectedUser.bind(this)}
+                                                    discussionId={this.state.discussionId}
+                                                    getShownMessages={this.getShownMessages.bind(this)}
+                                                    getShownLinks={this.getShownLinks.bind(this)}
+                                                    getShownNodes={this.getShownNodes.bind(this)}
+                                                    handleHide={() => this.handleInsightVisibility('statUser', false)}
+                                                    allowHide={this.props.userType !== 'USER'}
+                                                    isFull={!this.state.statisticsDiscussion}
+                                                />
+                                            </span>
+                                            <span className={(this.state.statisticsDiscussion ? "show" : "") + "collapse"}>
+                                                <DiscussionStats
+                                                    className="stats"
+                                                    id="presentStatDiscussion"
+                                                    discussionId={this.state.discussionId}
+                                                    getShownMessages={this.getShownMessages.bind(this)}
+                                                    getShownLinks={this.getShownLinks.bind(this)}
+                                                    getShownNodes={this.getShownNodes.bind(this)}
+                                                    handleHide={() => this.handleInsightVisibility('statDiscussion', false)}
+                                                    allowHide={this.props.userType !== 'USER'}
+                                                    isFull={!this.state.statisticsUser}
+                                                />
+                                            </span>
+                                        </div >
+
+                                    }
+                                    <div>
+                                        {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
+                                            href="#presentStatUser" data-toggle="collapse"
+                                            onClick={() => this.handleInsightVisibility('statUser', true)} ><h4 ><i
+                                                className="fa fa-angle-up p-2" />User Statistics</h4 ></a >}
+                                        {(!this.state.statisticsDiscussion && this.props.userType !== 'USER') && <a
+                                            href="#presentStatDiscussion" data-toggle="collapse"
+                                            onClick={() => this.handleInsightVisibility('statDiscussion', true)} ><h4 ><i
+                                                className="fa fa-angle-up p-2" />Discussion Statistics</h4 ></a >}
+                                    </div>
+                                    {(!this.state.alerts && this.props.userType !== 'USER') && <a
+                                        href="#presentAlerts" data-toggle="collapse"
+                                        onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
+                                            className="fa fa-angle-up p-2" />Alerts</h4 ></a >}
                                     <div
                                         id="presentAlerts"
                                         className={(this.state.alerts ? "show" : "") + " collapse col p-0 alerts"} >
                                         <AlertList
                                             alerts={this.state.shownAlerts}
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
-                                            allowHide={this.props.userType !== 'USER'} />
+                                            allowHide={this.props.userType !== 'USER'}
+                                            handleClick={this.handleAlertClick}
+                                        />
                                     </div >
-                                    {(!this.state.alerts && this.props.userType !== 'USER') && <a
-                                        href="#presentAlerts" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />Alerts</h4 ></a >}
                                 </div >
+
                             </div >
                         }
                     </div >

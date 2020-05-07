@@ -18,3 +18,7 @@
     font-weight: bold;
 }
 
+.modal-body {
+    height: auto !important;
+    max-height: 750px !important;
+}

@@ -181,7 +181,7 @@ class Simulation extends Component {
 
     updateLinksNext = (userName, parentUserName) => {
         const idx = this.shownLinks.findIndex(currentLink =>
-            currentLink.source.id === userName && currentLink.target.id === parentUserName);
+            currentLink.source === userName && currentLink.target === parentUserName);
         if (idx === -1) {
             this.shownLinks.push({
                 source: this.shownNodes.filter(node => node.id === userName)[0],
@@ -248,7 +248,6 @@ class Simulation extends Component {
     };
 
     backByTimestamp = (messageIndex, selfMessage) => {
-        // this.nodesChildren.delete(this.allMessages[messageIndex].id);
         const parentId = this.allMessages[messageIndex].parentId;
         let children = this.nodesChildren.get(parentId);
         children.splice(children.length - 1, 1);
@@ -305,7 +304,6 @@ class Simulation extends Component {
     };
 
     updateWidthAll() {
-
         const allMessagesNumber = this.shownLinks.map(link => link.name);
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {

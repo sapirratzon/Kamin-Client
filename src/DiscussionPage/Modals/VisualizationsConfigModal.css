@@ -8,13 +8,15 @@ label {
 }
 
 .visModalGraph,
-.visModalStats,
+.visModalStatsUser,
+.visModalStatsDiscussion,
 .visModalAlerts {
     display: none;
 }
 
 .visModalGraph + label,
-.visModalStats + label,
+.visModalStatsUser + label,
+.visModalStatsDiscussion + label,
 .visModalAlerts + label {
     background-color: #fafafa;
     border: 1px solid #cacece;
@@ -26,13 +28,15 @@ label {
 }
 
 .visModalGraph + label:active, .visModalGraph:checked + label:active,
-.visModalStats + label:active, .visModalStats:checked + label:active,
+.visModalStatsUser + label:active, .visModalStatsUser:checked + label:active,
+.visModalStatsDiscussion + label:active, .visModalStatsDiscussion:checked + label:active,
 .visModalAlerts + label:active, .visModalAlerts:checked + label:active {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .visModalGraph:checked + label,
-.visModalStats:checked + label,
+.visModalStatsUser:checked + label,
+.visModalStatsDiscussion:checked + label,
 .visModalAlerts:checked + label {
     background-color: #e9ecee;
     border: 1px solid #adb8c0;
@@ -41,7 +45,8 @@ label {
 }
 
 .visModalGraph:checked + label:after,
-.visModalStats:checked + label:after,
+.visModalStatsUser:checked + label:after,
+.visModalStatsDiscussion:checked + label:after,
 .visModalAlerts:checked + label:after {
     content: '\2714';
     font-size: 14px;

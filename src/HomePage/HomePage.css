@@ -51,6 +51,9 @@ form input .container::-webkit-input-placeholder {
     height: 35px;
     font-size: medium;
 }
+option{
+    max-width: 50px;
+}
 
 .codeInput {
     padding-top: 0;

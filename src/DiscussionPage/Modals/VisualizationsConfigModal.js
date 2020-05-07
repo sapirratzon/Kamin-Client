@@ -27,20 +27,24 @@ class VisualizationsModal extends Component {
         allUsersConfiguration['all'] = {
             graph: this.props.defaultConfig['graph'],
             alerts: this.props.defaultConfig['alerts'],
-            statistics: this.props.defaultConfig['statistics']
+            statisticsUser: this.props.defaultConfig['statisticsUser'],
+            statisticsDiscussion: this.props.defaultConfig['statisticsDiscussion'],
         };
         Object.keys(configuration).forEach(user => {
             allUsersConfiguration[user] = {
                 graph: configuration[user]['graph'],
                 alerts: configuration[user]['alerts'],
-                statistics: configuration[user]['statistics']
+                statisticsUser: configuration[user]['statisticsUser'],
+                statisticsDiscussion: configuration[user]['statisticsDiscussion'],
             };
             if (!configuration[user]['graph'])
                 allUsersConfiguration['all']['graph'] = false;
             if (!configuration[user]['alerts'])
                 allUsersConfiguration['all']['alerts'] = false;
-            if (!configuration[user]['statistics'])
-                allUsersConfiguration['all']['statistics'] = false;
+            if (!configuration[user]['statisticsUser'])
+                allUsersConfiguration['all']['statisticsUser'] = false;
+            if (!configuration[user]['statisticsDiscussion'])
+                allUsersConfiguration['all']['statisticsDiscussion'] = false;
         });
         this.activeUsers = allUsersConfiguration;
     }
@@ -139,7 +143,8 @@ class VisualizationsModal extends Component {
                                 <tr >
                                     <th >username</th >
                                     <th >Graph</th >
-                                    <th >Statistics</th >
+                                    <th >Statistics User</th >
+                                    <th >Statistics Discussion</th >
                                     <th >Alerts</th >
                                 </tr >
                             </thead >
@@ -160,12 +165,22 @@ class VisualizationsModal extends Component {
                                         <td >
                                             <input
                                                 name={id} type="checkbox"
-                                                id={id + " statistics"}
-                                                className="visModalStats"
-                                                checked={this.activeUsers[id]['statistics']}
-                                                onChange={(event) => this.updateUserVisualizations(event, 'statistics')}
+                                                id={id + " statisticsUser"}
+                                                className="visModalStatsUser"
+                                                checked={this.activeUsers[id]['statisticsUser']}
+                                                onChange={(event) => this.updateUserVisualizations(event, 'statisticsUser')}
                                             />
-                                            <label htmlFor={id + " statistics"} />
+                                            <label htmlFor={id + " statisticsUser"} />
+                                        </td >
+                                        <td >
+                                            <input
+                                                name={id} type="checkbox"
+                                                id={id + " statisticsDiscussion"}
+                                                className="visModalStatsDiscussion"
+                                                checked={this.activeUsers[id]['statisticsDiscussion']}
+                                                onChange={(event) => this.updateUserVisualizations(event, 'statisticsDiscussion')}
+                                            />
+                                            <label htmlFor={id + " statisticsDiscussion"} />
                                         </td >
                                         <td >
                                             <input
