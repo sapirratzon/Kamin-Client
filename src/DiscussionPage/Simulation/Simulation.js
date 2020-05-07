@@ -248,7 +248,6 @@ class Simulation extends Component {
     };
 
     backByTimestamp = (messageIndex, selfMessage) => {
-        // this.nodesChildren.delete(this.allMessages[messageIndex].id);
         const parentId = this.allMessages[messageIndex].parentId;
         let children = this.nodesChildren.get(parentId);
         children.splice(children.length - 1, 1);
@@ -297,8 +296,8 @@ class Simulation extends Component {
     updateOpacityAll() {
         for (let index = 0; index < this.shownLinks.length; index++) {
             let newOpacity = Math.pow(index, 3) / Math.pow(this.shownLinks.length - 1, 3);
-            if (newOpacity < 0.1) {
-                newOpacity = 0.1
+            if (newOpacity < 0.2) {
+                newOpacity = 0.2
             }
             this.shownLinks[index].color = rgb(32, 32, 32, newOpacity);
         }

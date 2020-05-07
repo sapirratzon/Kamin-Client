@@ -22,7 +22,7 @@
     padding-top: 10px;
 }
 
-.Messages-message > .vl {
+.Messages-message>.vl {
     transform: scaleY(1.5);
     top: 30px;
 }
@@ -38,14 +38,14 @@
     margin: 0 10px;
 }
 
-.Message-content > .username {
+.Message-content>.username {
     display: block;
     color: gray;
-    font-size: 14px;
+    font-size: 10px;
 }
 
-.Message-content > .text {
-    font-size: 18px;
+.Message-content>.text {
+    font-size: 14px;
     border-radius: 12px;
     color: black;
     display: inline-block;
@@ -63,4 +63,16 @@
     position: relative;
     border-left: 2px solid #edeff1;
     z-index: -1;
+}
+
+.input {
+    width: 80%
+}
+
+.tox-notifications-container {
+    display: none !important;
+}
+
+.tox-statusbar {
+    display: none !important;
 }
