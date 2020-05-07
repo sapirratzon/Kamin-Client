@@ -91,18 +91,6 @@ class Chat extends Component {
         this.socket.emit('add comment', comment)
     };
 
-    sendAlert(targetId, message, depth, username) {
-        const alert = JSON.stringify({
-            "author": this.props.currentUser,
-            "text": message,
-            "parentId": targetId,
-            "discussionId": this.props.discussionId,
-            "depth": depth,
-            "extra_data": { "recipients_type": "parent", users_list: { [username]: true } }
-        });
-        this.socket.emit('add alert', alert);
-    };
-
     addComment(message) {
         this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
         this.reloadChat();
@@ -240,7 +228,6 @@ class Chat extends Component {
                     <Messages
                         messages={this.props.messages} isSimulation={this.props.isSimulation}
                         newCommentHandler={this.sendComment.bind(this)}
-                        newAlertHandler={this.sendAlert.bind(this)}
                         updateAlertedMessage={this.props.updateAlertedMessage}
                         updateVisibility={this.props.updateVisibility}
                     />
