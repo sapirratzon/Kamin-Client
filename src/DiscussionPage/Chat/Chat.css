@@ -76,3 +76,7 @@
 .tox-statusbar {
     display: none !important;
 }
+
+P {
+    margin: 0 !important
+}
