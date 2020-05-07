@@ -38,7 +38,8 @@ class UserStats extends Component {
         this.props.getShownMessages().forEach(message => {
             if (message.author === selectedUser) {
                 commentsWritten++;
-                wordsNumber += message.text.split(' ').length;
+                console.log(message.text.replace(/<(?<=<)(.*?)(?=>)>/g, ' ').split(' ').filter(word => word.length > 1))
+                wordsNumber += message.text.replace(/<(?<=<)(.*?)(?=>)>/g, ' ').replace('&nbsp;','').split(' ').filter(word => word.length > 1).length;
             }
         });
         this.setState({
