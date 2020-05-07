@@ -107,7 +107,7 @@ class Message extends Component {
                             { this.props.username }{ "  " }{ this.getDate(this.props.timestamp) }
                         </div >
                         <div className="text ml-2" >
-                            < div dangerouslySetInnerHTML={{ __html: this.state.shownText }}></div>
+                            < div dangerouslySetInnerHTML={ {__html: this.state.shownText} }/>
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
                         { !this.props.isSimulation ?
