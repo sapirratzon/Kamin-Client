@@ -15,13 +15,14 @@ class CreateDiscussionModal extends Component {
             titleError: '',
             replyPosition: "None",
             graphChecked: true,
-            statsChecked: true,
+            statsUserChecked: true,
+            statsDiscussionChecked: true,
             alertsChecked: true,
             language: 'English',
             directionClass: "leftToRight",
         };
         this.configuration = {
-            vis_config: { "graph": true, "alerts": true, "statistics": true },
+            vis_config: { "graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": false },
             extra_config: {
                 replyPosition: "None",
                 language: "English"
@@ -43,8 +44,11 @@ class CreateDiscussionModal extends Component {
         if (type === "graph") {
             this.setState({ graphChecked: this.configuration.vis_config[type] })
         }
-        if (type === "statistics") {
-            this.setState({ statsChecked: this.configuration.vis_config[type] })
+        if (type === "statisticsUser") {
+            this.setState({ statsUserChecked: this.configuration.vis_config[type] })
+        }
+        if (type === "statisticsDiscussion") {
+            this.setState({ statsDiscussionChecked: this.configuration.vis_config[type] })
         }
         if (type === "alerts") {
             this.setState({ alertsChecked: this.configuration.vis_config[type] })
@@ -121,7 +125,7 @@ class CreateDiscussionModal extends Component {
 
     render() {
         return (
-            <Modal visible={this.props.isOpen}>
+            <Modal visible={this.props.isOpen} >
                 <div className="modal-header" >
                     <h5 className="modal-title" >Create New Discussion</h5 >
                 </div >
@@ -143,15 +147,20 @@ class CreateDiscussionModal extends Component {
                     </div >
                     <div >
                         <label className="config" >Visualization Config:</label >
-                        <CheckBox
-                            changeHandler={this.vizConfigChange} type="graph" text="graph"
-                            checked={this.state.graphChecked} />
-                        <CheckBox
-                            changeHandler={this.vizConfigChange} type="statistics" text="statistics"
-                            checked={this.state.statsChecked} />
-                        <CheckBox
-                            changeHandler={this.vizConfigChange} type="alerts" text="alerts"
-                            checked={this.state.alertsChecked} />
+                        <div>
+                            <CheckBox
+                                changeHandler={this.vizConfigChange} type="graph" text="graph"
+                                checked={this.state.graphChecked} />
+                            <CheckBox
+                                changeHandler={this.vizConfigChange} type="statisticsUser" text="statisticsUser"
+                                checked={this.state.statsUserChecked} />
+                            <CheckBox
+                                changeHandler={this.vizConfigChange} type="statisticsDiscussion" text="statisticsDiscussion"
+                                checked={this.state.statsDiscussionChecked} />
+                            <CheckBox
+                                changeHandler={this.vizConfigChange} type="alerts" text="alerts"
+                                checked={this.state.alertsChecked} />
+                        </div>
                         <div className="dropdown mt-2" >
                             <label >Language: </label >
                             <button
@@ -170,8 +179,6 @@ class CreateDiscussionModal extends Component {
                             </div >
                         </div >
                     </div >
-
-
                 </div >
                 <div className="modal-footer" >
                     <button

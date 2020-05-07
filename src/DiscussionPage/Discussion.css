@@ -34,7 +34,10 @@
     height: 39.6%;
 }
 
-.card-stats {
+.card-stats-full {
+    height: 100%;
+}
+.card-stats-share {
     height: 50%;
 }
 
@@ -57,3 +60,4 @@ hr {
     height: 44px;
     font-size: 14px;
 }
+

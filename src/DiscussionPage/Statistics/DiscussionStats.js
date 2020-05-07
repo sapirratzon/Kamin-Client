@@ -36,10 +36,10 @@ class DiscussionStats extends Component {
 
     render() {
         return (
-            <div className="card card-stats small-font" >
-                <div className="card-header p-1" >
-                    <h4 className="Card-title" >Discussion Statistics</h4 >
-                </div >
+            <div className={(this.props.isFull ? "card-stats-full" : "card-stats-share") + " card small-font"} >
+                {this.props.allowHide ? <h4 className="Card-title" ><a href="#presentStatDiscussion" data-toggle="collapse" onClick={this.props.handleHide}>
+                    <i className="fa fa-angle-down" /></a>Discussion Statistics </h4 > : <h4 className="Card-title" > Discussion Statistics </h4 >
+                }
                 <div className="card-body p-1 table-wrap" >
                     <table className="mx-auto table-sm table " >
                         < tbody>

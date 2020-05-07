@@ -36,21 +36,21 @@ class Message extends Component {
     };
 
     replyHandler = () => {
-            this.setState({
-                showReplyInput: false,
-                replyText: "Reply"
-            });
+        this.setState(prevState => ({
+            showReplyInput: !prevState.showReplyInput,
+            replyText: prevState.replyText === 'Reply' ? 'Hide' : 'Reply'
+        }));
     };
 
     alertsModalHandler = () => {
-        this.props.updateAlertedMessage({id: this.props.id, depth: this.props.depth + 1});
+        this.props.updateAlertedMessage({ id: this.props.id, depth: this.props.depth + 1 });
         this.props.updateVisibility(true);
     };
 
     sendMessageHandler = () => {
         if (this.state.inputContent.length === 0) return;
-            this.props.newCommentHandler(this.props.id, this.state.inputContent, this.props.depth + 1);
-            this.replyHandler();
+        this.props.newCommentHandler(this.props.id, this.state.inputContent, this.props.depth + 1);
+        this.replyHandler();
     };
 
     getDate = (timestamp) => {
@@ -67,10 +67,10 @@ class Message extends Component {
 
     handleMessageDisplayLength = () => {
         this.state.fullyShown ? this.setState({
-                fullyShown: false,
-                shownText: this.props.text.substring(0, 500),
-                textLengthMessage: " Show more"
-            })
+            fullyShown: false,
+            shownText: this.props.text.substring(0, 500),
+            textLengthMessage: " Show more"
+        })
             : this.setState({
                 fullyShown: true,
                 shownText: this.props.text,
@@ -92,9 +92,9 @@ class Message extends Component {
         let verticalLines = [];
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div
-                className="vl" key={ i } style={ {
-                "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
-            } } />)
+                className="vl" key={i} style={{
+                    "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
+                }} />)
         }
         return (
             <React.Fragment >
@@ -102,9 +102,9 @@ class Message extends Component {
                     {verticalLines}
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
-                        style={ {
+                        style={{
                             "backgroundColor": this.props.color,
-                        } }
+                        }}
                     /></a >
                     <div id="messageCollapse" className={"show collapse card Message-content " + this.props.directionClass} >
                         <div className="card-header p-1 username leftToRight" >
@@ -128,7 +128,7 @@ class Message extends Component {
                             </React.Fragment >
                         }
 
-                        { this.props.depth === 0 }
+                        {this.props.depth === 0}
                     </div >
                 </li >
                 <div className="mx-auto input mt-2">
