@@ -186,7 +186,6 @@ class HomePage extends Component {
                         </Link >
                     </div >
                 }
-                <img src={bguLogo} alt="bgulogo" />
             </div >
         );
     }
