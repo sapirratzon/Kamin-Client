@@ -234,6 +234,7 @@ class Chat extends Component {
                         newCommentHandler={this.sendComment.bind(this)}
                         updateAlertedMessage={this.props.updateAlertedMessage}
                         updateVisibility={this.props.updateVisibility}
+                        selectedMessage={this.props.selectedMessage}
                     />
                 </div > : null}
             </React.Fragment>

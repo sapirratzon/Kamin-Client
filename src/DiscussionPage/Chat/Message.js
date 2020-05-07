@@ -106,7 +106,7 @@ class Message extends Component {
                             "backgroundColor": this.props.color,
                         }}
                     /></a >
-                    <div id="messageCollapse" className={"show collapse card Message-content " + this.props.directionClass} >
+                    <div id="messageCollapse" className={(this.props.selected ? 'border-warning ' : '') + " show collapse card Message-content cursor-pointer" + this.props.directionClass} >
                         <div className="card-header p-1 username leftToRight" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
@@ -116,7 +116,7 @@ class Message extends Component {
                         </div >
                         {!this.props.isSimulation &&
                             <React.Fragment >
-                                <div className={"reply " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")} >
+                                <div className={"reply cursor-pointer " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")} >
                                     <i
                                         className="far fa-comment-dots message-buttons mb-1"
                                         onClick={this.replyHandler} >{this.state.replyText}</i >

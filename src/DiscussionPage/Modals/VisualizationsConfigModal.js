@@ -58,7 +58,6 @@ class VisualizationsModal extends Component {
     };
 
     updateUserVisualizations = (event, type) => {
-        debugger
         if (event.target.name === 'all') {
             Object.keys(this.activeUsers).forEach(user => {
                 this.updateConfigInState(event, user, type);

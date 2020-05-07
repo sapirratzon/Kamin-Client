@@ -34,8 +34,8 @@ const Alert = (props) => {
     const names = getUsernames(props.alert);
     return (
         <li >
-            <div id="messageCollapse" className={(props.alert.comment_type === 'alert' ? 'border-warning' : 'border-info') + " card small-font mt-2"} >
-                <div className="card-header  p-1 username">
+            <div id="messageCollapse" className={(props.alert.comment_type === 'alert' ? 'border-warning' : 'border-info') + " card small-font mt-2 cursor-pointer"} >
+                <div className={` card-header p-1 username bg-alert-${type} `} >
                     <i className={props.alert.comment_type === 'alert' ? 'fas fa-exclamation-triangle' : 'fas fa-user-cog'} />{" "}
                     {props.alert.comment_type === "alert" &&
                     ` Sent to: ${getUsernames(props.alert)}, `} {getDate(props.alert.timestamp)}

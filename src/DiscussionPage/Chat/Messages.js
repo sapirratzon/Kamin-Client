@@ -15,6 +15,7 @@ const Messages = (props) => {
                     newCommentHandler={props.newCommentHandler} newAlertHandler={props.newAlertHandler} 
                     updateAlertedMessage={props.updateAlertedMessage}
                     updateVisibility={props.updateVisibility}
+                    selected={props.selectedMessage === m.id}
                     />)}
         </ul >
     );

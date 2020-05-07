@@ -38,7 +38,8 @@ class Discussion extends Component {
             statisticsDiscussion: true,
             isLoading: false,
             language: "English",
-            directionClass: "leftToRight"
+            directionClass: "leftToRight",
+            selectedMessageId: null
         };
     }
 
@@ -219,6 +220,15 @@ class Discussion extends Component {
         }
     };
 
+    handleAlertClick = (messageId) => {
+        if (this.state.selectedMessageId === messageId) {
+            this.setState({ selectedMessageId: null })
+        }
+        else {
+            this.setState({ selectedMessageId: messageId });
+        }
+    }
+
     hashCode = (str) => {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -337,6 +347,7 @@ class Discussion extends Component {
                                 updateLanguage={this.updateLanguage}
                                 updateAlertedMessage={this.updateAlertedMessage.bind(this)}
                                 updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
+                                selectedMessage={this.state.selectedMessageId}
                             />
                         </div >
                         {!this.state.isLoading &&
@@ -392,15 +403,18 @@ class Discussion extends Component {
                                                 />
                                             </span>
                                         </div >
+
                                     }
-                                    {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
-                                        href="#presentStatUser" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('statUser', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />User Statistics</h4 ></a >}
-                                    {(!this.state.statisticsDiscussion && this.props.userType !== 'USER') && <a
-                                        href="#presentStatDiscussion" data-toggle="collapse"
-                                        onClick={() => this.handleInsightVisibility('statDiscussion', true)} ><h4 ><i
-                                            className="fa fa-angle-up p-2" />Discussion Statistics</h4 ></a >}
+                                    <div>
+                                        {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
+                                            href="#presentStatUser" data-toggle="collapse"
+                                            onClick={() => this.handleInsightVisibility('statUser', true)} ><h4 ><i
+                                                className="fa fa-angle-up p-2" />User Statistics</h4 ></a >}
+                                        {(!this.state.statisticsDiscussion && this.props.userType !== 'USER') && <a
+                                            href="#presentStatDiscussion" data-toggle="collapse"
+                                            onClick={() => this.handleInsightVisibility('statDiscussion', true)} ><h4 ><i
+                                                className="fa fa-angle-up p-2" />Discussion Statistics</h4 ></a >}
+                                    </div>
                                     {(!this.state.alerts && this.props.userType !== 'USER') && <a
                                         href="#presentAlerts" data-toggle="collapse"
                                         onClick={() => this.handleInsightVisibility('alerts', true)} ><h4 ><i
@@ -413,6 +427,7 @@ class Discussion extends Component {
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
                                             allowHide={this.props.userType !== 'USER'}
                                             directionClass={this.state.directionClass}
+                                            handleClick={this.handleAlertClick}
                                         />
                                     </div >
                                 </div >

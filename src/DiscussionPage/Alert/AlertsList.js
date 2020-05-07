@@ -1,10 +1,7 @@
 import React from 'react';
 import Alert from "./Alert";
 import "./Alerts.css";
-import {
-    Card, CardBody, CardTitle, CardHeader,
-    Container
-} from 'reactstrap';
+import { Card, CardBody, CardTitle, CardHeader, Container } from 'reactstrap';
 
 const AlertList = (props) => {
     return (
@@ -18,7 +15,7 @@ const AlertList = (props) => {
             <CardBody className="p-1" >
                 <Container >
                     <ul id="alerts-list" >
-                        {props.alerts.map((a) => <Alert key={a.id} alert={a} directionClass={props.directionClass}/>)}
+                        {props.alerts.map((a) => <Alert key={a.id} alert={a} directionClass={props.directionClass} onClick={() => props.handleClick(a.parentId)}/>)}
                     </ul >
                 </Container >
             </CardBody >
