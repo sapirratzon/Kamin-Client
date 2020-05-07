@@ -2,7 +2,7 @@ import React from "react";
 
 const Alert = (props) => {
     const getUsernames = (alert) => {
-        let usernames = ""
+        let usernames = '';
         if (alert["extra_data"]["recipients_type"] === 'all') {
             return " All Participants";
         }
@@ -36,9 +36,10 @@ const Alert = (props) => {
         <li >
             <div id="messageCollapse" className={(props.alert.comment_type === 'alert' ? 'border-warning' : 'border-info') + " card small-font mt-2"} >
                 <div className="card-header  p-1 username">
-                    <i className={props.alert.comment_type === 'alert' ? 'fas fa-exclamation-triangle' : 'fas fa-user-cog'} />{" "}{getDate(props.alert.timestamp)} {props.alert.comment_type === "alert" &&
-                        ` | Sent to: ${getUsernames(props.alert)} `
-                    }
+                    <i className={props.alert.comment_type === 'alert' ? 'fas fa-exclamation-triangle' : 'fas fa-user-cog'} />{" "}
+                    {props.alert.comment_type === "alert" &&
+                    ` Sent to: ${getUsernames(props.alert)}, `} {getDate(props.alert.timestamp)}
+
                 </div >
                 <div className="text  ml-2" >
                     {props.alert.text}
