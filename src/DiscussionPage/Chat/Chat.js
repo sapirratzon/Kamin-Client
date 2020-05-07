@@ -65,7 +65,6 @@ class Chat extends Component {
         this.shownLinks.sort(function (a, b) {
             return a.timestamp - b.timestamp;
         });
-        debugger
         this.updateLinksOpacity();
         this.updateLinksWidth();
     }
