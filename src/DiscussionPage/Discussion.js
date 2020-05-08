@@ -12,7 +12,6 @@ import io from "socket.io-client";
 import VisualizationsModal from "./Modals/VisualizationsConfigModal";
 import Loader from "react-loader-spinner";
 import MultipleUsersAlerts from "./Modals/MultipleUsersAlerts";
-import { thresholdScott } from "d3";
 
 class Discussion extends Component {
     constructor(props) {
@@ -55,9 +54,11 @@ class Discussion extends Component {
         this.socket.on("error", (response) => {
             console.log({ response });
         });
+
         this.socket.on("new configuration", (response) => {
             this.handleNewConfig(response);
         });
+
         if (this.props.userType === "MODERATOR")
             this.setState({
                 graph: true,
@@ -178,8 +179,10 @@ class Discussion extends Component {
     };
 
     handleNewConfig = (response) => {
-        for (let setting in response) {
-            this.setState({ [setting]: response[setting] });
+        if (this.props.userType === 'USER') {
+            for (let setting in response) {
+                this.setState({ [setting]: response[setting] });
+            }
         }
     };
 
@@ -380,7 +383,6 @@ class Discussion extends Component {
                                                 />
                                             </span>
                                         </div >
-
                                     }
                                     <div>
                                         {(!this.state.statisticsUser && this.props.userType !== 'USER') && <a
