@@ -145,15 +145,6 @@ class CreateDiscussionModal extends Component {
                                 changeHandler={this.vizConfigChange} type="alerts" text="alerts"
                                 checked={this.state.alertsChecked} />
                         </div>
-                        <div className="dropdown" >
-                            <label >Default reply position: </label >
-                            <button
-                                className="btn btn-sm btn-primary dropdown-toggle" type="button"
-                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false" >
-                                {this.state.replyPosition}
-                            </button >
-                        </div >
                     </div >
                 </div >
                 <div className="modal-footer" >
