@@ -19,6 +19,13 @@ const Alert = (props) => {
         return usernames;
     }
 
+    const getAlertType = (alert) => {
+        if (alert.comment_type !== "alert") return '';
+        if (alert["extra_data"]["recipients_type"] === 'all') { return 'all'; }
+        else if (Object.keys(alert["extra_data"]["users_list"]).length > 1) { return 'list'; }
+        else { return ('user'); }
+    };
+
     const getDate = (timestamp) => {
         const date = new Date(timestamp * 1000);
         return new Intl.DateTimeFormat('en-US', {
@@ -30,9 +37,8 @@ const Alert = (props) => {
             second: '2-digit'
         }).format(date);
     };
-
-    const names = getUsernames(props.alert);
-    return (
+        const type = getAlertType(props.alert);
+        return (
         <li >
             <div id="messageCollapse" className={(props.alert.comment_type === 'alert' ? 'border-warning' : 'border-info') + " card small-font mt-2 cursor-pointer"} >
                 <div className={` card-header p-1 username bg-alert-${type} `} >
