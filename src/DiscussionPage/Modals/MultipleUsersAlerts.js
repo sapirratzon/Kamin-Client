@@ -19,7 +19,7 @@ class MultipleUsersAlerts extends Component {
     }
 
     componentDidMount() {
-        this.socket.on("new user", (response) => {
+        this.socket.on("update active users", (response) => {
             const allUsers = response;
             if (Object.keys(allUsers).length > 0) {
                 this.noUsers = 'Choose Users:';
@@ -31,7 +31,7 @@ class MultipleUsersAlerts extends Component {
             else {
                 this.noUsers = 'There are no users in discussion';
             }
-        })
+        });
     }
 
     updateVisibility = (isOpen) => {
