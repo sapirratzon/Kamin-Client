@@ -32,7 +32,7 @@ class Chat extends Component {
                     }
                 );
                 this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-                this.loadDiscussion(this.state.root);
+                this.loadDiscussion(this.state.root, null, null);
                 this.updateGraph();
                 this.lastMessage = this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0];
                 this.props.updateAlertedMessage(this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0]);
@@ -76,7 +76,7 @@ class Chat extends Component {
         this.shownNodes = [];
         this.shownLinks = [];
         this.shownAlerts = [];
-        this.loadDiscussion(this.state.root);
+        this.loadDiscussion(this.state.root, null, null);
         this.shownAlerts.sort(function (a, b) {
             return a.timestamp - b.timestamp;
         });
@@ -141,7 +141,7 @@ class Chat extends Component {
         });
     };
 
-    loadDiscussion = (commentNode) => {
+    loadDiscussion = (commentNode, childIdx, branchId) => {
         if (commentNode == null) return;
         if (commentNode["node"]["comment_type"] === "alert") {
             if (commentNode["node"]["extra_data"]["recipients_type"] === 'all' ||
@@ -150,13 +150,16 @@ class Chat extends Component {
                 this.shownAlerts.push(commentNode["node"]);
         } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
+            let newBranchId = (commentNode["node"]["depth"] > 0 ? branchId + 'b' + childIdx : '1');
             this.shownMessages.push({
                 author: commentNode["node"]["author"],
                 id: commentNode["node"]["id"],
                 color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
                 text: commentNode["node"]["text"],
                 depth: commentNode["node"]["depth"],
-                timestamp: commentNode["node"]["timestamp"]
+                timestamp: commentNode["node"]["timestamp"],
+                childIdx: childIdx,
+                branchId: newBranchId
             });
             if (!this.nodesMap.has(commentNode["node"]["author"])) {
                 let node = {
@@ -182,6 +185,7 @@ class Chat extends Component {
                 let parentUsername = parentId.author;
                 this.nodesMap.get(parentUsername)['commentsReceived']++;
             }
+            let i = 0;
             commentNode["children"].forEach(childComment => {
                 if (commentNode["node"]["comment_type"] === "comment" && childComment["node"]["comment_type"] === "comment") {
                     if (childComment["node"]["author"] !== commentNode["node"]["author"]) {
@@ -211,7 +215,8 @@ class Chat extends Component {
                         }
                     }
                 }
-                this.loadDiscussion(childComment);
+                this.loadDiscussion(childComment, i, newBranchId);
+                i+=1;
             });
         }
     };

@@ -24,13 +24,15 @@ class Message extends Component {
             this.setState({
                 longMessage: true,
                 fullyShown: false,
-                shownText: this.props.text.substring(0, 500),
-                textLengthMessage: " Show more"
+                // shownText: this.props.text.substring(0, 500),
+                shownText: this.props.branchId,
+                // textLengthMessage: " Show more"
             });
         } else {
             this.setState({
                 fullyShown: true,
-                shownText: this.props.text
+                // shownText: this.props.text
+                shownText: this.props.branchId
             });
         }
     };
@@ -43,7 +45,7 @@ class Message extends Component {
     };
 
     alertsModalHandler = () => {
-        this.props.updateAlertedMessage({ id: this.props.id, depth: this.props.depth + 1 });
+        this.props.updateAlertedMessage({id: this.props.id, depth: this.props.depth + 1});
         this.props.updateVisibility(true);
     };
 
@@ -96,14 +98,14 @@ class Message extends Component {
             <React.Fragment >
                 <li className="Messages-message" style={ {"marginLeft": depthString} } >
                     { verticalLines }
-                    <a href="#messageCollapse" data-toggle="collapse" > <span
+                    <a href={"#" + (this.props.branchId.startsWith(this.props.parentBranchId)? this.props.parentBranchId: '')} data-toggle="collapse" onClick={() => this.props.updateSelectedBranch(this.props.branchId)}> <span
                         className="avatar"
                         style={ {
                             "backgroundColor": this.props.color,
                         } }
                     /></a >
                     <div
-                        id="messageCollapse"
+                        id= {this.props.parentBranchId}
                         className={ (this.props.selected ? 'border-warning ' : '') + " show collapse card Message-content cursor-pointer" } >
                         <div className="card-header p-1 username" >
                             { this.props.username }{ "  " }{ this.getDate(this.props.timestamp) }
