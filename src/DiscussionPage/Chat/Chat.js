@@ -77,6 +77,9 @@ class Chat extends Component {
         this.shownLinks = [];
         this.shownAlerts = [];
         this.loadDiscussion(this.state.root);
+        this.shownAlerts.sort(function (a, b) {
+            return a.timestamp - b.timestamp;
+        });
         this.updateGraph();
     }
 
@@ -92,13 +95,14 @@ class Chat extends Component {
     };
 
     addComment(message) {
-        this.addMessageHelper(this.state.root, message.parentId, message.author, message.text, message.depth, message.id, message.timestamp);
+        this.addMessageHelper(this.state.root, message);
         this.reloadChat();
         this.lastMessage = message;
         this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, message);
     };
 
     addAlert(alert) {
+        this.addMessageHelper(this.state.root,alert);
         this.shownAlerts.push(alert);
         this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
     };
@@ -123,25 +127,17 @@ class Chat extends Component {
         });
     }
 
-    addMessageHelper(currentNode, targetId, author, message, depth, messageId, timestamp) {
+    addMessageHelper(currentNode, comment) {
         if (currentNode == null) return;
-        if (currentNode["node"]["id"] === targetId) {
+        if (currentNode["node"]["id"] === comment.parentId) {
             currentNode["children"].push({
-                node: {
-                    author: author,
-                    depth: depth,
-                    id: messageId,
-                    text: message,
-                    timestamp: timestamp,
-                    children: [],
-                    comment_type: "comment"
-                },
+                node: comment,
                 children: []
             });
             return;
         }
         currentNode["children"].forEach(child => {
-            this.addMessageHelper(child, targetId, author, message, depth, messageId, timestamp);
+            this.addMessageHelper(child, comment);
         });
     };
 
