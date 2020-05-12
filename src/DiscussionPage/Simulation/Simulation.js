@@ -275,7 +275,7 @@ class Simulation extends Component {
     handleOrderSettings = () => {
         this.setState((prevState) => ({
             isChronological: !prevState.isChronological,
-            order: this.state.switchText,
+            order: prevState.switchText,
             switchText: prevState.order
         }));
         this.handleResetClick();
