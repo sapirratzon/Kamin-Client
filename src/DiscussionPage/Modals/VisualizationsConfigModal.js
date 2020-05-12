@@ -7,6 +7,7 @@ class VisualizationsModal extends Component {
     constructor(props) {
         super(props);
         this.activeUsers = {};
+        this.noUsers = 'There are no users in discussion';
         this.socket = props.socket;
         this.state = {
             configType: '',
@@ -23,30 +24,34 @@ class VisualizationsModal extends Component {
     }
 
     loadActiveUsers(configuration) {
-        const allUsersConfiguration = {};
-        allUsersConfiguration['all'] = {
-            graph: this.props.defaultConfig['graph'],
-            alerts: this.props.defaultConfig['alerts'],
-            statisticsUser: this.props.defaultConfig['statisticsUser'],
-            statisticsDiscussion: this.props.defaultConfig['statisticsDiscussion'],
-        };
-        Object.keys(configuration).forEach(user => {
-            allUsersConfiguration[user] = {
-                graph: configuration[user]['graph'],
-                alerts: configuration[user]['alerts'],
-                statisticsUser: configuration[user]['statisticsUser'],
-                statisticsDiscussion: configuration[user]['statisticsDiscussion'],
+        this.activeUsers = {};
+        if (Object.keys(configuration).length > 0) {
+            this.activeUsers['all'] = {
+                graph: this.props.defaultConfig['graph'],
+                alerts: this.props.defaultConfig['alerts'],
+                statisticsUser: this.props.defaultConfig['statisticsUser'],
+                statisticsDiscussion: this.props.defaultConfig['statisticsDiscussion'],
             };
-            if (!configuration[user]['graph'])
-                allUsersConfiguration['all']['graph'] = false;
-            if (!configuration[user]['alerts'])
-                allUsersConfiguration['all']['alerts'] = false;
-            if (!configuration[user]['statisticsUser'])
-                allUsersConfiguration['all']['statisticsUser'] = false;
-            if (!configuration[user]['statisticsDiscussion'])
-                allUsersConfiguration['all']['statisticsDiscussion'] = false;
-        });
-        this.activeUsers = allUsersConfiguration;
+            Object.keys(configuration).forEach(user => {
+                this.activeUsers[user] = {
+                    graph: configuration[user]['graph'],
+                    alerts: configuration[user]['alerts'],
+                    statisticsUser: configuration[user]['statisticsUser'],
+                    statisticsDiscussion: configuration[user]['statisticsDiscussion'],
+                };
+                if (!configuration[user]['graph'])
+                    this.activeUsers['all']['graph'] = false;
+                if (!configuration[user]['alerts'])
+                    this.activeUsers['all']['alerts'] = false;
+                if (!configuration[user]['statisticsUser'])
+                    this.activeUsers['all']['statisticsUser'] = false;
+                if (!configuration[user]['statisticsDiscussion'])
+                    this.activeUsers['all']['statisticsDiscussion'] = false;
+            });
+        }
+        else {
+            this.noUsers = 'There are no users in discussion';
+        }
     }
 
     updateVisibility = (isOpen) => {
@@ -137,7 +142,7 @@ class VisualizationsModal extends Component {
                     <h5 className="modal-title" >Visualization Management</h5 >
                 </div >
                 <div className="modal-body" >
-                    {Object.keys(this.activeUsers).length > 0 &&
+                    {Object.keys(this.activeUsers).length > 0 ?
                         <table className="table" >
                             <thead >
                                 <tr >
@@ -196,6 +201,7 @@ class VisualizationsModal extends Component {
                                 )}
                             </tbody >
                         </table >
+                        : <p><b> {this.noUsers} </b></p>
                     }
                 </div >
                 <div className="modal-footer" >

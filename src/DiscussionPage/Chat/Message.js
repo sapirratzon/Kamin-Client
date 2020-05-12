@@ -94,7 +94,7 @@ class Message extends Component {
         }
         return (
             <React.Fragment >
-                <li className=" Messages-message" style={ {"marginLeft": depthString} } >
+                <li className="Messages-message" style={ {"marginLeft": depthString} } >
                     { verticalLines }
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
