@@ -20,7 +20,7 @@ class CreateDiscussionModal extends Component {
             alertsChecked: true,
         };
         this.configuration = {
-            vis_config: { "graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": false },
+            vis_config: {"graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": true},
             replyPosition: "None"
         }
     }
@@ -30,28 +30,28 @@ class CreateDiscussionModal extends Component {
             titleError: '',
             descriptionError: ''
         });
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
+        const {name, value} = e.target;
+        this.setState({[name]: value});
     };
 
     vizConfigChange = (type) => {
         this.configuration.vis_config[type] = !this.configuration.vis_config[type];
         if (type === "graph") {
-            this.setState({ graphChecked: this.configuration.vis_config[type] })
+            this.setState({graphChecked: this.configuration.vis_config[type]})
         }
         if (type === "statisticsUser") {
-            this.setState({ statsUserChecked: this.configuration.vis_config[type] })
+            this.setState({statsUserChecked: this.configuration.vis_config[type]})
         }
         if (type === "statisticsDiscussion") {
-            this.setState({ statsDiscussionChecked: this.configuration.vis_config[type] })
+            this.setState({statsDiscussionChecked: this.configuration.vis_config[type]})
         }
         if (type === "alerts") {
-            this.setState({ alertsChecked: this.configuration.vis_config[type] })
+            this.setState({alertsChecked: this.configuration.vis_config[type]})
         }
     };
 
     replyConfigChange = (type) => {
-        this.setState({ replyPosition: type });
+        this.setState({replyPosition: type});
         this.configuration.replyPosition = type;
     };
 
@@ -60,7 +60,7 @@ class CreateDiscussionModal extends Component {
     };
 
     createDiscussion = () => {
-        const { description, title } = this.state;
+        const {description, title} = this.state;
         if (!title) {
             this.setState({
                 titleError: 'Title is required'
@@ -109,7 +109,7 @@ class CreateDiscussionModal extends Component {
 
     render() {
         return (
-            <Modal visible={this.props.isOpen} >
+            <Modal visible={ this.props.isOpen } >
                 <div className="modal-header" >
                     <h5 className="modal-title" >Create New Discussion</h5 >
                 </div >
@@ -117,44 +117,45 @@ class CreateDiscussionModal extends Component {
                     <div >
                         <p className="title" >Title:</p >
                         <input
-                            type="text" className="title-input" value={this.state.title} name="title"
-                            placeholder="Enter Title" onChange={this.handleChange.bind(this)} />
-                        <p > {this.state.titleError} </p >
+                            type="text" className="title-input" value={ this.state.title } name="title"
+                            placeholder="Enter Title" onChange={ this.handleChange.bind(this) } />
+                        <p > { this.state.titleError } </p >
                     </div >
                     <div >
                         <p className="description" >Description:</p >
                         <textarea
-                            className="description-input" name="description" value={this.state.description}
-                            placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
+                            className="description-input" name="description" value={ this.state.description }
+                            placeholder={ "Write Something" } onChange={ this.handleChange.bind(this) }
                         />
-                        <p> {this.state.descriptionError} </p>
+                        <p > { this.state.descriptionError } </p >
                     </div >
                     <div >
                         <label className="config" >Visualization Config:</label >
-                        <div>
+                        <div >
                             <CheckBox
-                                changeHandler={this.vizConfigChange} type="graph" text="graph"
-                                checked={this.state.graphChecked} />
+                                changeHandler={ this.vizConfigChange } type="graph" text="graph"
+                                checked={ this.state.graphChecked } />
                             <CheckBox
-                                changeHandler={this.vizConfigChange} type="statisticsUser" text="statisticsUser"
-                                checked={this.state.statsUserChecked} />
+                                changeHandler={ this.vizConfigChange } type="statisticsUser" text="statisticsUser"
+                                checked={ this.state.statsUserChecked } />
                             <CheckBox
-                                changeHandler={this.vizConfigChange} type="statisticsDiscussion" text="statisticsDiscussion"
-                                checked={this.state.statsDiscussionChecked} />
+                                changeHandler={ this.vizConfigChange } type="statisticsDiscussion"
+                                text="statisticsDiscussion"
+                                checked={ this.state.statsDiscussionChecked } />
                             <CheckBox
-                                changeHandler={this.vizConfigChange} type="alerts" text="alerts"
-                                checked={this.state.alertsChecked} />
-                        </div>
+                                changeHandler={ this.vizConfigChange } type="alerts" text="alerts"
+                                checked={ this.state.alertsChecked } />
+                        </div >
                     </div >
                 </div >
                 <div className="modal-footer" >
                     <button
-                        type="button" onClick={() => this.updateVisibility(false)}
+                        type="button" onClick={ () => this.updateVisibility(false) }
                         className="btn btn-grey" >Cancel
                     </button >
                     <button
                         className="btn btn-info"
-                        onClick={this.createDiscussion} >Create
+                        onClick={ this.createDiscussion } >Create
                     </button >
                 </div >
             </Modal >
@@ -171,7 +172,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLogOut: () => dispatch({ type: 'LOGOUT' })
+        onLogOut: () => dispatch({type: 'LOGOUT'})
     };
 };
 
