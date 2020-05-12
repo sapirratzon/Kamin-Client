@@ -8,15 +8,15 @@ import UserStats from "./Statistics/UserStats";
 import DiscussionStats from "./Statistics/DiscussionStats";
 import ReactTooltip from "react-tooltip";
 import { connect } from "react-redux";
-import io from "socket.io-client";
 import VisualizationsModal from "./Modals/VisualizationsConfigModal";
 import Loader from "react-loader-spinner";
 import MultipleUsersAlerts from "./Modals/MultipleUsersAlerts";
+import socketConnection from '../Socket/Socket'
 
 class Discussion extends Component {
     constructor(props) {
         super(props);
-        this.socket = io(process.env.REACT_APP_API);
+        this.socket = socketConnection;
         this.defaultConfig = {};
         this.state = {
             shownMessages: [],

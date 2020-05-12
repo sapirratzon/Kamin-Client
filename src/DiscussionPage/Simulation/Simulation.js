@@ -20,38 +20,40 @@ class Simulation extends Component {
         this.messagesCounter = 0;
         this.socket = props.socket;
         this.state = {
-            order: 'Regular',
-            switchOrder: 'Chronological',
-            isChronological: false
+            order: 'Chronological',
+            switchText: 'Regular',
+            isChronological: true
         }
     }
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-            this.loadMessages(response["discussionDict"]["tree"]);
-            this.chronologicMessages.sort(function (a, b) {
-                return a.timestamp - b.timestamp;
-            });
-            this.handleOrderSettings();
-            this.shownMessages = this.allMessages.slice(0, 1);
-            this.nodesChildren.set(this.shownMessages[0].id, []);
-            this.shownNodes.push({
-                id: this.shownMessages[0].author,
-                color: "#" + this.props.nodeColor(this.shownMessages[0].author),
-                name: this.shownMessages[0].author,
-                val: 0.5,
-                comments: 1,
-                commentsReceived: 0
-            });
-            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownLinks);
-            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
-                response['visualConfig']['configuration']);
-            this.props.handleFinishLoading();
-            while (this.currentMessageIndex < response["currentIndex"]) {
-                this.handleNextClick(false);
+            if (this.allMessages.length === 0) {
+                this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+                this.loadMessages(response["discussionDict"]["tree"]);
+                this.chronologicMessages.sort(function (a, b) {
+                    return a.timestamp - b.timestamp;
+                });
+                this.allMessages = this.chronologicMessages;
+                this.shownMessages = this.allMessages.slice(0, 1);
+                this.nodesChildren.set(this.shownMessages[0].id, []);
+                this.shownNodes.push({
+                    id: this.shownMessages[0].author,
+                    color: "#" + this.props.nodeColor(this.shownMessages[0].author),
+                    name: this.shownMessages[0].author,
+                    val: 0.5,
+                    comments: 1,
+                    commentsReceived: 0
+                });
+                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownLinks);
+                this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                    response['visualConfig']['configuration']);
+                while (this.currentMessageIndex < response["currentIndex"]) {
+                    this.handleNextClick(false);
+                }
+                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
+                this.props.handleFinishLoading();
             }
-            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
         });
         const data = {
             discussion_id: this.props.discussionId,
@@ -60,7 +62,6 @@ class Simulation extends Component {
         this.socket.emit('join', data);
         this.handleModeratorActions();
     }
-
 
     loadMessages = (node) => {
         if (node == null) return;
@@ -272,16 +273,12 @@ class Simulation extends Component {
     };
 
     handleOrderSettings = () => {
-        let temp = this.state.order;
         this.setState((prevState) => ({
-            isChronological: !prevState.isChronological
+            isChronological: !prevState.isChronological,
+            order: this.state.switchText,
+            switchText: prevState.order
         }));
-
         this.handleResetClick();
-        this.setState({
-            order: this.state.switchOrder,
-            switchOrder: temp
-        });
         this.state.isChronological ?
             this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
     };
@@ -334,7 +331,7 @@ class Simulation extends Component {
                                 type="button" className="btn btn-primary btn-sm"
                                 onClick={() => { this.handleNavigationClickModerator("all") }} >All
                     </button >
-                            <div data-tip={'Press here to change to ' + this.state.switchOrder + ' order.'} >
+                            <div data-tip={'Press here to change to ' + this.state.switchText + ' order.'} >
                                 <Switch
                                     className="commentsOrderToggle"
                                     onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
