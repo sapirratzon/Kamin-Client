@@ -17,7 +17,7 @@ const Messages = (props) => {
                 return showMessage && <Message
                     key={m.id} username={m.author} color={m.color} text={m.text}
                     timestamp={m.timestamp} directionClass={props.directionClass}
-                    depth={m.depth} id={m.id} isSimulation={props.isSimulation}
+                    depth={m.depth} id={m.id} numOfChildren={m.numOfChildren} isSimulation={props.isSimulation}
                     newCommentHandler={props.newCommentHandler} newAlertHandler={props.newAlertHandler}
                     updateAlertedMessage={props.updateAlertedMessage}
                     updateVisibility={props.updateVisibility}

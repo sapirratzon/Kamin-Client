@@ -30,7 +30,7 @@ class Simulation extends Component {
         this.socket.on('join room', (response) => {
             if (this.allMessages.length === 0) {
                 this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-                this.loadMessages(response["discussionDict"]["tree"]);
+                this.loadMessages(response["discussionDict"]["tree"], 0, 1);
                 this.chronologicMessages.sort(function (a, b) {
                     return a.timestamp - b.timestamp;
                 });
@@ -67,14 +67,18 @@ class Simulation extends Component {
         this.handleModeratorActions();
     }
 
-    loadMessages = (node) => {
-        if (node == null) return;
+    loadMessages = (commentNode, childIdx, branchId) => {
+        if (commentNode == null) return;
         this.messagesCounter++;
-        node["node"].color = "#" + this.props.nodeColor(node["node"]["author"]);
-        this.regularMessages.push(node["node"]);
-        this.chronologicMessages.push(node["node"]);
-        node["children"].forEach(child => {
-            this.loadMessages(child);
+        commentNode["node"].branchId = (commentNode["node"]["depth"] > 0 ? branchId + '.' + childIdx : '1');
+        commentNode["node"].color = "#" + this.props.nodeColor(commentNode["node"]["author"]);
+        commentNode["node"].numOfChildren = commentNode["children"].length;
+        this.regularMessages.push(commentNode["node"]);
+        this.chronologicMessages.push(commentNode["node"]);
+        let i = 0;
+        commentNode["children"].forEach(child => {
+            this.loadMessages(child, i, commentNode["node"].branchId);
+            i+=1;
         });
     };
 

@@ -130,8 +130,8 @@ class Message extends Component {
                                 </div >
                             </React.Fragment >
                         }
-                        <div>{(!this.props.isSimulation && this.props.showMoreMessages) && <b><i className="ml-2 cursor-pointer message-buttons text-muted"
-                            onClick={() => this.props.collapseNode(this.props.branchId)}>Show collapsed messages</i></b>}</div>
+                        <div className="mt-2">{(this.props.showMoreMessages && this.props.numOfChildren > 0) && <b><i className="ml-2 cursor-pointer message-buttons text-muted"
+                            onClick={() => this.props.collapseNode(this.props.branchId)}>Show More Comments </i></b>}</div>
                     </div >
                 </li >
                 <div className="mx-auto input mt-2">
