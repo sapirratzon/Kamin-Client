@@ -28,32 +28,35 @@ class Simulation extends Component {
 
     componentDidMount() {
         this.socket.on('join room', (response) => {
-            this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-            this.loadMessages(response["discussionDict"]["tree"]);
-            this.chronologicMessages.sort(function (a, b) {
-                return a.timestamp - b.timestamp;
-            });
-            this.handleOrderSettings();
-            this.shownMessages = this.allMessages.slice(0, 1);
-            this.nodesChildren.set(this.shownMessages[0].id, []);
-            this.shownNodes.push({
-                id: this.shownMessages[0].author,
-                color: "#" + this.props.nodeColor(this.shownMessages[0].author),
-                name: this.shownMessages[0].author,
-                val: 0.5,
-                comments: 1,
-                commentsReceived: 0
-            });
-            const language = response.discussionDict.discussion.configuration.language;
-            if (language) {
-                this.props.updateLanguage(language);
-            }
-            this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownLinks);
-            this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
-                response['visualConfig']['configuration']);
-            this.props.handleFinishLoading();
-            while (this.currentMessageIndex < response["currentIndex"]) {
-                this.handleNextClick(false);
+            if (this.allMessages.length === 0) {
+                this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+                this.loadMessages(response["discussionDict"]["tree"]);
+                this.chronologicMessages.sort(function (a, b) {
+                    return a.timestamp - b.timestamp;
+                });
+                this.allMessages = this.chronologicMessages;
+                this.shownMessages = this.allMessages.slice(0, 1);
+                this.nodesChildren.set(this.shownMessages[0].id, []);
+                this.shownNodes.push({
+                    id: this.shownMessages[0].author,
+                    color: "#" + this.props.nodeColor(this.shownMessages[0].author),
+                    name: this.shownMessages[0].author,
+                    val: 0.5,
+                    comments: 1,
+                    commentsReceived: 0
+                });
+                const language = response.discussionDict.discussion.configuration.language;
+                if (language) {
+                    this.props.updateLanguage(language);
+                }
+                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownLinks);
+                this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                    response['visualConfig']['configuration']);
+                while (this.currentMessageIndex < response["currentIndex"]) {
+                    this.handleNextClick(false);
+                }
+                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
+                this.props.handleFinishLoading();
             }
         });
         const data = {
