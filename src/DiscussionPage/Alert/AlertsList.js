@@ -15,7 +15,7 @@ const AlertList = (props) => {
             <CardBody className="p-1" >
                 <Container >
                     <ul id="alerts-list" >
-                        {props.alerts.map((a) => <Alert key={a.id} alert={a} onClick={() => props.handleClick(a.parentId)} />)}
+                        {props.alerts.map((a) => <Alert key={a.id} alert={a} directionClass={props.directionClass} onClick={() => props.handleClick(a.parentId)}/>)}
                     </ul >
                 </Container >
             </CardBody >

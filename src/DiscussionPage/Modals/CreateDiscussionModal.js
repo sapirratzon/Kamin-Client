@@ -18,10 +18,14 @@ class CreateDiscussionModal extends Component {
             statsUserChecked: true,
             statsDiscussionChecked: true,
             alertsChecked: true,
+            language: 'English',
+            directionClass: "leftToRight",
         };
         this.configuration = {
-            vis_config: {"graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": true},
-            replyPosition: "None"
+            vis_config: { "graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": false },
+            extra_config: {
+                language: "English"
+            }
         }
     }
 
@@ -50,9 +54,19 @@ class CreateDiscussionModal extends Component {
         }
     };
 
-    replyConfigChange = (type) => {
-        this.setState({replyPosition: type});
-        this.configuration.replyPosition = type;
+    languageChange = (lang) => {
+        if (lang === "English") {
+            this.setState({
+                language: lang,
+                directionClass: 'leftToRight'
+            });
+        } else {
+            this.setState({
+                language: lang,
+                directionClass: 'rightToLeft'
+            });
+        }
+        this.configuration.language = lang;
     };
 
     changePath = (path) => {
@@ -107,25 +121,26 @@ class CreateDiscussionModal extends Component {
         this.props.updateVisibility(isOpen);
     };
 
+
     render() {
         return (
             <Modal visible={ this.props.isOpen } >
                 <div className="modal-header" >
                     <h5 className="modal-title" >Create New Discussion</h5 >
                 </div >
-                <div className="modal-body" >
+                <div className="modal-body">
                     <div >
                         <p className="title" >Title:</p >
                         <input
-                            type="text" className="title-input" value={ this.state.title } name="title"
-                            placeholder="Enter Title" onChange={ this.handleChange.bind(this) } />
-                        <p > { this.state.titleError } </p >
+                            type="text" className={"title-input " + this.state.directionClass} value={this.state.title} name="title"
+                            placeholder="Enter Title" onChange={this.handleChange.bind(this)} />
+                        <p > {this.state.titleError} </p >
                     </div >
                     <div >
                         <p className="description" >Description:</p >
                         <textarea
-                            className="description-input" name="description" value={ this.state.description }
-                            placeholder={ "Write Something" } onChange={ this.handleChange.bind(this) }
+                            className={"description-input " + this.state.directionClass} name="description" value={this.state.description}
+                            placeholder={"Write Something"} onChange={this.handleChange.bind(this)}
                         />
                         <p > { this.state.descriptionError } </p >
                     </div >
@@ -143,8 +158,25 @@ class CreateDiscussionModal extends Component {
                                 text="Discussion Stats"
                                 checked={ this.state.statsDiscussionChecked } />
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="alerts" text="Alerts"
-                                checked={ this.state.alertsChecked } />
+                                changeHandler={this.vizConfigChange} type="alerts" text="Alerts"
+                                checked={this.state.alertsChecked} />
+                        </div>
+                        <div className="dropdown mt-2" >
+                            <label >Language: </label >
+                            <button
+                                className="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false" >
+                                {this.state.language}
+                            </button >
+                            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+                                <a
+                                    href='/#' onClick={() => { this.languageChange("English") }}
+                                    className="dropdown-item" >English</a >
+                                <a
+                                    href='/#' onClick={() => { this.languageChange("Hebrew") }}
+                                    className="dropdown-item" >Hebrew</a >
+                            </div >
                         </div >
                     </div >
                 </div >

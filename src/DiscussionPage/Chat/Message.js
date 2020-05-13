@@ -78,6 +78,10 @@ class Message extends Component {
             });
     };
 
+
+    getDirection = () => {
+        return this.props.language === "English" ? 'ltr' : 'rtl';
+    }
     handleEditorChange = (content, editor) => {
         this.setState({inputContent: content});
     };
@@ -94,69 +98,65 @@ class Message extends Component {
         }
         return (
             <React.Fragment >
-                <li className="Messages-message" style={ {"marginLeft": depthString} } >
-                    { verticalLines }
+                <li className="Messages-message mr-1" style={{ "marginLeft": depthString, "direction": this.getDirection }} >
+                    {verticalLines}
                     <a href="#messageCollapse" data-toggle="collapse" > <span
                         className="avatar"
                         style={ {
                             "backgroundColor": this.props.color,
                         } }
                     /></a >
-                    <div
-                        id="messageCollapse"
-                        className={ (this.props.selected ? 'border-warning ' : '') + " show collapse card Message-content cursor-pointer" } >
-                        <div className="card-header p-1 username" >
-                            { this.props.username }{ "  " }{ this.getDate(this.props.timestamp) }
+                    <div id="messageCollapse" className={(this.props.selected ? 'border-warning ' : '') + " show collapse card Message-content cursor-pointer" + this.props.directionClass} >
+                        <div className="card-header p-1 username leftToRight" >
+                            {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
-                        <div className="text ml-2 cursor-pointer" >
-                            < div dangerouslySetInnerHTML={ {__html: this.state.shownText} } />
-                            { this.state.longMessage && <b
-                                className="text-primary message-buttons"
-                                onClick={ this.handleMessageDisplayLength } > { this.state.textLengthMessage } </b > }
+                        <div className={"mr-1 ml-1 " + this.props.directionClass} >
+                            < div dangerouslySetInnerHTML={{ __html: this.state.shownText }} />
+                            {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
-                        { !this.props.isSimulation ?
+                        {!this.props.isSimulation &&
                             <React.Fragment >
-                                <div className="reply ml-2 cursor-pointer" >
+                                <div className={"reply cursor-pointer " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")} >
                                     <i
-                                        className="far fa-comment-dots mr-2 mb-2 message-buttons"
-                                        onClick={ this.replyHandler } >{ this.state.replyText }</i >
-                                    { this.props.userType !== 'USER' ?
+                                        className="far fa-comment-dots message-buttons mb-1"
+                                        onClick={this.replyHandler} >{this.state.replyText}</i >
+                                    {this.props.userType !== 'USER' ?
                                         <i
-                                            className="far fa-bell message-buttons"
-                                            onClick={ this.alertsModalHandler } >Alert</i >
-                                        : null }
+                                            className={"far fa-bell message-buttons " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")}
+                                            onClick={this.alertsModalHandler} >Alert</i > : null}
                                 </div >
                             </React.Fragment >
-                            : null
                         }
 
                         { this.props.depth === 0 }
                     </div >
                 </li >
-                <div className="mx-auto input mt-2" >
-                    { (this.state.showReplyInput) &&
-                    <React.Fragment >
-                        <Editor
-                            init={ {
-                                height: 500,
-                                menubar: false,
-                                plugins: [
-                                    'advlist autolink lists link image charmap print preview anchor',
-                                    'searchreplace visualblocks code fullscreen',
-                                    'insertdatetime media table paste code help wordcount'
-                                ],
-                                toolbar:
-                                    'undo redo | formatselect | bold italic backcolor | \
-       alignleft aligncenter alignright alignjustify | \
-       bullist numlist outdent indent | removeformat | help'
-                            } }
-                            onEditorChange={ this.handleEditorChange }
-                        />
-                        <button
-                            type="button" className="btn btn-outline-primary waves-effect btn-sm"
-                            onClick={ this.sendMessageHandler } >Send
-                        </button >
-                    </React.Fragment >
+                <div className="mx-auto input mt-2">
+                    {(this.state.showReplyInput) &&
+                        <React.Fragment>
+                            <Editor
+                                init={{
+                                    height: 300,
+                                    menubar: false,
+                                    plugins: [
+                                        'advlist autolink lists link image charmap print preview anchor',
+                                        'searchreplace visualblocks code fullscreen',
+                                        'insertdatetime media table paste code help wordcount'
+                                    ],
+                                    toolbar:
+                                        'undo redo | formatselect | bold italic backcolor | \
+                                        alignleft aligncenter alignright alignjustify | \
+                                        bullist numlist outdent indent | removeformat | help',
+                                    directionality: (this.directionClass==="leftToRight" ? 'ltr' : 'rtl')
+
+                                }}
+                                onEditorChange={this.handleEditorChange}
+                            />
+                            <button
+                                type="button" className={"btn btn-outline-primary waves-effect btn-sm " +this.directionClass}
+                                onClick={this.sendMessageHandler} >Send
+                            </button >
+                        </React.Fragment>
                     }
                 </div >
             </React.Fragment >
