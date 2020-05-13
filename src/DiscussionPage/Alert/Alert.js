@@ -1,12 +1,14 @@
 import React from "react";
 
 const Alert = (props) => {
+
     const getAlertType = (alert) => {
         if (alert.comment_type !== "alert") return '';
         if (alert["extra_data"]["recipients_type"] === 'all') { return 'all'; }
         else if (Object.keys(alert["extra_data"]["users_list"]).length > 1) { return 'list'; }
         else { return ('user'); }
     };
+
     const getUsernames = (alert) => {
         let usernames = '';
         if (alert["extra_data"]["recipients_type"] === 'all') {
@@ -23,7 +25,8 @@ const Alert = (props) => {
             }
         }
         return usernames;
-    };
+    }
+
 
     const getDate = (timestamp) => {
         const date = new Date(timestamp * 1000);
@@ -36,28 +39,24 @@ const Alert = (props) => {
             second: '2-digit'
         }).format(date);
     };
-
-
-    const names = getUsernames(props.alert);
-    const type = getAlertType(props.alert);
-    return (
-        <li onClick={props.onClick} >
-            <div
-                id="messageCollapse"
-                className={(props.alert.comment_type === 'alert' ? 'border-warning' : 'border-info') + " card small-font mt-2 cursor-pointer"} >
+        const type = getAlertType(props.alert);
+        return (
+        <li >
+            <div id="messageCollapse" className={(props.alert.comment_type === 'alert' ? 'border-warning' : 'border-info') + " card small-font mt-2 cursor-pointer"} >
                 <div className={` card-header p-1 username bg-alert-${type} `} >
                     <i className={props.alert.comment_type === 'alert' ? 'fas fa-exclamation-triangle' : 'fas fa-user-cog'} />{" "}
                     {props.alert.comment_type === "alert" &&
                         ` Sent to: ${getUsernames(props.alert)}, `} {getDate(props.alert.timestamp)}
 
                 </div >
-                <div className="text  ml-2" >
+                <div className={"text " + (props.directionClass === "leftToRight" ? props.directionClass + " ml-2" : props.directionClass + " mr-2")}  >
                     {props.alert.text}
                 </div >
             </div >
         </li >
     );
 };
+
 
 
 export default Alert;

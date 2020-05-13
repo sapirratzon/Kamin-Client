@@ -39,3 +39,13 @@ input[name='firstName'], input[name='lastName'] {
         overflow-y: hidden;
     }
 }
+
+ .leftToRight{
+    direction: ltr;
+    text-align: left;
+} 
+
+.rightToLeft{
+    direction: rtl;
+    text-align: right;
+}
