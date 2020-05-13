@@ -30,12 +30,12 @@ class Graph extends Component {
         ctx.beginPath();
         ctx.arc(node.x, node.y, this.NODE_R * 1.2 + node.val, 0, 2 * Math.PI, false);
         if (this.props.rootId === node.id) {
-            ctx.fillStyle = 'rgba(255,255,51,0.9)';
+            ctx.fillStyle = 'rgba(255,255,51,0.6)';
         } else if (this.props.currentUser === node.id) {
-            ctx.fillStyle = 'rgba(51,153,255,0.8)';
+            ctx.fillStyle = 'rgba(51,153,255,0.6)';
 
         } else if (this.state.highlightNode === node) {
-            ctx.fillStyle = 'rgba(170,170,170,0.7)';
+            ctx.fillStyle = 'rgba(170,170,170,0.6)';
         }
         ctx.fill();
     }
