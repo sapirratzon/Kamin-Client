@@ -61,7 +61,7 @@ class Simulation extends Component {
                 }
                 this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
                 if (response.selfControl === "on") {
-                    this.setState({ selfControl: true })
+                    await this.setState({ selfControl: true })
                 }
                 this.props.handleFinishLoading();
             }
@@ -303,7 +303,9 @@ class Simulation extends Component {
         this.setState((prevState) => ({
             selfControl: !prevState.selfControl,
         }), () => {
-            this.handleResetClick();
+            if (!this.state.selfControl) {
+                this.handleResetClick();
+            }
         });
 
     };
@@ -347,11 +349,11 @@ class Simulation extends Component {
                             </button >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
-                                onClick={() => { this.state.selfControl ? this.handleBackClick() : this.handleNavigationClickModerator("back") }} >Back
+                                onClick={() => { this.state.selfControl ? this.handleBackClick(true) : this.handleNavigationClickModerator("back") }} >Back
                             </button >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
-                                onClick={() => { this.state.selfControl ? this.handleNextClick() : this.handleNavigationClickModerator("next") }} >Next
+                                onClick={() => { this.state.selfControl ? this.handleNextClick(true) : this.handleNavigationClickModerator("next") }} >Next
                             </button >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
@@ -367,17 +369,18 @@ class Simulation extends Component {
                                 />
                                 <span ><b >{(this.state.isChronological ? 'Chronological' : 'Regular')}</b ></span >
                             </div >
-
-                            {/* <div data-tip={'Press here to change to ' + (!this.state.selfControl ? 'Controll All' : 'Self Control')} >
-                                <Switch
-                                    className="commentsOrderToggle"
-                                    onChange={() => { this.handleNavigationClickModerator("self control change"); }}
-                                    checked={this.state.selfControl}
-                                    offColor="#4285f4"
-                                    onColor="#4285f4"
-                                />
-                                <span ><b >{(!this.state.selfControl ? 'Self Control ON' : 'Self Control OFF')}</b ></span >
-                            </div > */}
+                            {this.props.userType !== "USER" &&
+                                <div className="pl-2" data-tip={'Press here to change to ' + (!this.state.selfControl ? 'Controll All' : 'Self Control')} >
+                                    <Switch
+                                        className="commentsOrderToggle"
+                                        onChange={() => { this.handleNavigationClickModerator("self control change"); }}
+                                        checked={this.state.selfControl}
+                                        offColor="#4285f4"
+                                        onColor="#4285f4"
+                                    />
+                                    <span ><b >Self Control</b ></span >
+                                </div >
+                            }
                         </div >
                     }
                 </React.Fragment > : null}
