@@ -78,10 +78,6 @@ class Discussion extends Component {
     }
 
     setDefaultVisualConfig = (discussionVisualConfig, userVisualConfig) => {
-        console.log('discussionVisualConfig');
-        console.log(discussionVisualConfig);
-        console.log('userVisualConfig');
-        console.log(userVisualConfig);
         this.defaultConfig = discussionVisualConfig;
         if (this.props.userType === 'USER') {
             if (userVisualConfig) {

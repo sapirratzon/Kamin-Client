@@ -67,10 +67,10 @@ class Message extends Component {
 
     handleMessageDisplayLength = () => {
         this.state.fullyShown ? this.setState({
-                fullyShown: false,
-                shownText: this.props.text.substring(0, 500),
-                textLengthMessage: " Show more"
-            })
+            fullyShown: false,
+            shownText: this.props.text.substring(0, 500),
+            textLengthMessage: " Show more"
+        })
             : this.setState({
                 fullyShown: true,
                 shownText: this.props.text,
@@ -82,35 +82,38 @@ class Message extends Component {
     getDirection = () => {
         return this.props.language === "English" ? 'ltr' : 'rtl';
     }
+
     handleEditorChange = (content, editor) => {
-        this.setState({inputContent: content});
+        this.setState({ inputContent: content });
     };
 
     render() {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
         let verticalLines = [];
+
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div
-                className="vl" key={ i } style={ {
-                "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
-            } } />)
+                className="vl" key={i} style={{
+                    "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
+                }} />)
         }
+
         return (
             <React.Fragment >
-                <li className="Messages-message mr-1" style={{ "marginLeft": depthString, "direction": this.getDirection }} >
+                <li className="Messages-message" style={{ "marginLeft": depthString, "direction": this.getDirection }} >
                     {verticalLines}
-                    <a href="#messageCollapse" data-toggle="collapse" > <span
+                    <a onClick={() => this.props.collapseNode(this.props.branchId)}> <span
                         className="avatar"
-                        style={ {
+                        style={{
                             "backgroundColor": this.props.color,
-                        } }
+                        }}
                     /></a >
-                    <div id="messageCollapse" className={(this.props.selected ? 'border-warning ' : '') + " show collapse card Message-content cursor-pointer" + this.props.directionClass} >
+                    <div className={(this.props.selected ? 'border-warning ' : '') + "card Message-content cursor-pointer" + this.props.directionClass} >
                         <div className="card-header p-1 username leftToRight" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
-                        <div className={"mr-1 ml-1 " + this.props.directionClass} >
+                        <div className={"mr-1 ml-1 cursor-pointer " + this.props.directionClass} >
                             < div dangerouslySetInnerHTML={{ __html: this.state.shownText }} />
                             {this.state.longMessage && <b className="text-primary message-buttons" onClick={this.handleMessageDisplayLength}> {this.state.textLengthMessage} </b >}
                         </div >
@@ -118,7 +121,7 @@ class Message extends Component {
                             <React.Fragment >
                                 <div className={"reply cursor-pointer " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")} >
                                     <i
-                                        className="far fa-comment-dots message-buttons mb-1"
+                                        className="far fa-comment-dots mr-2 mb-2 message-buttons"
                                         onClick={this.replyHandler} >{this.state.replyText}</i >
                                     {this.props.userType !== 'USER' ?
                                         <i
@@ -127,8 +130,8 @@ class Message extends Component {
                                 </div >
                             </React.Fragment >
                         }
-
-                        { this.props.depth === 0 }
+                        <div>{(!this.props.isSimulation && this.props.showMoreMessages) && <b><i className="ml-2 cursor-pointer message-buttons text-muted"
+                            onClick={() => this.props.collapseNode(this.props.branchId)}>Show collapsed messages</i></b>}</div>
                     </div >
                 </li >
                 <div className="mx-auto input mt-2">
@@ -147,13 +150,13 @@ class Message extends Component {
                                         'undo redo | formatselect | bold italic backcolor | \
                                         alignleft aligncenter alignright alignjustify | \
                                         bullist numlist outdent indent | removeformat | help',
-                                    directionality: (this.directionClass==="leftToRight" ? 'ltr' : 'rtl')
+                                    directionality: (this.directionClass === "leftToRight" ? 'ltr' : 'rtl')
 
                                 }}
                                 onEditorChange={this.handleEditorChange}
                             />
                             <button
-                                type="button" className={"btn btn-outline-primary waves-effect btn-sm " +this.directionClass}
+                                type="button" className={"btn btn-outline-primary waves-effect btn-sm " + this.directionClass}
                                 onClick={this.sendMessageHandler} >Send
                             </button >
                         </React.Fragment>
@@ -171,5 +174,10 @@ const mapStateToProps = state => {
     };
 };
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        collapseNode: (nodeBranch) => dispatch({ type: 'COLLAPSE_NODE', payload: { node: nodeBranch } })
+    };
+};
 
-export default connect(mapStateToProps)(Message);
+export default connect(mapStateToProps, mapDispatchToProps)(Message);
