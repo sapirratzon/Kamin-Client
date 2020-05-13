@@ -6,7 +6,7 @@ const Messages = (props) => {
     return (
         <ul className="Messages-list" >
             {props.messages.map((m) => {
-                debuggerage = true;
+                let showMessage = true;
                 let showMoreMessages = false;
                 for (let collapsedNode of props.collapsedNodes) {
                     if (m.branchId === collapsedNode)
