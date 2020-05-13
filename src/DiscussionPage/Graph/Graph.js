@@ -28,7 +28,7 @@ class Graph extends Component {
 
     paintRing(node, ctx) {
         ctx.beginPath();
-        ctx.arc(node.x, node.y, this.NODE_R * 1.2 + node.val, 0, 2 * Math.PI, false);
+        ctx.arc(node.x, node.y, this.NODE_R * 1.2 + node.val* 1.2, 0, 2 * Math.PI, false);
         if (this.props.rootId === node.id) {
             ctx.fillStyle = 'rgba(255,255,51,0.6)';
         } else if (this.props.currentUser === node.id) {
@@ -41,6 +41,9 @@ class Graph extends Component {
     }
 
     selectedNode(node, event) {
+            this.setState({
+                highlightNode: node
+            });  
         this.props.updateSelectedUser(node.id)
     }
 
@@ -81,7 +84,7 @@ class Graph extends Component {
                             // cooldownTicks={1} // Todo: what Is this for??? 
 
                             nodeCanvasObjectMode={node =>
-                                // this.state.highlightNode === node || 
+                                this.state.highlightNode === node || 
                                 this.props.rootId === node.id || this.props.currentUser === node.id ? 'before' : undefined}
                             nodeCanvasObject={this.paintRing.bind(this)}
                             onNodeClick={this.selectedNode.bind(this)}
