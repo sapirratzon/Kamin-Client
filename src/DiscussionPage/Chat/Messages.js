@@ -25,14 +25,13 @@ class Messages extends Component {
                     }
                     return showMessage && <Message
                         key={m.id} username={m.author} color={m.color} text={m.text}
-                        timestamp={m.timestamp} directionClass={props.directionClass}
+                        timestamp={m.timestamp} directionClass={this.props.directionClass}
                         depth={m.depth} id={m.id} isSimulation={this.props.isSimulation}
                         newCommentHandler={this.props.newCommentHandler} newAlertHandler={this.props.newAlertHandler}
                         updateAlertedMessage={this.props.updateAlertedMessage}
                         updateVisibility={this.props.updateVisibility}
                         selected={this.props.selectedMessage === m.id}
                         branchId={m.branchId}
-                        parentBranchId={this.state.branchId}
                         showMoreMessages={showMoreMessages}
                     />
                 })}

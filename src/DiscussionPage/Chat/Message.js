@@ -82,6 +82,7 @@ class Message extends Component {
     getDirection = () => {
         return this.props.language === "English" ? 'ltr' : 'rtl';
     }
+
     handleEditorChange = (content, editor) => {
         this.setState({ inputContent: content });
     };
@@ -90,12 +91,14 @@ class Message extends Component {
         let depthPixels = this.props.depth * 20;
         let depthString = depthPixels.toString() + "px";
         let verticalLines = [];
+
         for (let i = 0; i < this.props.depth + 1; i++) {
             verticalLines.push(<div
                 className="vl" key={i} style={{
                     "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
                 }} />)
         }
+
         return (
             <React.Fragment >
                 <li className="Messages-message" style={{ "marginLeft": depthString, "direction": this.getDirection }} >
@@ -124,11 +127,11 @@ class Message extends Component {
                                         <i
                                             className={"far fa-bell message-buttons " + (this.props.directionClass === "leftToRight" ? "ml-1" : "mr-1")}
                                             onClick={this.alertsModalHandler} >Alert</i > : null}
-
                                 </div >
                             </React.Fragment >
                         }
-                        <div>{this.props.showMoreMessages && <b><i className="ml-2 cursor-pointer message-buttons text-info" onClick={() => this.props.collapseNode(this.props.branchId)}>Show collapsed messages</i></b>}</div>
+                        <div>{(!this.props.isSimulation && this.props.showMoreMessages) && <b><i className="ml-2 cursor-pointer message-buttons text-muted"
+                            onClick={() => this.props.collapseNode(this.props.branchId)}>Show collapsed messages</i></b>}</div>
                     </div >
                 </li >
                 <div className="mx-auto input mt-2">
