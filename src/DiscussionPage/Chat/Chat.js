@@ -25,7 +25,29 @@ class Chat extends Component {
     componentDidMount() {
         if (!this.props.isSimulation) {
             this.socket.on('join room', (response) => {
-                this.join(response);
+                this.reloadChat();
+                this.setState(
+                    {
+                        root: response["discussionDict"]["tree"],
+                    }
+                );
+                this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
+                this.loadDiscussion(this.state.root, null, null);
+                this.updateGraph();
+                this.lastMessage = this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0];
+                this.props.updateAlertedMessage(this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0]);
+                this.shownAlerts.sort(function (a, b) {
+                    return a.timestamp - b.timestamp;
+                });
+                this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
+                    response['visualConfig']['configuration']);
+                const language = response.discussionDict.discussion.configuration.language;
+                if (language) {
+                    this.props.updateLanguage(language);
+                }
+
+                this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
+                this.props.handleFinishLoading();
             });
             const data = {
                 discussion_id: this.props.discussionId,
@@ -40,31 +62,6 @@ class Chat extends Component {
             });
         }
     };
-
-    join(response) {
-        this.setState(
-            {
-                root: response["discussionDict"]["tree"],
-            }
-        );
-        this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
-        this.loadDiscussion(this.state.root);
-        this.updateGraph();
-        this.lastMessage = this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0];
-        this.props.updateAlertedMessage(this.shownMessages.slice().sort(function (a, b) { return b.timestamp - a.timestamp; })[0]);
-        this.shownAlerts.sort(function (a, b) {
-            return a.timestamp - b.timestamp;
-        });
-        this.props.updateVisualConfig(response['discussionDict']['discussion']['configuration']['vis_config'],
-            response['visualConfig']['configuration']);
-        const language = response.discussionDict.discussion.configuration.language;
-        if (language) {
-            this.props.updateLanguage(language);
-        }
-
-        this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
-        this.props.handleFinishLoading();
-    }
 
 
     updateGraph() {
@@ -154,17 +151,13 @@ class Chat extends Component {
     };
 
     loadDiscussion = (commentNode, childIdx, branchId) => {
-        if (commentNode == null) {
-            return;
-        }
-        if (commentNode["node"]["comment_type"] !== "comment") {
+        if (commentNode == null) return;
+        if (commentNode["node"]["comment_type"] === "alert") {
             if (commentNode["node"]["extra_data"]["recipients_type"] === 'all' ||
                 this.props.currentUser in commentNode["node"]["extra_data"]["users_list"] ||
                 this.props.userType !== "USER")
-                if (this.props.userType !== "USER" || commentNode["node"]["comment_type"] === "alert") {
-                    this.shownAlerts.push(commentNode["node"]);
-                }
-        } else {
+                this.shownAlerts.push(commentNode["node"]);
+        } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
             let newBranchId = (commentNode["node"]["depth"] > 0 ? branchId + '.' + childIdx : '1');
             this.shownMessages.push({

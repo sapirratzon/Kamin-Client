@@ -6,7 +6,6 @@ const Messages = (props) => {
     return (
         <ul className="Messages-list" >
             {props.messages.map((m) => {
-                debugger
                 let showMessage = true;
                 let showMoreMessages = false;
                 for (let collapsedNode of props.collapsedNodes) {
