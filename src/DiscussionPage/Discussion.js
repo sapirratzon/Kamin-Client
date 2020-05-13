@@ -304,7 +304,6 @@ class Discussion extends Component {
                                         isOpen={this.state.showSentMultipleAlertsModal}
                                         discussionId={this.state.discussionId}
                                         updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
-                                        lastMessage={this.state.lastMessage}
                                         alertedMessage={this.state.alertedMessage}
                                         socket={this.socket}
                                         directionClass={this.state.directionClass}
