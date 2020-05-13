@@ -20,21 +20,25 @@ class Simulation extends Component {
         this.messagesCounter = 0;
         this.socket = props.socket;
         this.state = {
-            order: 'Chronological',
-            switchText: 'Regular',
-            isChronological: true
+            isChronological: true,
+            selfControl: false
         }
     }
 
     componentDidMount() {
-        this.socket.on('join room', (response) => {
+        this.socket.on('join room', async (response) => {
             if (this.allMessages.length === 0) {
                 this.props.setTitle(response["discussionDict"]["discussion"]["title"]);
                 this.loadMessages(response["discussionDict"]["tree"], 0, 1);
                 this.chronologicMessages.sort(function (a, b) {
                     return a.timestamp - b.timestamp;
                 });
-                this.allMessages = this.chronologicMessages;
+                if (response.simulationOrder === "regular") {
+                    await this.setState({ isChronological: false });
+                    this.allMessages = [...this.regularMessages];
+                } else {
+                    this.allMessages = [...this.chronologicMessages];
+                }
                 this.shownMessages = this.allMessages.slice(0, 1);
                 this.nodesChildren.set(this.shownMessages[0].id, []);
                 this.shownNodes.push({
@@ -56,6 +60,9 @@ class Simulation extends Component {
                     this.handleNextClick(false);
                 }
                 this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts);
+                if (response.selfControl === "on") {
+                    this.setState({ selfControl: true })
+                }
                 this.props.handleFinishLoading();
             }
         });
@@ -78,7 +85,7 @@ class Simulation extends Component {
         let i = 0;
         commentNode["children"].forEach(child => {
             this.loadMessages(child, i, commentNode["node"].branchId);
-            i+=1;
+            i += 1;
         });
     };
 
@@ -88,6 +95,7 @@ class Simulation extends Component {
         this.socket.on('reset', this.handleResetClick);
         this.socket.on('all', this.handleShowAllClick);
         this.socket.on('change_simulation_order', this.handleOrderSettings);
+        this.socket.on('change_simulation_control', this.handleSelfControl);
     };
 
     handleNavigationClickModerator = (type) => {
@@ -281,15 +289,25 @@ class Simulation extends Component {
     };
 
     handleOrderSettings = () => {
+        this.handleResetClick();
         this.setState((prevState) => ({
             isChronological: !prevState.isChronological,
-            order: prevState.switchText,
-            switchText: prevState.order
-        }));
-        this.handleResetClick();
-        this.state.isChronological ?
-            this.allMessages = this.chronologicMessages : this.allMessages = this.regularMessages;
+        }), () => {
+            this.state.isChronological ?
+                this.allMessages = [...this.chronologicMessages] : this.allMessages = [...this.regularMessages];
+        });
+
     };
+
+    handleSelfControl = () => {
+        this.setState((prevState) => ({
+            selfControl: !prevState.selfControl,
+        }), () => {
+            this.handleResetClick();
+        });
+
+    };
+
 
     update(dif, toUpdateState) {
         this.currentMessageIndex = this.currentMessageIndex + dif;
@@ -321,34 +339,45 @@ class Simulation extends Component {
         return (
             <React.Fragment>
                 {!this.props.isLoading ? <React.Fragment >
-                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT") &&
+                    {(this.props.userType === "MODERATOR" || this.props.userType === "ROOT" || this.state.selfControl) &&
                         <div className={"row"} >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
-                                onClick={() => { this.handleNavigationClickModerator("reset") }} >Reset
-                    </button >
+                                onClick={() => { this.state.selfControl ? this.handleResetClick() : this.handleNavigationClickModerator("reset") }} >Reset
+                            </button >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
-                                onClick={() => { this.handleNavigationClickModerator("back") }} >Back
-                    </button >
+                                onClick={() => { this.state.selfControl ? this.handleBackClick() : this.handleNavigationClickModerator("back") }} >Back
+                            </button >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
-                                onClick={() => { this.handleNavigationClickModerator("next") }} >Next
-                    </button >
+                                onClick={() => { this.state.selfControl ? this.handleNextClick() : this.handleNavigationClickModerator("next") }} >Next
+                            </button >
                             <button
                                 type="button" className="btn btn-primary btn-sm"
-                                onClick={() => { this.handleNavigationClickModerator("all") }} >All
-                    </button >
-                            <div data-tip={'Press here to change to ' + this.state.switchText + ' order.'} >
+                                onClick={() => { this.state.selfControl ? this.handleShowAllClick() : this.handleNavigationClickModerator("all") }} >All
+                            </button >
+                            <div data-tip={'Press here to change to ' + (!this.state.isChronological ? 'Chronological' : 'Regular') + ' order.'} >
                                 <Switch
                                     className="commentsOrderToggle"
-                                    onChange={() => { this.handleNavigationClickModerator("change_simulation_order") }}
+                                    onChange={() => { this.state.selfControl ? this.handleOrderSettings() : this.handleNavigationClickModerator("change_simulation_order") }}
                                     checked={this.state.isChronological}
                                     offColor="#4285f4"
                                     onColor="#4285f4"
                                 />
-                                <span ><b >{this.state.order}</b ></span >
+                                <span ><b >{(this.state.isChronological ? 'Chronological' : 'Regular')}</b ></span >
                             </div >
+
+                            {/* <div data-tip={'Press here to change to ' + (!this.state.selfControl ? 'Controll All' : 'Self Control')} >
+                                <Switch
+                                    className="commentsOrderToggle"
+                                    onChange={() => { this.handleNavigationClickModerator("self control change"); }}
+                                    checked={this.state.selfControl}
+                                    offColor="#4285f4"
+                                    onColor="#4285f4"
+                                />
+                                <span ><b >{(!this.state.selfControl ? 'Self Control ON' : 'Self Control OFF')}</b ></span >
+                            </div > */}
                         </div >
                     }
                 </React.Fragment > : null}
