@@ -130,20 +130,20 @@ class CreateDiscussionModal extends Component {
                         <p > { this.state.descriptionError } </p >
                     </div >
                     <div >
-                        <label className="config" >Visualization Config:</label >
+                        <label className="config mt-2" >Visualization Config:</label >
                         <div >
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="graph" text="graph"
+                                changeHandler={ this.vizConfigChange } type="graph" text="Graph"
                                 checked={ this.state.graphChecked } />
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="statisticsUser" text="statisticsUser"
+                                changeHandler={ this.vizConfigChange } type="statisticsUser" text="User Stats"
                                 checked={ this.state.statsUserChecked } />
                             <CheckBox
                                 changeHandler={ this.vizConfigChange } type="statisticsDiscussion"
-                                text="statisticsDiscussion"
+                                text="Discussion Stats"
                                 checked={ this.state.statsDiscussionChecked } />
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="alerts" text="alerts"
+                                changeHandler={ this.vizConfigChange } type="alerts" text="Alerts"
                                 checked={ this.state.alertsChecked } />
                         </div >
                     </div >
