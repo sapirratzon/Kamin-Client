@@ -27,11 +27,11 @@ const reducer = (state = initialState, action) => {
     } else if (action.type === 'COLLAPSE_NODE') {
         if (state.collapsedNodes.includes(action.payload.node)) {
             return {
-                collapsedNodes: [...state.collapsedNodes.filter((node) => node !== action.payload.node)]
+                ...state, collapsedNodes: [...state.collapsedNodes.filter((node) => node !== action.payload.node)]
             }
         }
         return {
-            collapsedNodes: [...state.collapsedNodes, action.payload.node]
+            ...state, collapsedNodes: [...state.collapsedNodes, action.payload.node]
         }
     }
     return state;
