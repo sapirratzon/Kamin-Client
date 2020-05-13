@@ -281,7 +281,7 @@ class Discussion extends Component {
                                             data-tip="Copied!" data-event="click" />
                                         {this.props.userType !== "USER" &&
                                             <i
-                                                className="fas fa-cog cursor-pointer"
+                                                className="fas fa-cog cursor-pointer pl-2"
                                                 onClick={() => this.updateVisualConfigModalHandler(true)} />
                                         }
                                     </h4 >

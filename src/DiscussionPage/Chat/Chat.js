@@ -135,17 +135,21 @@ class Chat extends Component {
         });
     }
 
-    addMessageHelper(currentNode, comment) {
+    addMessageHelper(currentNode, comment, childIdx, branchId) {
         if (currentNode == null) return;
         if (currentNode["node"]["id"] === comment.parentId) {
+            comment.childIdx = childIdx;
+            comment.branchId = branchId + '.' + childIdx;
             currentNode["children"].push({
                 node: comment,
                 children: []
             });
             return;
         }
+        let i=0;
         currentNode["children"].forEach(child => {
-            this.addMessageHelper(child, comment);
+            this.addMessageHelper(child, comment, i, currentNode.node.branchId);
+            i+=1;
         });
     };
 
