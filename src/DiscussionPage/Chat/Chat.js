@@ -102,7 +102,7 @@ class Chat extends Component {
     };
 
     addAlert(alert) {
-        this.addMessageHelper(this.state.root,alert);
+        this.addMessageHelper(this.state.root, alert);
         this.shownAlerts.push(alert);
         this.props.updateShownState(this.shownMessages, this.shownNodes, this.shownLinks, this.shownAlerts, this.lastMessage);
     };
@@ -150,7 +150,7 @@ class Chat extends Component {
                 this.shownAlerts.push(commentNode["node"]);
         } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
-            let newBranchId = (commentNode["node"]["depth"] > 0 ? branchId + 'b' + childIdx : '1');
+            let newBranchId = (commentNode["node"]["depth"] > 0 ? branchId + '.' + childIdx : '1');
             this.shownMessages.push({
                 author: commentNode["node"]["author"],
                 id: commentNode["node"]["id"],
@@ -216,7 +216,7 @@ class Chat extends Component {
                     }
                 }
                 this.loadDiscussion(childComment, i, newBranchId);
-                i+=1;
+                i += 1;
             });
         }
     };
@@ -246,5 +246,11 @@ const mapStateToProps = state => {
     };
 };
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        collapseNode: (nodeBranch) => dispatch({ type: 'COLLAPSE_NODE', payload: { node: nodeBranch } })
+    };
+};
 
-export default connect(mapStateToProps)(Chat);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chat);
