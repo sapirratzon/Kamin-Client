@@ -22,7 +22,7 @@ class CreateDiscussionModal extends Component {
             directionClass: "leftToRight",
         };
         this.configuration = {
-            vis_config: { "graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": false },
+            vis_config: { "Graph": true, "Alerts": true, "User Statistics": true, "Discussion statistics": false },
             extra_config: {
                 language: "English"
             }
