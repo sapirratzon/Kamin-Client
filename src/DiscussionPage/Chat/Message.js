@@ -167,17 +167,10 @@ class Message extends Component {
     }
 }
 
-
 const mapStateToProps = state => {
     return {
         userType: state.userType,
     };
 };
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        collapseNode: (nodeBranch) => dispatch({ type: 'COLLAPSE_NODE', payload: { node: nodeBranch } })
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Message);
+export default connect(mapStateToProps, null)(Message);
