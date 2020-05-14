@@ -81,7 +81,7 @@ class Message extends Component {
 
     getDirection = () => {
         return this.props.language === "English" ? 'ltr' : 'rtl';
-    }
+    };
 
     handleEditorChange = (content, editor) => {
         this.setState({ inputContent: content });

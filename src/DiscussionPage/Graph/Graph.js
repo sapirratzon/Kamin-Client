@@ -12,6 +12,7 @@ class Graph extends Component {
             currentUserNode: null,
             highlightLink: null,
             highlightNode: null,
+            selectedLink: null
         };
         this.NODE_R = 4;
     }
@@ -45,6 +46,13 @@ class Graph extends Component {
                 highlightNode: node
             });  
         this.props.updateSelectedUser(node.id)
+    }
+
+    selectedLink(link, event) {
+        this.setState({
+            selectedLink: link
+        });
+        this.props.updateSelectedLink(link)
     }
 
     handleNodeHover(node) {
@@ -88,6 +96,7 @@ class Graph extends Component {
                                 this.props.rootId === node.id || this.props.currentUser === node.id ? 'before' : undefined}
                             nodeCanvasObject={this.paintRing.bind(this)}
                             onNodeClick={this.selectedNode.bind(this)}
+                            onLinkClick={this.selectedLink.bind(this)}
                         // onNodeHover={this.handleNodeHover.bind(this)}
                         />
                     </div >

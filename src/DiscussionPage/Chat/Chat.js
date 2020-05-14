@@ -172,6 +172,7 @@ class Chat extends Component {
 
             this.shownMessages.push({
                 ...commentNode["node"],
+                parentUsername: commentNode["node"]["author"],
                 color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
                 numOfChildren: commentNode["children"].length,
                 childIdx: childIdx,
@@ -247,6 +248,7 @@ class Chat extends Component {
                         updateAlertedMessage={this.props.updateAlertedMessage}
                         updateVisibility={this.props.updateVisibility}
                         selectedMessage={this.props.selectedMessage}
+                        selectedLink={this.props.selectedLink}
                     />
                 </div > : null}
             </React.Fragment>

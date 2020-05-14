@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import Message from './Message';
-import { connect } from 'react-redux'
 
 class Messages extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            collapsedNodes: [],
+            collapsedNodes: []
         }
     }
 
@@ -17,7 +16,7 @@ class Messages extends Component {
         else {
             this.setState({ collapsedNodes: [...this.state.collapsedNodes, collapsedNode] });
         }
-    }
+    };
 
     render() {
         return (
@@ -31,7 +30,13 @@ class Messages extends Component {
                         else if (m.branchId !== collapsedNode && m.branchId.startsWith(collapsedNode))
                             showMessage = false;
                     }
-                    return showMessage && <Message
+                    let byFilter = true;
+                    if (this.props.selectedLink !== null) {
+                        byFilter = (m.author === this.props.selectedLink.source.id &&
+                            m.parentUsername === this.props.selectedLink.target.id);
+
+                    }
+                    return byFilter && showMessage && <Message
                         key={m.id} username={m.author} color={m.color} text={m.text}
                         timestamp={m.timestamp} directionClass={this.props.directionClass}
                         depth={m.depth} id={m.id} numOfChildren={m.numOfChildren} isSimulation={this.props.isSimulation}

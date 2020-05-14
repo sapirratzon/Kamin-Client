@@ -38,7 +38,8 @@ class Discussion extends Component {
             isLoading: false,
             language: "English",
             directionClass: "leftToRight",
-            selectedMessageId: null
+            selectedMessageId: null,
+            selectedLink: null
         };
     }
 
@@ -124,6 +125,10 @@ class Discussion extends Component {
     updateSelectedUserHandler(username) {
         this.setState({ selectedUser: username });
     }
+
+    updateSelectedLinkHandler = (link) => {
+        this.setState({ selectedLink: link });
+    };
 
     setTitle = (title) => {
         let dots = '';
@@ -351,6 +356,7 @@ class Discussion extends Component {
                                 updateAlertedMessage={this.updateAlertedMessage.bind(this)}
                                 updateVisibility={this.updateSentMultipleAlertsModalHandler.bind(this)}
                                 selectedMessage={this.state.selectedMessageId}
+                                selectedLink={this.state.selectedLink}
                             />
                         </div >
                         {!this.state.isLoading &&
@@ -364,6 +370,7 @@ class Discussion extends Component {
                                             links={this.state.shownLinks}
                                             currentUser={this.props.currentUser}
                                             updateSelectedUser={this.updateSelectedUserHandler.bind(this)}
+                                            updateSelectedLink={this.updateSelectedLinkHandler.bind(this)}
                                             rootId={this.state.shownMessages[0]["author"]}
                                             handleHide={() => this.handleInsightVisibility('graph', false)}
                                             allowHide={this.props.userType !== 'USER'}

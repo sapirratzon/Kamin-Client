@@ -77,9 +77,13 @@ class Simulation extends Component {
     loadMessages = (commentNode, childIdx, branchId) => {
         if (commentNode == null) return;
         this.messagesCounter++;
+        let parentUserName = '';
+        if (commentNode["node"].parentId !== null)
+            parentUserName = this.regularMessages.find(message => message.id === commentNode["node"].parentId).author;
         commentNode["node"].branchId = (commentNode["node"]["depth"] > 0 ? branchId + '.' + childIdx : '1');
         commentNode["node"].color = "#" + this.props.nodeColor(commentNode["node"]["author"]);
         commentNode["node"].numOfChildren = commentNode["children"].length;
+        commentNode["node"].parentUsername = parentUserName;
         this.regularMessages.push(commentNode["node"]);
         this.chronologicMessages.push(commentNode["node"]);
         let i = 0;
@@ -239,7 +243,6 @@ class Simulation extends Component {
                 children: [],
                 comments: 1,
                 commentsReceived: 0
-
             })
         } else {
             this.shownNodes[idx].val += 0.05;
@@ -330,8 +333,6 @@ class Simulation extends Component {
 
     updateWidthAll() {
         const allMessagesNumber = this.shownLinks.map(link => link.name);
-        console.log('allMessagesNumber');
-        console.log(allMessagesNumber);
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
             const value = this.shownLinks[index].name;
