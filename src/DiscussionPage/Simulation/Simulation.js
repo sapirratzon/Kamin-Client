@@ -198,7 +198,7 @@ class Simulation extends Component {
 
     updateLinksNext = (userName, parentUserName) => {
         const idx = this.shownLinks.findIndex(currentLink =>
-            currentLink.source === userName && currentLink.target === parentUserName);
+            currentLink.source.id === userName && currentLink.target.id === parentUserName);
         if (idx === -1) {
             this.shownLinks.push({
                 source: this.shownNodes.filter(node => node.id === userName)[0],
@@ -330,6 +330,8 @@ class Simulation extends Component {
 
     updateWidthAll() {
         const allMessagesNumber = this.shownLinks.map(link => link.name);
+        console.log('allMessagesNumber');
+        console.log(allMessagesNumber);
         const max = Math.max(...allMessagesNumber);
         for (let index = 0; index < this.shownLinks.length; index++) {
             const value = this.shownLinks[index].name;
