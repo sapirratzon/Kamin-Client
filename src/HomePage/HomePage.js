@@ -132,34 +132,39 @@ class HomePage extends Component {
                         path={this.props.history} />
                     {!this.state.isLoading ?
                         <form onSubmit={this.handleJoinClick} >
-                            <h3 >Join Existing Discussions:</h3 >
-                            <div className="row text-center" >
-                                <span className="col-6" >
-                                    <p >Simulations:</p >
-                                    <select
-                                        className="discussions" value={this.state.selectedSimulationDiscussion}
-                                        onChange={(e) => { this.handleSelectedDiscussion(e, true) }} >
-                                        <option value="" >Select Discussion</option >
-                                        {Object.keys(this.state.simulationDiscussions).map((id) =>
-                                            <option
-                                                key={id}
-                                                value={id} >{this.state.simulationDiscussions[id]}</option >)}
-                                    </select >
-                                </span >
-                                <span className="col-6" >
-                                    <p >Real time:</p >
-                                    <select
-                                        className="discussions" value={this.state.selectedRealTimeDiscussion}
-                                        onChange={(e) => { this.handleSelectedDiscussion(e, false) }} >
-                                        <option value="" >Select Discussion</option >
-                                        {Object.keys(this.state.realTimeDiscussions).map((id) =>
-                                            <option
-                                                key={id}
-                                                value={id} >{this.state.realTimeDiscussions[id]}</option >)}
-                                    </select >
-                                </span >
-                            </div >
-                            <span className="font-size-xxl" >Or</span >
+                            {this.props.userType !== "USER" &&
+                                <React.Fragment>
+                                    <h3 >Join Existing Discussions:</h3 >
+                                    <div className="row text-center" >
+                                        <span className="col-6" >
+                                            <p >Simulations:</p >
+                                            <select
+                                                className="discussions" value={this.state.selectedSimulationDiscussion}
+                                                onChange={(e) => { this.handleSelectedDiscussion(e, true) }} >
+                                                <option value="" >Select Discussion</option >
+                                                {Object.keys(this.state.simulationDiscussions).map((id) =>
+                                                    <option
+                                                        key={id}
+                                                        value={id} >{this.state.simulationDiscussions[id]}</option >)}
+                                            </select >
+                                        </span >
+                                        <span className="col-6" >
+                                            <p >Real time:</p >
+                                            <select
+                                                className="discussions" value={this.state.selectedRealTimeDiscussion}
+                                                onChange={(e) => { this.handleSelectedDiscussion(e, false) }} >
+                                                <option value="" >Select Discussion</option >
+                                                {Object.keys(this.state.realTimeDiscussions).map((id) =>
+                                                    <option
+                                                        key={id}
+                                                        value={id} >{this.state.realTimeDiscussions[id]}</option >)}
+                                            </select >
+                                        </span >
+                                    </div >
+                                    <span className="font-size-xxl" >Or </span >
+                                </React.Fragment>
+                            }
+                            <span className="font-size-xxl" >Enter Discussion code:</span >
                             <input
                                 type="text" className="codeInput form-control" name="unique"
                                 placeholder="Enter code" onChange={this.handleTypedId}
