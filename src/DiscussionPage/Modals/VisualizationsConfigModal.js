@@ -27,12 +27,14 @@ class VisualizationsModal extends Component {
         this.activeUsers = {};
         if (Object.keys(configuration).length > 0) {
             this.activeUsers['all'] = {
-                graph: this.props.defaultConfig['graph'],
-                alerts: this.props.defaultConfig['alerts'],
-                statisticsUser: this.props.defaultConfig['statisticsUser'],
-                statisticsDiscussion: this.props.defaultConfig['statisticsDiscussion'],
+                graph: true,
+                alerts: true,
+                statisticsUser: true,
+                statisticsDiscussion: true,
             };
+
             Object.keys(configuration).forEach(user => {
+                
                 this.activeUsers[user] = {
                     graph: configuration[user]['graph'],
                     alerts: configuration[user]['alerts'],
@@ -148,8 +150,8 @@ class VisualizationsModal extends Component {
                                 <tr >
                                     <th >username</th >
                                     <th >Graph</th >
-                                    <th >Statistics User</th >
-                                    <th >Statistics Discussion</th >
+                                    <th >User Statistics </th >
+                                    <th >Discussion Statistics</th >
                                     <th >Alerts</th >
                                 </tr >
                             </thead >
