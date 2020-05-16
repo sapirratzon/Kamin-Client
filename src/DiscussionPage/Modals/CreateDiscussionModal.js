@@ -22,7 +22,7 @@ class CreateDiscussionModal extends Component {
             directionClass: "leftToRight",
         };
         this.configuration = {
-            vis_config: { "Graph": true, "Alerts": true, "User Statistics": true, "Discussion statistics": false },
+            vis_config: { "graph": true, "alerts": true, "statisticsUser": true, "statisticsDiscussion": true },
             extra_config: {
                 language: "English"
             }
@@ -41,16 +41,16 @@ class CreateDiscussionModal extends Component {
     vizConfigChange = (type) => {
         this.configuration.vis_config[type] = !this.configuration.vis_config[type];
         if (type === "graph") {
-            this.setState({graphChecked: this.configuration.vis_config[type]})
+            this.setState(prevState=>({graphChecked: !prevState.graphChecked}));
         }
         if (type === "statisticsUser") {
-            this.setState({statsUserChecked: this.configuration.vis_config[type]})
+            this.setState(prevState=>({statsUserChecked: !prevState.statsUserChecked}))
         }
         if (type === "statisticsDiscussion") {
-            this.setState({statsDiscussionChecked: this.configuration.vis_config[type]})
+            this.setState(prevState=>({statsDiscussionChecked: !prevState.statsDiscussionChecked}))
         }
         if (type === "alerts") {
-            this.setState({alertsChecked: this.configuration.vis_config[type]})
+            this.setState(prevState=>({alertsChecked: !prevState.alertsChecked}))
         }
     };
 
@@ -148,17 +148,17 @@ class CreateDiscussionModal extends Component {
                         <label className="config mt-2" >Visualization Config:</label >
                         <div >
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="graph" text="Graph"
+                                changeHandler={()=> {this.vizConfigChange("graph")}} type="graph" text="Graph"
                                 checked={ this.state.graphChecked } />
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="statisticsUser" text="User Stats"
+                                changeHandler={ ()=> {this.vizConfigChange("statisticsUser")} } type="statisticsUser" text="User Stats"
                                 checked={ this.state.statsUserChecked } />
                             <CheckBox
-                                changeHandler={ this.vizConfigChange } type="statisticsDiscussion"
+                                changeHandler={()=> {this.vizConfigChange("statisticsDiscussion")} } type="statisticsDiscussion"
                                 text="Discussion Stats"
                                 checked={ this.state.statsDiscussionChecked } />
                             <CheckBox
-                                changeHandler={this.vizConfigChange} type="alerts" text="Alerts"
+                                changeHandler={()=> {this.vizConfigChange("alerts")}} type="alerts" text="Alerts"
                                 checked={this.state.alertsChecked} />
                         </div>
                         <div className="dropdown mt-2" >

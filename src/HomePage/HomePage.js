@@ -164,7 +164,7 @@ class HomePage extends Component {
                                     <span className="font-size-xxl" >Or </span >
                                 </React.Fragment>
                             }
-                            <span className="font-size-xxl" >Enter Discussion code:</span >
+                            <span className="font-size-xxl" >Enter Discussion Code:</span >
                             <input
                                 type="text" className="codeInput form-control" name="unique"
                                 placeholder="Enter code" onChange={this.handleTypedId}
