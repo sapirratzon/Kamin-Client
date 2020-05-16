@@ -20,6 +20,11 @@ class Chat extends Component {
             root: null
         };
         this.socket = props.socket;
+        this.sentimentColors = {
+            good: rgb(0, 128, 0, 1),
+            bad: rgb(255, 0, 0, 1),
+            neutral: rgb(32, 32, 32, 1)
+        }
     }
 
     componentDidMount() {
@@ -126,7 +131,7 @@ class Chat extends Component {
             if (newOpacity < 0.2) {
                 newOpacity = 0.2
             }
-            link.updateOpacity([32, 32, 32, newOpacity]);
+            link.updateOpacity([link.color.r, link.color.g, link.color.b, newOpacity]);
         });
     }
 
@@ -208,6 +213,7 @@ class Chat extends Component {
                     if (childComment["node"]["author"] !== commentNode["node"]["author"]) {
                         const key = childComment["node"]["author"] + " -> " + commentNode["node"]["author"];
                         if (!this.linksMap.has(key)) {
+                            const sentimentColor = this.sentimentColors[commentNode.node.extra_data.sentiment];
                             const link = {
                                 source: childComment["node"]["author"],
                                 target: commentNode["node"]["author"],
@@ -215,12 +221,13 @@ class Chat extends Component {
                                 name: 1,
                                 width: 1,
                                 curvature: 0.2,
-                                color: rgb(32, 32, 32, 1),
+                                // color: rgb(32, 32, 32, 1),
+                                color: sentimentColor ? sentimentColor : this.sentimentColors["neutral"],
                                 updateWidth: function (value) {
                                     this.width = value;
                                 },
                                 updateOpacity: function (value) {
-                                    this.color = rgb(value[0], value[1], value[2], value[3]);
+                                    this.color = rgb(this.color.r, this.color.g, this.color.b, value[3]);
                                 },
                             };
                             this.linksMap.set(key, link);
@@ -228,6 +235,8 @@ class Chat extends Component {
                             const link = this.linksMap.get(key);
                             link.timestamp = childComment["node"]["timestamp"];
                             link.name += 1;
+                            const sentimentColor = this.sentimentColors[commentNode.node.extra_data.sentiment];
+                            link.color = sentimentColor ? sentimentColor : this.sentimentColors["neutral"];
                             this.nodesMap.get(link.source).updateVal(0.05);
                         }
                     }
