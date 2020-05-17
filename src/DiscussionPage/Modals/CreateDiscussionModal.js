@@ -137,7 +137,7 @@ class CreateDiscussionModal extends Component {
                         <p > {this.state.titleError} </p >
                     </div >
                     <div >
-                        <p className="description" >Description:</p >
+                        <p className="description" >First Message:</p >
                         <textarea
                             className={"description-input " + this.state.directionClass} name="description" value={this.state.description}
                             placeholder={"Write Something"} onChange={this.handleChange.bind(this)}

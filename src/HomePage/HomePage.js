@@ -4,7 +4,6 @@ import './HomePage.css';
 import { Link } from "react-router-dom";
 import CreateDiscussionModal from "../DiscussionPage/Modals/CreateDiscussionModal";
 import Loader from 'react-loader-spinner'
-import bguLogo from '../bgulogo.png';
 
 class HomePage extends Component {
     constructor(props) {
@@ -108,23 +107,21 @@ class HomePage extends Component {
 
     render() {
         return (
-            <div className="HomePage" >
+            <React.Fragment> {window.innerWidth > 500 ? <div className="HomePage" >
                 <div className="headline" />
                 {this.props.currentUser ? <div className="container" >
-                    {this.props.userType !== 'USER' &&
-                        <React.Fragment >
-                            <p >Moderation Tools:</p >
-                            <button
-                                type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.updateModalHandler(true)} >Create New Discussion
-                        </button >
-                        </React.Fragment >
-                    }
+                    <React.Fragment >
+                        <p >Moderation Tools:</p >
+                        <button
+                            type="button" className="btn btn-info btn-sm"
+                            onClick={() => this.updateModalHandler(true)} >Create New Discussion
+                    </button >
+                    </React.Fragment >
                     {this.props.userType === 'ROOT' &&
                         <Link to={'/moderatorsManagement'} >
                             <button
                                 type="button" className="btn btn-info btn-sm" >Manage Moderators
-                        </button >
+                    </button >
                         </Link >}
                     <CreateDiscussionModal
                         isOpen={this.state.discussionModal}
@@ -137,7 +134,7 @@ class HomePage extends Component {
                                     <h3 >Join Existing Discussions:</h3 >
                                     <div className="row text-center" >
                                         <span className="col-6" >
-                                            <p >Simulations:</p >
+                                            <p >Playbacks:</p >
                                             <select
                                                 className="discussions" value={this.state.selectedSimulationDiscussion}
                                                 onChange={(e) => { this.handleSelectedDiscussion(e, true) }} >
@@ -164,10 +161,10 @@ class HomePage extends Component {
                                     <span className="font-size-xxl" >Or </span >
                                 </React.Fragment>
                             }
-                            <span className="font-size-xxl" >Enter Discussion Code:</span >
+                            <span className="font-size-xxl" >Enter Discussion ID:</span >
                             <input
                                 type="text" className="codeInput form-control" name="unique"
-                                placeholder="Enter code" onChange={this.handleTypedId}
+                                placeholder="Enter ID" onChange={this.handleTypedId}
                                 value={this.state.typedId} />
                             <p className="text-danger" >{this.state.error}</p >
                             <button className="btn btn-info btn-sm" >Join</button >
@@ -178,23 +175,23 @@ class HomePage extends Component {
                 </div > : <div >
                         <h1 >Hi and welcome to Kamin!</h1 >
                         <h3 >In order to use the application you need to create an account or sign in if you already have
-                         one.</h3 >
+                     one.</h3 >
                         <Link to={'/login'} >
                             <button
                                 type="button" className="btn btn-info btn-sm"
                             >Sign in
-                        </button >
+                    </button >
                         </Link >
                         <Link to={'/registration'} >
                             <button type="button" className="btn btn-info btn-sm" >Sign up
-                        </button >
+                    </button >
                         </Link >
                     </div >
                 }
-            </div >
+            </div > : <p className="text-center"><h1>Sorry currently mobile is not supported :(</h1></p>}
+            </React.Fragment>
         );
     }
-
 }
 
 const mapStateToProps = state => {

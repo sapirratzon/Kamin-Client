@@ -233,6 +233,8 @@ class Discussion extends Component {
             case 'statDiscussion':
                 this.setState({ statisticsDiscussion: show });
                 break;
+            default:
+                break;
         }
     };
 
@@ -278,7 +280,7 @@ class Discussion extends Component {
                                             <button
                                                 className="btn multipleAlerts"
                                                 onClick={() => this.resetFilterHandler()} >
-                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> All Messages
+                                                Show All Messages
                                         </button >
                                         </React.Fragment >
                                     }
@@ -441,7 +443,6 @@ class Discussion extends Component {
                                             alerts={this.state.shownAlerts} directionClass={this.state.directionClass}
                                             handleHide={() => this.handleInsightVisibility('alerts', false)}
                                             allowHide={this.props.userType !== 'USER'}
-                                            directionClass={this.state.directionClass}
                                             handleClick={this.handleAlertClick}
                                         />
                                     </div >
