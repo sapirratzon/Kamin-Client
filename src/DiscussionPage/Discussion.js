@@ -127,7 +127,7 @@ class Discussion extends Component {
     }
 
     updateSelectedLinkHandler = (link) => {
-        this.setState({ selectedLink: link });
+        // this.setState({ selectedLink: link });
     };
 
     setTitle = (title) => {
