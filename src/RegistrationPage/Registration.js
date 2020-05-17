@@ -11,6 +11,8 @@ class Registration extends Component {
                 firstName: '',
                 lastName: ''
             },
+            usernameError: '',
+            passwordError: '',
             submitted: false,
             registered: false
         };
@@ -18,6 +20,22 @@ class Registration extends Component {
 
     handleChange=(event) => {
         const {name, value}=event.target;
+        const regex =RegExp('[^A-Za-z0-9]+');
+        if (regex.test(value)){
+            this.setState({
+                usernameError: 'Invalid input, only letters and numbers are allowed, no spaces.'
+            })
+        }
+        else {
+            this.setState({
+                usernameError: ''
+            })
+        }
+        if (name === 'password' && value.length > 7) {
+            this.setState({
+                passwordError: ''
+            })
+        }
         const {user}=this.state;
         this.setState({
             user: {
@@ -31,10 +49,17 @@ class Registration extends Component {
         event.preventDefault();
         this.setState({submitted: true});
         const {user}=this.state;
+        if (user.password.length < 8){
+            this.setState({
+                passwordError: 'Password must be of minimum 8 characters length'
+            })
+        }
         if (user.firstName && user.lastName && user.username && user.password) {
             const xhr=new XMLHttpRequest();
             xhr.addEventListener('load', () => {
-                this.setState({registered: true});
+                this.setState({
+                    registered: true,
+                    error: ''});
                 setTimeout(() => this.props.history.push('/login/'), 2000);
             });
             xhr.open('POST', process.env.REACT_APP_API + '/api/newUser');
@@ -71,6 +96,7 @@ class Registration extends Component {
                                 type="password" className="form-control" name="password" value={ user.password }
                                 placeholder="Password"
                                 onChange={ this.handleChange } />
+                            <div className="help-block text-danger" >{this.state.passwordError}</div >
                             { submitted && !user.password &&
                             <div className="help-block text-danger" >Password is required</div >
                             }
@@ -95,7 +121,7 @@ class Registration extends Component {
                             <div className="help-block text-danger" >Last Name is required</div >
                             }
                         </div >
-
+                        <div className="help-block text-danger" >{this.state.usernameError}</div >
                         <div className="form-group register-btn" >
                             <button className="btn btn-primary" >Register</button >
                         </div >
