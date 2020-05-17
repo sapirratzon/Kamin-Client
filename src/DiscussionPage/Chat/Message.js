@@ -109,7 +109,7 @@ class Message extends Component {
                             "backgroundColor": this.props.color,
                         }}
                     /></a >
-                    <div className={(this.props.selected ? 'border-warning ' : '') + "card Message-content cursor-pointer" + this.props.directionClass} >
+                    <div className={(this.props.selected ? 'border-warning ' : '') + "card Message-content cursor-pointer " + this.props.directionClass} >
                         <div className="card-header p-1 username leftToRight" >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
