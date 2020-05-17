@@ -4,7 +4,6 @@ import './HomePage.css';
 import { Link } from "react-router-dom";
 import CreateDiscussionModal from "../DiscussionPage/Modals/CreateDiscussionModal";
 import Loader from 'react-loader-spinner'
-import bguLogo from '../bgulogo.png';
 
 class HomePage extends Component {
     constructor(props) {
@@ -111,7 +110,6 @@ class HomePage extends Component {
             <div className="HomePage" >
                 <div className="headline" />
                 {this.props.currentUser ? <div className="container" >
-                    {this.props.userType !== 'USER' &&
                         <React.Fragment >
                             <p >Moderation Tools:</p >
                             <button
@@ -119,7 +117,6 @@ class HomePage extends Component {
                                 onClick={() => this.updateModalHandler(true)} >Create New Discussion
                         </button >
                         </React.Fragment >
-                    }
                     {this.props.userType === 'ROOT' &&
                         <Link to={'/moderatorsManagement'} >
                             <button
