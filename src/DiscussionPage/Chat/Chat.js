@@ -169,14 +169,16 @@ class Chat extends Component {
         } else if (commentNode["node"]["comment_type"] === "comment") {
             this.messagesCounter++;
             let newBranchId = (commentNode["node"]["depth"] > 0 ? branchId + '.' + childIdx : '1');
-
+            let parentUserName = '';
+            if (commentNode["node"].parentId !== null)
+                parentUserName = this.shownMessages.find(message => message.id === commentNode["node"].parentId).author;
             this.shownMessages.push({
                 ...commentNode["node"],
-                parentUsername: commentNode["node"]["author"],
                 color: "#" + this.props.nodeColor(commentNode["node"]["author"]),
                 numOfChildren: commentNode["children"].length,
                 childIdx: childIdx,
-                branchId: newBranchId
+                branchId: newBranchId,
+                parentUsername: parentUserName
             });
             if (!this.nodesMap.has(commentNode["node"]["author"])) {
                 let node = {

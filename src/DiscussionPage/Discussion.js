@@ -127,7 +127,7 @@ class Discussion extends Component {
     }
 
     updateSelectedLinkHandler = (link) => {
-        // this.setState({ selectedLink: link });
+        this.setState({ selectedLink: link });
     };
 
     setTitle = (title) => {
@@ -201,6 +201,12 @@ class Discussion extends Component {
         this.socket.emit("end_session", data);
     };
 
+    resetFilterHandler = () => {
+        this.setState({
+            selectedLink: null
+        })
+    };
+
     handleNewConfig = (response) => {
         if (this.props.userType === 'USER') {
             for (let setting in response) {
@@ -271,9 +277,8 @@ class Discussion extends Component {
                                         </button >
                                             <button
                                                 className="btn multipleAlerts"
-                                                onClick={() => this.updateSentMultipleAlertsModalHandler(true)} >
-                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> Alert
-                                                                                                              Users
+                                                onClick={() => this.resetFilterHandler()} >
+                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> All Messages
                                         </button >
                                         </React.Fragment >
                                     }
