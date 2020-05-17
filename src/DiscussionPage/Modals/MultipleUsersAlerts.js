@@ -8,7 +8,7 @@ class MultipleUsersAlerts extends Component {
         super(props);
         this.socket = this.props.socket;
         this.activeUsers = {};
-        this.noUsers= '';
+        this.noUsers = '';
         this.state = {
             alertedUsers: {},
             alertedAll: false,
@@ -23,9 +23,11 @@ class MultipleUsersAlerts extends Component {
             const allUsers = response;
             if (Object.keys(allUsers).length > 0) {
                 this.noUsers = 'Choose Users:';
-                this.activeUsers = {'all': false};
+                this.activeUsers = { 'all': false };
                 Object.keys(allUsers).forEach(user => {
-                    this.activeUsers[allUsers[user]]= false;
+                    if (this.props.currentUser != user) {
+                        this.activeUsers[allUsers[user]] = false;
+                    }
                 });
             }
             else {
@@ -36,7 +38,7 @@ class MultipleUsersAlerts extends Component {
 
     updateVisibility = (isOpen) => {
         this.props.updateVisibility(isOpen);
-        this.setState({ error: ''});
+        this.setState({ error: '' });
         this.setState({
             userAlerted: false,
             alertedAll: false,
@@ -45,7 +47,7 @@ class MultipleUsersAlerts extends Component {
 
     handleWriteAlert = (event) => {
         const alertText = event.target.value;
-        this.setState({ error: ''});
+        this.setState({ error: '' });
         this.setState({
             alertText: alertText
         });
@@ -76,7 +78,7 @@ class MultipleUsersAlerts extends Component {
     };
 
     validateFields = () => {
-        if (! (this.state.userAlerted || this.state.alertedAll)){
+        if (!(this.state.userAlerted || this.state.alertedAll)) {
             this.setState({
                 error: 'You must select users from the list.'
             });
@@ -140,28 +142,28 @@ class MultipleUsersAlerts extends Component {
                     <p><b> {this.noUsers} </b></p>
                     <table className="table-alerts w-50" >
                         <tbody >
-                        {Object.keys(this.activeUsers).map((id) =>
-                            <tr id={id} key={id} >
-                                <td >
-                                    <input
-                                        name={id} type="checkbox"
-                                        id={id + " alert"}
-                                        className="alertUser"
-                                        checked={this.activeUsers[id]}
-                                        onChange={(event) => this.updateIsUserAlerted(event)}
-                                    />
-                                    <label htmlFor={id + " alert"} />
-                                </td >
-                                <td >{id}</td >
-                            </tr >
-                        )}
+                            {Object.keys(this.activeUsers).map((id) =>
+                                <tr id={id} key={id} >
+                                    <td >
+                                        <input
+                                            name={id} type="checkbox"
+                                            id={id + " alert"}
+                                            className="alertUser"
+                                            checked={this.activeUsers[id]}
+                                            onChange={(event) => this.updateIsUserAlerted(event)}
+                                        />
+                                        <label htmlFor={id + " alert"} />
+                                    </td >
+                                    <td >{id}</td >
+                                </tr >
+                            )}
                         </tbody >
                     </table >
                     <div >
                         <p className="pt-3"><b> Write your alert here: </b></p>
                         <textarea
-                            className={"description-input " + this.props.directionClass} name="description" value={ this.state.alertText }
-                            placeholder={ "Write Something" } onChange={this.handleWriteAlert.bind(this) }
+                            className={"description-input " + this.props.directionClass} name="description" value={this.state.alertText}
+                            placeholder={"Write Something"} onChange={this.handleWriteAlert.bind(this)}
                         />
                         <div className="help-block text-danger" >{this.state.error}</div >
                     </div >

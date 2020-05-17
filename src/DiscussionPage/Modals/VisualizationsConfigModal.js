@@ -34,21 +34,22 @@ class VisualizationsModal extends Component {
             };
 
             Object.keys(configuration).forEach(user => {
-                
-                this.activeUsers[user] = {
-                    graph: configuration[user]['graph'],
-                    alerts: configuration[user]['alerts'],
-                    statisticsUser: configuration[user]['statisticsUser'],
-                    statisticsDiscussion: configuration[user]['statisticsDiscussion'],
-                };
-                if (!configuration[user]['graph'])
-                    this.activeUsers['all']['graph'] = false;
-                if (!configuration[user]['alerts'])
-                    this.activeUsers['all']['alerts'] = false;
-                if (!configuration[user]['statisticsUser'])
-                    this.activeUsers['all']['statisticsUser'] = false;
-                if (!configuration[user]['statisticsDiscussion'])
-                    this.activeUsers['all']['statisticsDiscussion'] = false;
+                if (this.props.currentUser != user) {
+                    this.activeUsers[user] = {
+                        graph: configuration[user]['graph'],
+                        alerts: configuration[user]['alerts'],
+                        statisticsUser: configuration[user]['statisticsUser'],
+                        statisticsDiscussion: configuration[user]['statisticsDiscussion'],
+                    };
+                    if (!configuration[user]['graph'])
+                        this.activeUsers['all']['graph'] = false;
+                    if (!configuration[user]['alerts'])
+                        this.activeUsers['all']['alerts'] = false;
+                    if (!configuration[user]['statisticsUser'])
+                        this.activeUsers['all']['statisticsUser'] = false;
+                    if (!configuration[user]['statisticsDiscussion'])
+                        this.activeUsers['all']['statisticsDiscussion'] = false;
+                }
             });
         }
         else {
