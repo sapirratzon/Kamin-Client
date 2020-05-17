@@ -131,7 +131,7 @@ class Chat extends Component {
             if (newOpacity < 0.2) {
                 newOpacity = 0.2
             }
-            link.updateOpacity([link.color.r, link.color.g, link.color.b, newOpacity]);
+            link.updateOpacity(newOpacity);
         });
     }
 
@@ -226,8 +226,8 @@ class Chat extends Component {
                                 updateWidth: function (value) {
                                     this.width = value;
                                 },
-                                updateOpacity: function (value) {
-                                    this.color = rgb(this.color.r, this.color.g, this.color.b, value[3]);
+                                updateOpacity: function (newOpacity) {
+                                    this.color = rgb(this.color.r, this.color.g, this.color.b, newOpacity);
                                 },
                             };
                             this.linksMap.set(key, link);
