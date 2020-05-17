@@ -48,18 +48,18 @@ class Graph extends Component {
         this.props.updateSelectedUser(node.id)
     }
 
-    selectedLink(link, event) {
+    selectedLink = (link) => {
         this.setState({
             selectedLink: link
         });
         this.props.updateSelectedLink(link)
-    }
+    };
 
-    handleNodeHover(node) {
+    handleNodeHover = (node) => {
         this.setState({
             highlightNode: node
         });
-    }
+    };
 
     render() {
         if (this.props.nodes != null) {
