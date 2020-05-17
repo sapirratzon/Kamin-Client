@@ -93,15 +93,23 @@ class Message extends Component {
         let verticalLines = [];
 
         for (let i = 0; i < this.props.depth + 1; i++) {
-            verticalLines.push(<div
-                className="vl" key={i} style={{
-                    "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
-                }} />)
+            if (this.props.directionClass === "leftToRight") {
+                verticalLines.push(<div
+                    className="vl" key={i} style={{
+                        "left": ((20 * (i + 1) - depthPixels) + 3) + "px",
+                    }} />)
+            } else {
+                verticalLines.push(<div
+                    className="vl" key={i} style={{
+                        "right": ((20 * (i + 1) - depthPixels) + 3) + "px",
+                    }} />)
+            }
         }
 
         return (
             <React.Fragment >
-                <li className="Messages-message" style={{ "marginLeft": depthString, "direction": this.getDirection }} >
+                <li className={"Messages-message " + this.props.directionClass} style={this.props.directionClass === "leftToRight" ?
+                    ({ "marginLeft": depthString }) : { "marginRight": depthString, "align": "right" }} >
                     {verticalLines}
                     <a onClick={() => this.props.collapseNode(this.props.branchId)}> <span
                         className="avatar"
