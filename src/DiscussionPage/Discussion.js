@@ -278,7 +278,7 @@ class Discussion extends Component {
                                             <button
                                                 className="btn multipleAlerts"
                                                 onClick={() => this.resetFilterHandler()} >
-                                                <i className="far fa-bell mr-2" style={{ 'fontSize': '18px' }} /> All Messages
+                                                Show All Messages
                                         </button >
                                         </React.Fragment >
                                     }
