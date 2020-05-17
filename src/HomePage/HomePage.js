@@ -107,21 +107,21 @@ class HomePage extends Component {
 
     render() {
         return (
-            <div className="HomePage" >
+            <React.Fragment> {window.innerWidth > 500 ? <div className="HomePage" >
                 <div className="headline" />
                 {this.props.currentUser ? <div className="container" >
-                        <React.Fragment >
-                            <p >Moderation Tools:</p >
-                            <button
-                                type="button" className="btn btn-info btn-sm"
-                                onClick={() => this.updateModalHandler(true)} >Create New Discussion
-                        </button >
-                        </React.Fragment >
+                    <React.Fragment >
+                        <p >Moderation Tools:</p >
+                        <button
+                            type="button" className="btn btn-info btn-sm"
+                            onClick={() => this.updateModalHandler(true)} >Create New Discussion
+                    </button >
+                    </React.Fragment >
                     {this.props.userType === 'ROOT' &&
                         <Link to={'/moderatorsManagement'} >
                             <button
                                 type="button" className="btn btn-info btn-sm" >Manage Moderators
-                        </button >
+                    </button >
                         </Link >}
                     <CreateDiscussionModal
                         isOpen={this.state.discussionModal}
@@ -175,23 +175,23 @@ class HomePage extends Component {
                 </div > : <div >
                         <h1 >Hi and welcome to Kamin!</h1 >
                         <h3 >In order to use the application you need to create an account or sign in if you already have
-                         one.</h3 >
+                     one.</h3 >
                         <Link to={'/login'} >
                             <button
                                 type="button" className="btn btn-info btn-sm"
                             >Sign in
-                        </button >
+                    </button >
                         </Link >
                         <Link to={'/registration'} >
                             <button type="button" className="btn btn-info btn-sm" >Sign up
-                        </button >
+                    </button >
                         </Link >
                     </div >
                 }
-            </div >
+            </div > : <p className="text-center"><h1>Sorry currently mobile is not supported :(</h1></p>}
+            </React.Fragment>
         );
     }
-
 }
 
 const mapStateToProps = state => {
