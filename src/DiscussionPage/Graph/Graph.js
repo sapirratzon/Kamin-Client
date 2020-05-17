@@ -52,7 +52,14 @@ class Graph extends Component {
         this.setState({
             selectedLink: link
         });
-        this.props.updateSelectedLink(link)
+        this.props.updateSelectedLink(link);
+    };
+
+    cancelSelectedLink = () => {
+        this.setState({
+            selectedLink: null
+        });
+        this.props.updateSelectedLink(null);
     };
 
     handleNodeHover = (node) => {
@@ -97,6 +104,7 @@ class Graph extends Component {
                             nodeCanvasObject={this.paintRing.bind(this)}
                             onNodeClick={this.selectedNode.bind(this)}
                             onLinkClick={this.selectedLink.bind(this)}
+                            onBackgroundClick={this.cancelSelectedLink.bind(this)}
                         // onNodeHover={this.handleNodeHover.bind(this)}
                         />
                     </div >
