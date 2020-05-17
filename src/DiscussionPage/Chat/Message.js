@@ -108,7 +108,7 @@ class Message extends Component {
 
         return (
             <React.Fragment >
-                <li className={"Messages-message " + this.props.directionClass} style={this.props.directionClass === "leftToRight" ?
+                <li className={"Messages-message " + this.props.directionClass + (this.props.directionClass ==="leftToRight"?' mr-1' : ' ml-1')} style={this.props.directionClass === "leftToRight" ?
                     ({ "marginLeft": depthString }) : { "marginRight": depthString, "align": "right" }} >
                     {verticalLines}
                     <a onClick={() => this.props.collapseNode(this.props.branchId)}> <span
@@ -164,7 +164,7 @@ class Message extends Component {
                                 onEditorChange={this.handleEditorChange}
                             />
                             <button
-                                type="button" className={"btn btn-outline-primary waves-effect btn-sm " + this.directionClass}
+                                type="button" className={"btn btn-outline-primary waves-effect btn-sm " + this.props.directionClass}
                                 onClick={this.sendMessageHandler} >Send
                             </button >
                         </React.Fragment>
