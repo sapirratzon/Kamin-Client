@@ -25,7 +25,7 @@ class MultipleUsersAlerts extends Component {
                 this.noUsers = 'Choose Users:';
                 this.activeUsers = { 'all': false };
                 Object.keys(allUsers).forEach(user => {
-                    if (this.props.currentUser != user) {
+                    if (this.props.currentUser !== user) {
                         this.activeUsers[allUsers[user]] = false;
                     }
                 });

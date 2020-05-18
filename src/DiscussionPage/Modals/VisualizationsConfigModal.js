@@ -34,7 +34,7 @@ class VisualizationsModal extends Component {
             };
 
             Object.keys(configuration).forEach(user => {
-                if (this.props.currentUser != user) {
+                if (this.props.currentUser !== user) {
                     this.activeUsers[user] = {
                         graph: configuration[user]['graph'],
                         alerts: configuration[user]['alerts'],
