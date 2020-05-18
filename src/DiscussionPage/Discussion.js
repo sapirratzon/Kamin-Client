@@ -267,6 +267,10 @@ class Discussion extends Component {
                 return;
             }
             const data = JSON.parse(xhr.responseText)
+            if(!data ){
+                console.log("no data for download")
+                return;
+            }
             const csv = data.csv
             const discussionDetails = data.discussion;
             const tree = data.tree;
