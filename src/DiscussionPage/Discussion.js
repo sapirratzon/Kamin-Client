@@ -259,6 +259,51 @@ class Discussion extends Component {
         return "00000".substring(0, 6 - c.length) + c;
     };
 
+    download = () => {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', () => {
+            if (xhr.status === 401) {
+                this.props.onLogOut();
+                return;
+            }
+            const data = JSON.parse(xhr.responseText)
+            const csv = data.csv
+            const discussionDetails = data.discussion;
+            const tree = data.tree;
+            tree.node.extra_data["DiscussionDetails"] = discussionDetails;
+            this.downloadCsvFile(csv, discussionDetails.title);
+            this.downloadJsonFile(tree, discussionDetails.title);
+        });
+        xhr.open('GET', process.env.REACT_APP_API + '/api/download/' + this.state.discussionId);
+        xhr.setRequestHeader("Authorization", "Basic " + btoa(this.props.token + ":"));
+        xhr.send();
+    }
+
+    downloadCsvFile(csvContent, filename) {
+        var BOM = "\uFEFF";
+        var csvContent = BOM + csvContent;
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", filename + ".csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    downloadJsonFile(jsonObj, filename) {
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonObj));
+        var link = document.createElement("a");
+        link.setAttribute("href", dataStr);
+        link.setAttribute("download", filename + ".json");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     render() {
         return (
             <div className="App" >
@@ -270,6 +315,13 @@ class Discussion extends Component {
                         {!this.state.isLoading &&
                             <React.Fragment >
                                 <span className="col-4" >
+                                    {this.props.userType !== "USER" &&
+                                        <button
+                                            type="button" className="btn btn-info"
+                                            onClick={this.download} >
+                                            <i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download
+                                    </button >
+                                    }
                                     {(this.props.userType !== "USER" && this.props.isSimulation === "false") &&
                                         <React.Fragment >
                                             <button
