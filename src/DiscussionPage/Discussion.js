@@ -284,11 +284,11 @@ class Discussion extends Component {
     }
 
     downloadCsvFile(csvContent, filename) {
-        var BOM = "\uFEFF";
-        var csvContent = BOM + csvContent;
+        const BOM = "\uFEFF";
+        csvContent = BOM + csvContent;
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        var url = URL.createObjectURL(blob);
-        var link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
         link.setAttribute("href", url);
         link.setAttribute("download", filename + ".csv");
         link.style.visibility = 'hidden';
