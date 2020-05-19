@@ -158,7 +158,7 @@ class Message extends Component {
                                         'undo redo | formatselect | bold italic backcolor | \
                                         alignleft aligncenter alignright alignjustify | \
                                         bullist numlist outdent indent | removeformat | help',
-                                    directionality: (this.directionClass === "leftToRight" ? 'ltr' : 'rtl')
+                                    directionality: (this.props.directionClass === "leftToRight" ? 'ltr' : 'rtl')
 
                                 }}
                                 onEditorChange={this.handleEditorChange}
