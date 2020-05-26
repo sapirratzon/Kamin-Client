@@ -13,6 +13,7 @@ class Registration extends Component {
             },
             usernameError: '',
             passwordError: '',
+            failureError: '',
             submitted: false,
             registered: false
         };
@@ -76,13 +77,27 @@ class Registration extends Component {
 
         if (user.firstName && user.lastName && user.username && user.password) {
             const xhr = new XMLHttpRequest();
-            xhr.addEventListener('load', () => {
-                this.setState({
-                    registered: true,
-                    error: ''
-                });
-                setTimeout(() => this.props.history.push('/login/'), 2000);
+            xhr.addEventListener('load', res => {
+                if (res.target.status === 200) {
+                    this.setState({
+                        registered: true,
+                        failureError:""
+                    });
+                    setTimeout(() => this.props.history.push('/login/'), 2000);
+                }
             });
+            xhr.addEventListener("error", () => {
+                this.setState({
+                    failureError: "Registration failed, Username is taken, choose a different Username "
+                })
+            });
+            xhr.onreadystatechange = () => {
+                if (xhr.status === 400) {
+                    this.setState({
+                        failureError: "Registration failed, Username is taken, choose a different Username "
+                    })
+                }
+            };
             xhr.open('POST', process.env.REACT_APP_API + '/api/newUser');
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(JSON.stringify({
@@ -148,6 +163,7 @@ class Registration extends Component {
                         </div >
                     </form >
                 </div >
+                <h3 className="text-center text-danger" >{this.state.failureError}</h3 >
                 {registered ?
                     <h3 className="text-center text-success " ><b >Registered successfully! Redirecting to the login
                                                                    page.</b ></h3 > : null}
