@@ -20,21 +20,29 @@ class Registration extends Component {
 
     handleChange = (event) => {
         const { name, value } = event.target;
-        const regex = RegExp('[^A-Za-z0-9]+');
-        if (regex.test(value) && (name === 'password' || name === 'username')){
-            this.setState({
-                usernameError: 'Invalid input, only letters and numbers are allowed, no spaces.'
-            });
-        }
-        else {
-            this.setState({
-                usernameError: ''
-            })
-        }
-        if (name === 'password' && value.length > 7) {
-            this.setState({
-                passwordError: ''
-            })
+        const regex = RegExp('^[A-Za-z0-9]+$');
+        if (name === 'username') {
+            if (!regex.test(value)) {
+                this.setState({
+                    usernameError: 'Invalid Username, only letters and numbers are allowed, no spaces.'
+                });
+            }
+            else {
+                this.setState({
+                    usernameError: ''
+                })
+            }
+        } else if (name === 'password') {
+            if (!regex.test(value)) {
+                this.setState({
+                    passwordError: 'Invalid password, only letters and numbers are allowed, no spaces.'
+                });
+            }
+            else {
+                this.setState({
+                    passwordError: ''
+                })
+            }
         }
         const { user } = this.state;
         this.setState({
@@ -49,18 +57,23 @@ class Registration extends Component {
         event.preventDefault();
         this.setState({ submitted: true });
         const { user } = this.state;
+        if (this.state.usernameError !== "" || this.state.passwordError !== "") {
+            return
+        }
+        if (user.username.length < 6) {
+            this.setState({
+                usernameError: 'Username must be of minimum 6 characters length'
+            });
+            return;
+        }
         if (user.password.length < 8) {
             this.setState({
                 passwordError: 'Password must be of minimum 8 characters length'
             });
             return;
         }
-        if (user.username.length < 8) {
-            this.setState({
-                usernameError: 'User Name must be of minimum 6 characters length'
-            });
-            return;
-        }
+
+
         if (user.firstName && user.lastName && user.username && user.password) {
             const xhr = new XMLHttpRequest();
             xhr.addEventListener('load', () => {
@@ -94,6 +107,7 @@ class Registration extends Component {
                                 type="text" className="form-control" name="username" value={user.username}
                                 placeholder="Username"
                                 onChange={this.handleChange} />
+                            <div className="help-block text-danger" >{this.state.usernameError}</div >
                             {submitted && !user.username &&
                                 <div className="help-block text-danger" >Username is required</div >
                             }
@@ -129,7 +143,6 @@ class Registration extends Component {
                                 <div className="help-block text-danger" >Last Name is required</div >
                             }
                         </div >
-                        <div className="help-block text-danger" >{this.state.usernameError}</div >
                         <div className="form-group register-btn" >
                             <button className="btn btn-primary" >Register</button >
                         </div >
