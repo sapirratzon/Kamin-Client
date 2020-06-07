@@ -108,7 +108,7 @@ class Message extends Component {
 
         return (
             <React.Fragment >
-                <li className={"Messages-message " + this.props.directionClass + (this.props.directionClass ==="leftToRight"?' mr-1' : ' ml-1')} style={this.props.directionClass === "leftToRight" ?
+                <li className={"Messages-message " + this.props.directionClass + (this.props.directionClass === "leftToRight" ? ' mr-1' : ' ml-1')} style={this.props.directionClass === "leftToRight" ?
                     ({ "marginLeft": depthString }) : { "marginRight": depthString, "align": "right" }} >
                     {verticalLines}
                     <a onClick={() => this.props.collapseNode(this.props.branchId)}> <span
@@ -118,7 +118,7 @@ class Message extends Component {
                         }}
                     /></a >
                     <div className={(this.props.selected ? 'border-warning ' : '') + "card Message-content cursor-pointer " + this.props.directionClass} >
-                        <div className="card-header p-1 username leftToRight" >
+                        <div className={"card-header p-1 username " + this.props.directionClass} >
                             {this.props.username}{"  "}{this.getDate(this.props.timestamp)}
                         </div >
                         <div className={"mr-1 ml-1 cursor-pointer " + this.props.directionClass} >
