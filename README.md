@@ -9,7 +9,7 @@ This repository contains the code for client side of the web application:
 
 * Make sure you have nodejs installed in order to use node package manager (npm) https://nodejs.org/en/
 
-* Make sure kamin-server is up & running - https://github.com/RonElhar/Kamin-Server/ see README.
+* Make sure kamin-server is up & running - https://github.com/sapirratzon/Kamin-Server see README.
 
 * After cloning the repositoy to your preffered code editor, open the terminal and execute the following command:
     ```bash
